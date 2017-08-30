@@ -1,0 +1,29 @@
+{
+  "name": "zyrajs",
+  "version": "0.0.0",
+  "description": "Riot Games API Lib for JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MingweiSamuel/ZyraJS.git"
+  },
+  "keywords": [
+    "riot",
+    "games",
+    "api",
+    "league",
+    "legends",
+    "\"league",
+    "of",
+    "legends\""
+  ],
+  "author": "Mingwei Samuel",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/MingweiSamuel/ZyraJS/issues"
+  },
+  "homepage": "https://github.com/MingweiSamuel/ZyraJS#readme"
+}
