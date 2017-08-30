@@ -1,14 +1,14 @@
 {
-  "name": "zyrajs",
+  "name": "teemojs",
   "version": "0.0.0",
-  "description": "Riot Games API Lib for JS",
+  "description": "A Fast & Lightweight Riot API Wrapper",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MingweiSamuel/ZyraJS.git"
+    "url": "git+https://github.com/MingweiSamuel/TeemoJS.git"
   },
   "keywords": [
     "riot",
@@ -16,16 +16,17 @@
     "api",
     "league",
     "legends",
-    "\"league",
-    "of",
-    "legends\""
+    "league of legends",
+    "wrapper",
+    "teemo",
+    "kindred"
   ],
   "author": "Mingwei Samuel",
   "license": "GPL-2.0",
   "bugs": {
-    "url": "https://github.com/MingweiSamuel/ZyraJS/issues"
+    "url": "https://github.com/MingweiSamuel/TeemoJS/issues"
   },
-  "homepage": "https://github.com/MingweiSamuel/ZyraJS#readme",
+  "homepage": "https://github.com/MingweiSamuel/TeemoJS#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
     "request": "^2.81.0",
