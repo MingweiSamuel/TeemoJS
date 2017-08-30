@@ -1,0 +1,66 @@
+{
+  "prefix": "https://%s.api.riotgames.com",
+  "retries": 3,
+  "maxConcurrent": 2000,
+  "endpoints": {
+    "championMastery": {
+      "getAllChampionMasteries": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s",
+      "getChampionMastery": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s",
+      "getChampionMasteryScore": "/lol/champion-mastery/v3/scores/by-summoner/%s"
+    },
+    "champion": {
+      "getChampions": "/lol/platform/v3/champions",
+      "getChampionsById": "/lol/platform/v3/champions/%s"
+    },
+    "league": {
+      "getChallengerLeague": "/lol/league/v3/challengerleagues/by-queue/%s",
+      "getAllLeaguesForSummoner": "/lol/league/v3/leagues/by-summoner/%s",
+      "getMasterLeague": "/lol/league/v3/masterleagues/by-queue/%s",
+      "getAllLeaguePositionsForSummoner": "/lol/league/v3/positions/by-summoner/%s"
+    },
+    "lolStaticData": {
+      "getChampionList": "/lol/static-data/v3/champions",
+      "getChampionById": "/lol/static-data/v3/champions/%s",
+      "getItemList": "/lol/static-data/v3/items",
+      "getItemById": "/lol/static-data/v3/items/%s",
+      "getLanguageStrings": "/lol/static-data/v3/language-strings",
+      "getLanguages": "/lol/static-data/v3/languages",
+      "getMapData": "/lol/static-data/v3/maps",
+      "getMasteryList": "/lol/static-data/v3/masteries",
+      "getMasteryById": "/lol/static-data/v3/masteries/%s",
+      "getProfileIcons": "/lol/static-data/v3/profile-icons",
+      "getRealm": "/lol/static-data/v3/realms",
+      "getRuneList": "/lol/static-data/v3/runes",
+      "getRuneById": "/lol/static-data/v3/runes/%s",
+      "getSummonerSpellList": "/lol/static-data/v3/summoner-spells",
+      "getSummonerSpellById": "/lol/static-data/v3/summoner-spells/%s",
+      "getVersions": "/lol/static-data/v3/versions"
+    },
+    "lolStatus": {
+      "getShardData": "/lol/status/v3/shard-data"
+    },
+    "masteries": {
+      "getMasteryPagesBySummonerId": "/lol/platform/v3/masteries/by-summoner/%s"
+    },
+    "match": {
+      "getMatchIdsByTournamentCode": "/lol/match/v3/matches/by-tournament-code/%s/ids",
+      "getMatch": "/lol/match/v3/matches/%s",
+      "getMatchByTournamentCode": "/lol/match/v3/matches/%s",
+      "getMatchlist": "/lol/match/v3/matchlists/by-account/%s",
+      "getRecentMatchlist": "/lol/match/v3/matchlists/by-account/%s/recent",
+      "getMatchTimeline": "/lol/match/v3/timelines/by-match/%s"
+    },
+    "runes": {
+      "getRunePagesBySummonerId": "/lol/platform/v3/runes/by-summoner/%s"
+    },
+    "spectator": {
+      "getCurrentGameInfoBySummoner": "/lol/spectator/v3/active-games/by-summoner/%s",
+      "getFeaturedGames": "/lol/spectator/v3/featured-games"
+    },
+    "summoner": {
+      "getByAccountId": "/lol/summoner/v3/summoners/by-account/%s",
+      "getBySummonerName": "/lol/summoner/v3/summoners/by-name/%s",
+      "getBySummonerId": "/lol/summoner/v3/summoners/%s"
+    }
+  }
+}

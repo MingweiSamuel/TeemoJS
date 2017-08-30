@@ -25,5 +25,13 @@
   "bugs": {
     "url": "https://github.com/MingweiSamuel/ZyraJS/issues"
   },
-  "homepage": "https://github.com/MingweiSamuel/ZyraJS#readme"
+  "homepage": "https://github.com/MingweiSamuel/ZyraJS#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
+  },
+  "devDependencies": {
+    "jsdom": "^11.2.0"
+  }
 }
