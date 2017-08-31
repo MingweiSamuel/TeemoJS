@@ -10,10 +10,8 @@ function RiotApi(key, config) {
   this.config = JSON.parse(JSON.stringify(defaultConfig));
   this.config.key = key;
   this.regions = {};
-  if (config) {
-    for (let [key, value] of Object.entries(config))
-      this.config[key] = value;
-  }
+  if (config)
+    Object.entries(config).forEach((k, v) => (this.config[k] = v));
 }
 RiotApi.prototype.get = function() {
   let region = arguments[0];
@@ -151,12 +149,9 @@ RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
     });
 }
 RateLimit.getAllOrDelay = function(rateLimits) {
-  let delay = -1;
-  for (let rateLimit of rateLimits) {
-    let currentDelay = rateLimit.retryDelay();
-    if (currentDelay > delay)
-      delay = currentDelay;
-  }
+  let delay = rateLimits
+    .map(r => r.retryDelay())
+    .reduce((a, b) => Math.max(a, b), -1);
   if (delay >= 0)
     return delay; // Techincally the delay could be more but whatev.
   let allBuckets = [].concat.apply([], rateLimits.map(rl => rl.buckets));
@@ -258,16 +253,10 @@ TokenBucket.prototype._getTimeToBucket = function(n) {
   return n * this.timespanIndex - (this.time % this.timespanIndex);
 }
 TokenBucket.getAllOrDelay = function(tokenBuckets) {
-  let delay = -1;
-  for (let tokenBucket of tokenBuckets) {
-    let bucketDelay = tokenBucket.getDelay();
-    if (bucketDelay > delay)
-      delay = bucketDelay;
-  }
-  if (delay >= 0)
-    return delay;
-  for (let tokenBucket of tokenBuckets)
-    tokenBucket.getTokens(1);
+  let delay = tokenBuckets
+    .map(b => b.getDelay())
+    .reduce((a, b) => Math.max(a, b), -1);
+  tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
 }
 
