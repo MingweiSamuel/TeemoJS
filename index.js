@@ -108,7 +108,6 @@ RateLimit.prototype.onResponse = function(res) {
     let type = res.headers[RateLimit.HEADER_LIMIT_TYPE];
     if (!type)
       throw new Error('Response missing type.');
-    console.log('429 ' + type);
     if (this.type === type.toLowerCase()) {
       let retryAfter = +res.headers[RateLimit.HEADER_RETRY_AFTER];
       if (Number.isNaN(retryAfter))
@@ -187,14 +186,13 @@ RateLimit.TYPE_METHOD = {
 /** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
 function TokenBucket(timespan, limit, factor, spread, now) {
   factor = factor || 20;
-  spread = (undefined !== spread) ? spread : 0.5;
+  spread = (undefined !== spread) ? spread : 500 / timespan;
 
   this.now = now || Date.now;
 
   this.timespan = timespan;
   this.limit = limit;
   this.limitPerIndex = Math.floor(limit / spread / factor) || 1;
-  console.log('limit: ' + this.limitPerIndex);
   this.timespanIndex = Math.ceil(timespan / factor);
 
   this.total = 0;

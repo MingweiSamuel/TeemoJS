@@ -61,7 +61,6 @@ describe('TeemoJS', function() {
           .then(data => {
             assert.ok(data);
             assert.equal(data.id, id);
-            console.log(id);
           })
         ));
     });
