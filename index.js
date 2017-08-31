@@ -7,7 +7,7 @@ const defaultConfig = require("./defaultConfig.json");
 
 function RiotApi(key, config) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
-  this.config = defaultConfig;
+  this.config = JSON.parse(JSON.stringify(defaultConfig));
   this.config.key = key;
   this.regions = {};
   if (config) {
