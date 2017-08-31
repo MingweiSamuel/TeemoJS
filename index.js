@@ -87,7 +87,7 @@ Region.prototype.get = function() {
 Region.prototype._getMethodLimit = function(method) {
   if (this.methodLimits[method])
     return this.methodLimits[method];
-  return (this.methodLimits[method] = new RateLimit(RateLimit.TYPE_APPLICATION));
+  return (this.methodLimits[method] = new RateLimit(RateLimit.TYPE_METHOD));
 }
 
 
@@ -106,11 +106,11 @@ RateLimit.prototype.onResponse = function(res) {
     let type = res.headers[RateLimit.HEADER_LIMIT_TYPE];
     if (!type)
       throw new Error('Response missing type.');
-    if (this.type === type.toLowerCase()) {
+    if (this.type.name === type.toLowerCase()) {
       let retryAfter = +res.headers[RateLimit.HEADER_RETRY_AFTER];
       if (Number.isNaN(retryAfter))
         throw new Error('Response 429 missing retry-after header.');
-      retryAfterTimestamp = Date.now() + retryAfter * 1000 + 500;
+      this.retryAfter = Date.now() + retryAfter * 1000 + 500;
     }
   }
 
