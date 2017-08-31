@@ -124,12 +124,7 @@ RateLimit.prototype.onResponse = function(res) {
 RateLimit.prototype._bucketsNeedUpdate = function(limitHeader, countHeader) {
   if (!limitHeader || !countHeader)
     return false;
-  let limits = '';
-  for (let i = 0; i < this.buckets.length; i++) {
-    if (i > 0)
-      limits += ',';
-    limits += this.buckets[i].toLimitString();
-  }
+  let limits = this.buckets.map(b => b.toLimitString()).join(',');
   return limitHeader !== limits;
 }
 RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
