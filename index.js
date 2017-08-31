@@ -1,3 +1,5 @@
+'use strict';
+
 const util = require("util");
 const Promise = require("bluebird");
 const req = require("request-promise");
@@ -63,23 +65,24 @@ Region.prototype.get = function() {
     this.liveRequests++;
     return req({
       uri, qs,
+      forever: true, // keep-alive.
       qsStringifyOptions: { indices: false },
       simple: false,
       resolveWithFullResponse: true,
       headers: { 'X-Riot-Token': this.config.key }
     }).then(res => {
-        this.liveRequests--;
-        rateLimits.forEach(rl => rl.onResponse(res));
-        if ([404, 422].includes(res.statusCode))
-          return null;
-        if (429 === res.statusCode || 500 <= res.statusCode) {
-          if (retries >= this.config.retries)
-            throw Error('Failed after ' + retries + ' retries with code ' + res.statusCode + '.');
-          retries++;
-          return fn();
-        }
-        return JSON.parse(res.body);
-      });
+      this.liveRequests--;
+      rateLimits.forEach(rl => rl.onResponse(res));
+      if ([404, 422].includes(res.statusCode))
+        return null;
+      if (429 === res.statusCode || 500 <= res.statusCode) {
+        if (retries >= this.config.retries)
+          throw Error('Failed after ' + retries + ' retries with code ' + res.statusCode + '.');
+        retries++;
+        return fn();
+      }
+      return JSON.parse(res.body);
+    });
   };
   return Promise.resolve(fn());
 }
@@ -105,6 +108,7 @@ RateLimit.prototype.onResponse = function(res) {
     let type = res.headers[RateLimit.HEADER_LIMIT_TYPE];
     if (!type)
       throw new Error('Response missing type.');
+    console.log('429 ' + type);
     if (this.type === type.toLowerCase()) {
       let retryAfter = +res.headers[RateLimit.HEADER_RETRY_AFTER];
       if (Number.isNaN(retryAfter))
@@ -165,9 +169,9 @@ RateLimit.getAllOrDelay = function(rateLimits) {
   return TokenBucket.getAllOrDelay(allBuckets);
 }
 /** Header specifying which RateLimitType caused a 429. */
-RateLimit.HEADER_LIMIT_TYPE = "X-Rate-Limit-Type";
+RateLimit.HEADER_LIMIT_TYPE = "x-rate-limit-type";
 /** Header specifying retry after time in seconds after a 429. */
-RateLimit.HEADER_RETRY_AFTER = "Retry-After";
+RateLimit.HEADER_RETRY_AFTER = "retry-after";
 RateLimit.TYPE_APPLICATION = {
   name: 'application',
   headerLimit: 'x-app-rate-limit',
@@ -183,13 +187,13 @@ RateLimit.TYPE_METHOD = {
 /** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
 function TokenBucket(timespan, limit, factor, spread, now) {
   factor = factor || 20;
-  spread = (undefined !== spread) ? spread : 0.5;
+  spread = (undefined !== spread) ? spread : 0.1;
 
   this.now = now || Date.now;
 
   this.timespan = timespan;
   this.limit = limit;
-  this.limitPerIndex = Math.floor(limit / spread / factor);
+  this.limitPerIndex = Math.floor(limit / spread / factor) || 1;
   this.timespanIndex = Math.ceil(timespan / factor);
 
   this.total = 0;

@@ -13,6 +13,7 @@
   "keywords": [
     "riot",
     "games",
+    "riot games",
     "api",
     "league",
     "legends",
@@ -33,6 +34,7 @@
     "request-promise": "^4.2.1"
   },
   "devDependencies": {
-    "jsdom": "^11.2.0"
+    "jsdom": "^11.2.0",
+    "mocha": "^3.5.0"
   }
 }
