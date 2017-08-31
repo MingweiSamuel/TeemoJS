@@ -11,7 +11,7 @@ function RiotApi(key, config) {
   this.config.key = key;
   this.regions = {};
   if (config) {
-    for (let [ key, value ] of Object.entries(config))
+    for (let [key, value] of Object.entries(config))
       this.config[key] = value;
   }
 }
@@ -119,7 +119,7 @@ RateLimit.prototype.onResponse = function(res) {
   let limitHeader = res.headers[this.type.headerLimit];
   let countHeader = res.headers[this.type.headerCount];
   if (this._bucketsNeedUpdate(limitHeader, countHeader))
-    this.buckets = this._getBucketsFromHeaders(limitHeader, countHeader);
+    this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader);
 }
 RateLimit.prototype._bucketsNeedUpdate = function(limitHeader, countHeader) {
   if (!limitHeader || !countHeader)
@@ -132,7 +132,7 @@ RateLimit.prototype._bucketsNeedUpdate = function(limitHeader, countHeader) {
   }
   return limitHeader !== limits;
 }
-RateLimit.prototype._getBucketsFromHeaders = function(limitHeader, countHeader) {
+RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
   // Limits: "20000:10,1200000:600"
   // Counts: "7:10,58:600"
   let limits = limitHeader.split(',');
@@ -140,20 +140,20 @@ RateLimit.prototype._getBucketsFromHeaders = function(limitHeader, countHeader) 
   if (limits.length !== counts.length)
     throw new Error('Limit and count headers do not match: ' + limitHeader + ', ' + countHeader + '.');
 
-  let buckets = [];
-  for (let i = 0; i < limits.length; i++) {
-    let [limitVal, limitSpan] = limits[i].split(':').map(Number);
-    limitSpan *= 1000;
-    let [countVal, countSpan] = counts[i].split(':').map(Number);
-    countSpan *= 1000;
-    if (limitSpan != countSpan)
-      throw new Error('Limit span and count span do not match: ' + limitSpan + ', ' + countSpan + '.');
+  return limits
+    .map((limit, i) => {
+      let count = counts[i];
+      let [limitVal, limitSpan] = limit.split(':').map(Number);
+      let [countVal, countSpan] = count.split(':').map(Number);
+      limitSpan *= 1000;
+      countSpan *= 1000;
+      if (limitSpan != countSpan)
+        throw new Error('Limit span and count span do not match: ' + limitSpan + ', ' + countSpan + '.');
 
-    let bucket = new TokenBucket(limitSpan, limitVal);
-    bucket.getTokens(countVal);
-    buckets.push(bucket);
-  }
-  return buckets;
+      let bucket = new TokenBucket(limitSpan, limitVal);
+      bucket.getTokens(countVal);
+      return bucket;
+    });
 }
 RateLimit.getAllOrDelay = function(rateLimits) {
   let delay = -1;
