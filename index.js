@@ -11,7 +11,7 @@ function RiotApi(key, config) {
   this.config.key = key;
   this.regions = {};
   if (config)
-    Object.entries(config).forEach((k, v) => (this.config[k] = v));
+    Object.entries(config).forEach(kv => (this.config[kv[0]] = kv[1]));
 }
 RiotApi.prototype.get = function() {
   let region = arguments[0];
