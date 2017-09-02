@@ -1,17 +1,18 @@
 'use strict';
 
 const util = require("util");
-const Promise = require("bluebird");
-const req = require("request-promise");
+const req = require("request-promise-native");
 const defaultConfig = require("./defaultConfig.json");
+
+const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 function RiotApi(key, config) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
-  this.config = JSON.parse(JSON.stringify(defaultConfig));
+  this.config = JSON.parse(JSON.stringify(RiotApi.defaultConfig));
   this.config.key = key;
   this.regions = {};
   if (config)
-    Object.entries(config).forEach(kv => (this.config[kv[0]] = kv[1]));
+    Object.entries(config).forEach(([k, v]) => (this.config[k] = v));
 }
 RiotApi.prototype.get = function() {
   let region = arguments[0];
@@ -22,6 +23,7 @@ RiotApi.prototype._getRegion = function(region) {
     return this.regions[region];
   return (this.regions[region] = new Region(this.config));
 }
+RiotApi.defaultConfig = defaultConfig;
 
 
 /** RateLimits for a region. One app limit and any number of method limits. */
@@ -57,9 +59,9 @@ Region.prototype.get = function() {
   let fn = () => {
     let delay = RateLimit.getAllOrDelay(rateLimits);
     if (delay >= 0)
-      return Promise.delay(delay).then(fn);
+      return delayPromise(delay).then(fn);
     if (this.liveRequests >= this.config.maxConcurrent)
-      return Promise.delay(20).then(fn);
+      return delayPromise(20).then(fn);
     this.liveRequests++;
     return req({
       uri, qs,
@@ -256,6 +258,8 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   let delay = tokenBuckets
     .map(b => b.getDelay())
     .reduce((a, b) => Math.max(a, b), -1);
+  if (delay >= 0)
+    return delay;
   tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
 }

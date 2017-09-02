@@ -29,11 +29,11 @@
   },
   "homepage": "https://github.com/MingweiSamuel/TeemoJS#readme",
   "dependencies": {
-    "bluebird": "^3.5.0",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise-native": "^1.0.4"
   },
   "devDependencies": {
+    "bluebird": "^3.5.0",
     "jsdom": "^11.2.0",
     "mocha": "^3.5.0"
   }

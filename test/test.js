@@ -7,7 +7,7 @@ describe('TeemoJS', function() {
     let apiKey = process.env.RIOT_API_KEY;
     if (!apiKey)
       throw new Error('Must set RIOT_API_KEY in environment.');
-    api = TeemoJS(apiKey, {})
+    api = TeemoJS(apiKey, { maxConcurrent: 2 });
   });
   describe('#get()', function() {
     it('championMastery.getAllChampionMasteries', function() {
@@ -64,5 +64,12 @@ describe('TeemoJS', function() {
           })
         ));
     });
+
+    // it('lolStaticData.getChampionList', function() {
+    //     return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
+    //     .then(data => {
+    //       assert.ok(data);
+    //     });
+    // });
   });
 });
