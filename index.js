@@ -6,13 +6,12 @@ const defaultConfig = require("./defaultConfig.json");
 
 const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));
 
-function RiotApi(key, config) {
+function RiotApi(key, config = {}) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
   this.config = JSON.parse(JSON.stringify(RiotApi.defaultConfig));
   this.config.key = key;
   this.regions = {};
-  if (config)
-    Object.entries(config).forEach(([k, v]) => (this.config[k] = v));
+  Object.entries(config).forEach(([k, v]) => (this.config[k] = v));
 }
 RiotApi.prototype.get = function() {
   let region = arguments[0];
@@ -176,11 +175,8 @@ RateLimit.TYPE_METHOD = {
 
 
 /** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
-function TokenBucket(timespan, limit, factor, spread, now) {
-  factor = factor || 20;
-  spread = (undefined !== spread) ? spread : 500 / timespan;
-
-  this.now = now || Date.now;
+function TokenBucket(timespan, limit, factor = 20, spread = 500 / timespan, now = Date.now) {
+  this.now = now;
 
   this.timespan = timespan;
   this.limit = limit;

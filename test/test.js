@@ -65,11 +65,11 @@ describe('TeemoJS', function() {
         ));
     });
 
-    // it('lolStaticData.getChampionList', function() {
-    //     return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
-    //     .then(data => {
-    //       assert.ok(data);
-    //     });
-    // });
+    it('lolStaticData.getChampionList', function() {
+        return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
+        .then(data => {
+          assert.ok(data);
+        });
+    });
   });
 });
