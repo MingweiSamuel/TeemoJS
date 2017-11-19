@@ -15,6 +15,7 @@
     "league": {
       "getChallengerLeague": "/lol/league/v3/challengerleagues/by-queue/%s",
       "getAllLeaguesForSummoner": "/lol/league/v3/leagues/by-summoner/%s",
+      "getLeagueById": "/lol/league/v3/leagues/%s",
       "getMasterLeague": "/lol/league/v3/masterleagues/by-queue/%s",
       "getAllLeaguePositionsForSummoner": "/lol/league/v3/positions/by-summoner/%s"
     },

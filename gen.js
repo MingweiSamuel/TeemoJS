@@ -1,6 +1,6 @@
-// This file creates the default methodspec.json.
+// This file creates defaultConfig.json.
 const Promise = require("bluebird");
-const req = require("request-promise");
+const req = require("request-promise-native");
 const fs = Promise.promisifyAll(require("fs"))
 const { JSDOM } = require("jsdom");
 

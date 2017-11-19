@@ -54,21 +54,29 @@ describe('TeemoJS', function() {
           assert.equal(data.summonerLevel, 30);
         });
     });
-    it('summoner.getBySummonerId many', function() {
-      let ids = require('./ids.json');
-      return Promise.all(ids.map(id =>
-        api.get('na1', 'summoner.getBySummonerId', id)
-          .then(data => {
-            assert.ok(data);
-            assert.equal(data.id, id);
-          })
-        ));
-    });
+    // it('summoner.getBySummonerId many', function() {
+    //   let ids = require('./ids.json');
+    //   return Promise.all(ids.map(id =>
+    //     api.get('na1', 'summoner.getBySummonerId', id)
+    //       .then(data => {
+    //         assert.ok(data);
+    //         assert.equal(data.id, id);
+    //       })
+    //     ));
+    // });
 
-    it('lolStaticData.getChampionList', function() {
-        return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
+    // it('lolStaticData.getChampionList', function() {
+    //   return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
+    //     .then(data => {
+    //       assert.ok(data);
+    //     });
+    // });
+
+    it('league.getAllLeaguePositionsForSummoner (euw)', function() {
+      return api.get('euw1', 'league.getAllLeaguePositionsForSummoner', '95457313')
         .then(data => {
-          assert.ok(data);
+          let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
+          console.log(entry.wins);
         });
     });
   });
