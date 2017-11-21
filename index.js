@@ -187,8 +187,6 @@ function TokenBucket(timespan, limit, factor = 20, spread = 500 / timespan, now 
     this.limitPerIndex = Math.ceil(limit / factor);
   this.timespanIndex = Math.ceil(timespan / factor);
 
-  console.log(this.limitPerIndex * factor);
-
   this.total = 0;
   this.time = -1;
   this.buffer = new Array(factor + 1).fill(0);
