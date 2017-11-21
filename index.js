@@ -5,6 +5,7 @@ const req = require("request-promise-native");
 const defaultConfig = require("./defaultConfig.json");
 
 const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));
+RiotApi.delayPromise = delayPromise;
 
 function RiotApi(key, config = {}) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
@@ -180,8 +181,13 @@ function TokenBucket(timespan, limit, factor = 20, spread = 500 / timespan, now 
 
   this.timespan = timespan;
   this.limit = limit;
+  // TODO: this math is ugly and wrong
   this.limitPerIndex = Math.floor(limit / spread / factor) || 1;
+  if (this.limitPerIndex * factor < limit) // TODO: hack to fix math above
+    this.limitPerIndex = Math.ceil(limit / factor);
   this.timespanIndex = Math.ceil(timespan / factor);
+
+  console.log(this.limitPerIndex * factor);
 
   this.total = 0;
   this.time = -1;
@@ -225,7 +231,7 @@ TokenBucket.prototype._update = function() {
   if (length < 0)
     throw new Error('Negative length.');
   if (length == 0)
-    return 0;
+    return index;
   if (length >= this.buffer.length) {
     this.buffer.fill(0);
     this.total = 0;
@@ -259,5 +265,6 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
 }
+RiotApi.TokenBucket = TokenBucket;
 
 module.exports = RiotApi;
