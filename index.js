@@ -17,19 +17,30 @@ function RiotApi(key, config = {}) {
 RiotApi.prototype.get = function() {
   let region = arguments[0];
   return this._getRegion(region).get(...arguments);
-}
+};
+/**
+ * Limits requests to FACTOR fraction of normal rate limits, allowing multiple
+ * instances to be used across multiple processes/machines.
+ * This can be called at any time.
+ */
+RiotApi.prototype.setDistFactor = function(factor) {
+  if (factor <= 0 || factor > 1)
+    throw new Error("Factor must be greater than zero and non-greater than one.");
+  this.config.distFactor = factor;
+  Object.values(this.regions).forEach(r => r.updateDistFactor());
+};
 RiotApi.prototype._getRegion = function(region) {
   if (this.regions[region])
     return this.regions[region];
   return (this.regions[region] = new Region(this.config));
-}
+};
 RiotApi.defaultConfig = defaultConfig;
 
 
 /** RateLimits for a region. One app limit and any number of method limits. */
 function Region(config) {
   this.config = config;
-  this.appLimit = new RateLimit(RateLimit.TYPE_APPLICATION);
+  this.appLimit = new RateLimit(RateLimit.TYPE_APPLICATION, 1);
   this.methodLimits = {};
   this.liveRequests = 0;
 }
@@ -85,24 +96,29 @@ Region.prototype.get = function() {
     });
   };
   return Promise.resolve(fn());
-}
+};
+Region.prototype.updateDistFactor = function() {
+  this.appLimit.setDistFactor(this.config.distFactor);
+  Object.values(this.methodLimits).forEach(rl => rl.setDistFactor(this.config.distFactor));
+};
 Region.prototype._getMethodLimit = function(method) {
   if (this.methodLimits[method])
     return this.methodLimits[method];
-  return (this.methodLimits[method] = new RateLimit(RateLimit.TYPE_METHOD));
-}
+  return (this.methodLimits[method] = new RateLimit(RateLimit.TYPE_METHOD, 1));
+};
 
 
 /** Rate limit. A collection of token buckets, updated when needed. */
-function RateLimit(type) {
+function RateLimit(type, distFactor) {
   this.type = type;
-  this.buckets = [ new TokenBucket(1000, 1, 1, 0) ];
+  this.buckets = [ new TokenBucket(1000, 1, { factor: 1, spread: 0 }) ];
   this.retryAfter = 0;
+  this.distFactor = distFactor;
 }
 RateLimit.prototype.retryDelay = function() {
   let now = Date.now();
   return now > this.retryAfter ? -1 : this.retryAfter - now;
-}
+};
 RateLimit.prototype.onResponse = function(res) {
   if (429 === res.statusCode) {
     let type = res.headers[RateLimit.HEADER_LIMIT_TYPE];
@@ -120,13 +136,17 @@ RateLimit.prototype.onResponse = function(res) {
   let countHeader = res.headers[this.type.headerCount];
   if (this._bucketsNeedUpdate(limitHeader, countHeader))
     this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader);
-}
+};
+RateLimit.prototype.setDistFactor = function(factor) {
+  this.distFactor = factor;
+  this.buckets.forEach(b => b.setDistFactor(factor));
+};
 RateLimit.prototype._bucketsNeedUpdate = function(limitHeader, countHeader) {
   if (!limitHeader || !countHeader)
     return false;
   let limits = this.buckets.map(b => b.toLimitString()).join(',');
   return limitHeader !== limits;
-}
+};
 RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
   // Limits: "20000:10,1200000:600"
   // Counts: "7:10,58:600"
@@ -145,11 +165,11 @@ RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
       if (limitSpan != countSpan)
         throw new Error('Limit span and count span do not match: ' + limitSpan + ', ' + countSpan + '.');
 
-      let bucket = new TokenBucket(limitSpan, limitVal);
+      let bucket = new TokenBucket(limitSpan, limitVal, { distFactor: this.distFactor });
       bucket.getTokens(countVal);
       return bucket;
     });
-}
+};
 RateLimit.getAllOrDelay = function(rateLimits) {
   let delay = rateLimits
     .map(r => r.retryDelay())
@@ -158,7 +178,7 @@ RateLimit.getAllOrDelay = function(rateLimits) {
     return delay; // Techincally the delay could be more but whatev.
   let allBuckets = [].concat.apply([], rateLimits.map(rl => rl.buckets));
   return TokenBucket.getAllOrDelay(allBuckets);
-}
+};
 /** Header specifying which RateLimitType caused a 429. */
 RateLimit.HEADER_LIMIT_TYPE = "x-rate-limit-type";
 /** Header specifying retry after time in seconds after a 429. */
@@ -176,21 +196,29 @@ RateLimit.TYPE_METHOD = {
 
 
 /** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
-function TokenBucket(timespan, limit, factor = 20, spread = 500 / timespan, now = Date.now) {
+function TokenBucket(timespan, limit, { distFactor = 1, factor = 20, spread = 500 / timespan, now = Date.now } = {}) {
   this.now = now;
 
   this.timespan = timespan;
-  this.limit = limit;
-  // TODO: this math is ugly and wrong
-  this.limitPerIndex = Math.floor(limit / spread / factor) || 1;
-  if (this.limitPerIndex * factor < limit) // TODO: hack to fix math above
-    this.limitPerIndex = Math.ceil(limit / factor);
+  // this.givenLimit is the limit given to the constructor, this.limit is the
+  // functional limit, accounting for this.distFactor.
+  this.givenLimit = limit;
+  this.factor = factor;
+  this.spread = spread;
   this.timespanIndex = Math.ceil(timespan / factor);
-
   this.total = 0;
   this.time = -1;
-  this.buffer = new Array(factor + 1).fill(0);
+  this.buffer = new Array(this.factor + 1).fill(0);
+
+  this.setDistFactor(distFactor);
 }
+TokenBucket.prototype.setDistFactor = function(distFactor) {
+  this.limit = this.givenLimit * distFactor;
+  // TODO: this math is ugly and basically wrong
+  this.limitPerIndex = Math.floor(this.givenLimit / this.spread / this.factor) * distFactor;
+  if (this.limitPerIndex * this.factor < this.limit) // TODO: hack to fix math above
+    this.limitPerIndex = Math.ceil(this.limit / this.factor);
+};
 /** Returns delay in milliseconds or -1 if token available. */
 TokenBucket.prototype.getDelay = function() {
   let index = this._update();
@@ -213,10 +241,10 @@ TokenBucket.prototype.getTokens = function(n) {
   this.buffer[index] += n;
   this.total += n;
   return this.total <= this.limit && this.buffer[index] <= this.limitPerIndex;
-}
+};
 TokenBucket.prototype.toLimitString = function() {
-  return this.limit + ':' + (this.timespan / 1000);
-}
+  return this.givenLimit + ':' + (this.timespan / 1000);
+};
 TokenBucket.prototype._update = function() {
   if (this.time < 0) {
     this.time = this.now();
@@ -244,16 +272,16 @@ TokenBucket.prototype._update = function() {
   if (this._getIndex(this.time) != index)
     throw new Error('Get index time wrong:' + this._getIndex(this.time) + ', ' + index + '.');
   return index;
-}
+};
 TokenBucket.prototype._getIndex = function(ts) {
   return Math.floor((ts / this.timespanIndex) % this.buffer.length);
-}
+};
 TokenBucket.prototype._getLength = function(start, end) {
   return Math.floor(end / this.timespanIndex) - Math.floor(start / this.timespanIndex);
-}
+};
 TokenBucket.prototype._getTimeToBucket = function(n) {
   return n * this.timespanIndex - (this.time % this.timespanIndex);
-}
+};
 TokenBucket.getAllOrDelay = function(tokenBuckets) {
   let delay = tokenBuckets
     .map(b => b.getDelay())
@@ -262,7 +290,7 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
     return delay;
   tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
-}
+};
 RiotApi.TokenBucket = TokenBucket;
 
 module.exports = RiotApi;

@@ -45,6 +45,7 @@ req('https://developer.riotgames.com/api-methods/')
       prefix: 'https://%s.api.riotgames.com',
       retries: 3,
       maxConcurrent: 2000,
+      distFactor: 1.0,
       endpoints: res
     };
   })
