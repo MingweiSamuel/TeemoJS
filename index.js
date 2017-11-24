@@ -12,7 +12,7 @@ function RiotApi(key, config = {}) {
   this.config = JSON.parse(JSON.stringify(RiotApi.defaultConfig));
   this.config.key = key;
   this.regions = {};
-  Object.entries(config).forEach(([k, v]) => (this.config[k] = v));
+  Object.assign(this.config, config);
 }
 RiotApi.prototype.get = function() {
   let region = arguments[0];
