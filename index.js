@@ -26,6 +26,8 @@ RiotApi.prototype.get = function() {
 RiotApi.prototype.setDistFactor = function(factor) {
   if (factor <= 0 || factor > 1)
     throw new Error("Factor must be greater than zero and non-greater than one.");
+  if (this.config.distFactor === factor)
+    return;
   this.config.distFactor = factor;
   Object.values(this.regions).forEach(r => r.updateDistFactor());
 };
