@@ -1,0 +1,32 @@
+{
+  "prefix": "http://api.champion.gg",
+  "retries": 3,
+  "maxConcurrent": 2000,
+  "distFactor": 1,
+  "defaultBucket": {
+    "timespan": 600000,
+    "limit": 3000
+  },
+  "rateLimitTypeApplication": {
+    "name": "application",
+    "headerLimit": null,
+    "headerCount": "x-rate-limit"
+  },
+  "rateLimitTypeMethod": null,
+  "defaultRetryAfter": 10,
+  "headerRetryAfter": "retry-after",
+  "headerLimitType": null,
+  "defaultLimitType": "application",
+  "keyHeader": null,
+  "keyQueryParam": "api_key",
+  "endpoints": {
+    "champion": {
+      "getAllChampions": "/v2/champions",
+      "getChampionMatchupsByRole": "/v2/champions/%s/%s/matchups",
+      "getChampionMatchups": "/v2/champions/%s/matchups",
+      "getChampion": "/v2/champions/%s"
+    },
+    "general": "/v2/general",
+    "overall": "/v2/overall"
+  }
+}

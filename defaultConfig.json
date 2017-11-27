@@ -3,10 +3,31 @@
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
+  "defaultBucket": {
+    "timespan": 1000,
+    "limit": 1,
+    "factor": 1,
+    "spread": 0
+  },
+  "rateLimitTypeApplication": {
+    "name": "application",
+    "headerLimit": "x-app-rate-limit",
+    "headerCount": "x-app-rate-limit-count"
+  },
+  "rateLimitTypeMethod": {
+    "name": "method",
+    "headerLimit": "x-method-rate-limit",
+    "headerCount": "x-method-rate-limit-count"
+  },
+  "headerRetryAfter": "retry-after",
+  "headerLimitType": "x-rate-limit-type",
+  "defaultLimitType": null,
+  "keyHeader": "X-Riot-Token",
+  "keyQueryParam": null,
   "endpoints": {
     "championMastery": {
       "getAllChampionMasteries": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s",
-      "getChampionMastery": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s",
+      "getChampionMastery": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s/by-champion/%s",
       "getChampionMasteryScore": "/lol/champion-mastery/v3/scores/by-summoner/%s"
     },
     "champion": {
@@ -47,7 +68,7 @@
     "match": {
       "getMatchIdsByTournamentCode": "/lol/match/v3/matches/by-tournament-code/%s/ids",
       "getMatch": "/lol/match/v3/matches/%s",
-      "getMatchByTournamentCode": "/lol/match/v3/matches/%s",
+      "getMatchByTournamentCode": "/lol/match/v3/matches/%s/by-tournament-code/%s",
       "getMatchlist": "/lol/match/v3/matchlists/by-account/%s",
       "getRecentMatchlist": "/lol/match/v3/matchlists/by-account/%s/recent",
       "getMatchTimeline": "/lol/match/v3/timelines/by-match/%s"

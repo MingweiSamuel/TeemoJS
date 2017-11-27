@@ -2,21 +2,29 @@
 
 const util = require("util");
 const req = require("request-promise-native");
-const defaultConfig = require("./defaultConfig.json");
-
+([ 'defaultConfig', 'emptyConfig', 'championGGConfig' ].forEach(
+  config => RiotApi[config] = require('./' + config + '.json')));
+const DEBUG = typeof global.it === 'function';
 const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));
-RiotApi.delayPromise = delayPromise;
 
+/** `RiotApi(key [, config])` or `RiotApi(config)` with `config.key` set. */
 function RiotApi(key, config = {}) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
   this.config = JSON.parse(JSON.stringify(RiotApi.defaultConfig));
-  this.config.key = key;
-  this.regions = {};
+  if (key instanceof Object)
+    config = key;
+  else
+    this.config.key = key;
   Object.assign(this.config, config);
+  this.regions = {};
+  this.hasRegions = this.config.prefix.includes('%s');
 }
 RiotApi.prototype.get = function() {
-  let region = arguments[0];
-  return this._getRegion(region).get(...arguments);
+  if (!this.hasRegions)
+    return this._getRegion(null).get(this.config.prefix, ...arguments);
+  let [ region, ...rest ] = arguments;
+  rest.unshift(util.format(this.config.prefix, region));
+  return this._getRegion(region).get(...rest);
 };
 /**
  * Limits requests to FACTOR fraction of normal rate limits, allowing multiple
@@ -36,37 +44,33 @@ RiotApi.prototype._getRegion = function(region) {
     return this.regions[region];
   return (this.regions[region] = new Region(this.config));
 };
-RiotApi.defaultConfig = defaultConfig;
 
 
 /** RateLimits for a region. One app limit and any number of method limits. */
 function Region(config) {
   this.config = config;
-  this.appLimit = new RateLimit(RateLimit.TYPE_APPLICATION, 1);
+  this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
   this.methodLimits = {};
   this.liveRequests = 0;
 }
 Region.prototype.get = function() {
-  let region = arguments[0];
+  let prefix = arguments[0];
   let target = arguments[1];
-  let arg, qs;
-  if (typeof arguments[2] === 'object')
-    qs = arguments[2];
-  else {
-    arg = arguments[2];
-    qs = arguments[3] || {};
-  }
-
-  let [endpoint, method] = target.split('.');
-
-  let suffix = this.config.endpoints[endpoint][method];
-  if (arg)
-    suffix = util.format(suffix, arg);
-  let prefix = util.format(this.config.prefix, region);
+  let suffix = this.config.endpoints;
+  for (let path of target.split('.'))
+    suffix = suffix[path];
+  let qs = {};
+  let args = Array.prototype.slice.call(arguments, 2);
+  if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off.
+    qs = args.pop();
+  if (suffix.split('%s').length - 1 !== args.length)
+    throw new Error(util.format('Wrong number of path arguments: "%j", for path "%s".', args, suffix));
+  suffix = util.format(suffix, ...args);
   let uri = prefix + suffix;
 
-  let methodLimit = this._getMethodLimit(target);
-  let rateLimits = [ this.appLimit, methodLimit ];
+  let rateLimits = [ this.appLimit ];
+  if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
+    rateLimits.push(this._getMethodLimit(target));
   let retries = 0;
 
   let fn = () => {
@@ -76,21 +80,27 @@ Region.prototype.get = function() {
     if (this.liveRequests >= this.config.maxConcurrent)
       return delayPromise(20).then(fn);
     this.liveRequests++;
-    return req({
+    let reqConfig = {
       uri, qs,
       forever: true, // keep-alive.
       qsStringifyOptions: { indices: false },
       simple: false,
-      resolveWithFullResponse: true,
-      headers: { 'X-Riot-Token': this.config.key }
-    }).then(res => {
+      resolveWithFullResponse: true
+    };
+    if (this.config.keyHeader)
+      reqConfig.headers = { [this.config.keyHeader]: this.config.key };
+    else
+      qs[this.config.keyQueryParam] = this.config.key;
+    return req(reqConfig).then(res => {
       this.liveRequests--;
       rateLimits.forEach(rl => rl.onResponse(res));
+      if (400 === res.statusCode)
+        throw new Error('Bad request, responded with: ' + res.body + '\nurl:' + reqConfig.uri);
       if ([404, 422].includes(res.statusCode))
         return null;
       if (429 === res.statusCode || 500 <= res.statusCode) {
         if (retries >= this.config.retries)
-          throw Error('Failed after ' + retries + ' retries with code ' + res.statusCode + '.');
+          throw new Error('Failed after ' + retries + ' retries with code ' + res.statusCode + '.');
         retries++;
         return fn();
       }
@@ -106,14 +116,15 @@ Region.prototype.updateDistFactor = function() {
 Region.prototype._getMethodLimit = function(method) {
   if (this.methodLimits[method])
     return this.methodLimits[method];
-  return (this.methodLimits[method] = new RateLimit(RateLimit.TYPE_METHOD, 1));
+  return (this.methodLimits[method] = new RateLimit(this.config.rateLimitTypeMethod, 1, this.config));
 };
 
 
 /** Rate limit. A collection of token buckets, updated when needed. */
-function RateLimit(type, distFactor) {
+function RateLimit(type, distFactor, config) {
+  this.config = config;
   this.type = type;
-  this.buckets = [ new TokenBucket(1000, 1, { factor: 1, spread: 0 }) ];
+  this.buckets = [ new TokenBucket(this.config.defaultBucket.timespan, this.config.defaultBucket.limit, this.config.defaultBucket) ];
   this.retryAfter = 0;
   this.distFactor = distFactor;
 }
@@ -123,11 +134,11 @@ RateLimit.prototype.retryDelay = function() {
 };
 RateLimit.prototype.onResponse = function(res) {
   if (429 === res.statusCode) {
-    let type = res.headers[RateLimit.HEADER_LIMIT_TYPE];
+    let type = res.headers[this.config.headerLimitType] || this.config.defaultLimitType;
     if (!type)
       throw new Error('Response missing type.');
     if (this.type.name === type.toLowerCase()) {
-      let retryAfter = +res.headers[RateLimit.HEADER_RETRY_AFTER];
+      let retryAfter = +res.headers[this.config.headerRetryAfter];
       if (Number.isNaN(retryAfter))
         throw new Error('Response 429 missing retry-after header.');
       this.retryAfter = Date.now() + retryAfter * 1000 + 500;
@@ -181,21 +192,6 @@ RateLimit.getAllOrDelay = function(rateLimits) {
   let allBuckets = [].concat.apply([], rateLimits.map(rl => rl.buckets));
   return TokenBucket.getAllOrDelay(allBuckets);
 };
-/** Header specifying which RateLimitType caused a 429. */
-RateLimit.HEADER_LIMIT_TYPE = "x-rate-limit-type";
-/** Header specifying retry after time in seconds after a 429. */
-RateLimit.HEADER_RETRY_AFTER = "retry-after";
-RateLimit.TYPE_APPLICATION = {
-  name: 'application',
-  headerLimit: 'x-app-rate-limit',
-  headerCount: 'x-app-rate-limit-count'
-};
-RateLimit.TYPE_METHOD = {
-  name: 'method',
-  headerLimit: 'x-method-rate-limit',
-  headerCount: 'x-method-rate-limit-count'
-};
-
 
 /** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
 function TokenBucket(timespan, limit, { distFactor = 1, factor = 20, spread = 500 / timespan, now = Date.now } = {}) {
@@ -293,6 +289,9 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
 };
-RiotApi.TokenBucket = TokenBucket;
 
 module.exports = RiotApi;
+if (DEBUG) {
+  module.exports.delayPromise = delayPromise;
+  module.exports.TokenBucket = TokenBucket;
+}

@@ -1,8 +1,11 @@
-// This file creates defaultConfig.json.
+// This file creates defaultConfig.json
+// This is not meant to be `require`d in a project.
 const Promise = require("bluebird");
 const req = require("request-promise-native");
-const fs = Promise.promisifyAll(require("fs"))
+const fs = Promise.promisifyAll(require("fs"));
 const { JSDOM } = require("jsdom");
+
+let emptyConfig = require('./emptyConfig.json');
 
 req('https://developer.riotgames.com/api-methods/')
   .then(body => {
@@ -36,17 +39,12 @@ req('https://developer.riotgames.com/api-methods/')
       for (let op of ops) {
         let opName = op.getAttribute('id').substr(1);
         let path = op.getElementsByClassName('path')[0].textContent;
-        path = path.trim().replace(/\{\S+\}/g, '%s');
+        path = path.trim().replace(/\{\S+?\}/g, '%s');
         console.log('  ' + opName + ': ' + path);
         endpoint[opName] = path;
       }
     }
-    return {
-      prefix: 'https://%s.api.riotgames.com',
-      retries: 3,
-      maxConcurrent: 2000,
-      distFactor: 1.0,
-      endpoints: res
-    };
+    emptyConfig.endpoints = res;
+    return emptyConfig;
   })
   .then(res => fs.writeFileAsync('defaultConfig.json', JSON.stringify(res, null, 2)));

@@ -1,0 +1,29 @@
+{
+  "prefix": "https://%s.api.riotgames.com",
+  "retries": 3,
+  "maxConcurrent": 2000,
+  "distFactor": 1,
+  "defaultBucket": {
+    "timespan": 1000,
+    "limit": 1,
+    "factor": 1,
+    "spread": 0
+  },
+  "rateLimitTypeApplication": {
+    "name": "application",
+    "headerLimit": "x-app-rate-limit",
+    "headerCount": "x-app-rate-limit-count"
+  },
+  "rateLimitTypeMethod": {
+    "name": "method",
+    "headerLimit": "x-method-rate-limit",
+    "headerCount": "x-method-rate-limit-count"
+  },
+  "defaultRetryAfter": null,
+  "headerRetryAfter": "retry-after",
+  "headerLimitType": "x-rate-limit-type",
+  "defaultLimitType": null,
+  "keyHeader": "X-Riot-Token",
+  "keyQueryParam": null,
+  "endpoints": {}
+}

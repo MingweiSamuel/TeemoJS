@@ -18,6 +18,13 @@ describe('TeemoJS', function() {
           assert.equal(data[0].championId, 143);
         });
     });
+    it('championMastery.getChampionMastery', function() {
+      return api.get('na1', 'championMastery.getChampionMastery', 69009277, 143)
+        .then(data => {
+          assert.equal(data.championId, 143);
+          assert.ok(data.championPoints >= 349767);
+        });
+    });
 
     it('match.getMatchlist', function() {
       return api.get('na1', 'match.getMatchlist', 78247, { champion: 429, season: 8 })
