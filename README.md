@@ -85,6 +85,7 @@ is a configuration for the [Champion.GG API](http://api.champion.gg/). Oh, you d
 
 Champion.GG Example:
 ```node
+let api = TeemoJS('cgg0api0key', TeemoJS.championGGConfig);
 api.get('champion.getChampion', 143)
   .then(data => console.log("Zyra's winrate as " + data[0].role + ' is ' + data[0].winRate + '.'));
 ```
