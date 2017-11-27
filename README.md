@@ -54,10 +54,14 @@ let api = TeemoJS(configWithKey);
 
 ### `config` Object
 
-- `prefix` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
 - `retries` [int]: Number of times to retry request if the request fails with a retriable error. Zero for no retires.
 - `maxConcurrent` [int]: Maximum live requests to allow.
 - `distFator` [float 0..1]: Factor to multiply rate limits by. This can be changed at any time using the `api.setDistFactor(x)` method. For example, if your API key was distributed across two computers, you could set this to 0.5.
+- `key` [OPTIONAL string]: Overrides the `key` argument passed into the constructor. Do not set unless you actually use this key.
+
+Only modify the following properties if you know what you're doing.
+
+- `prefix` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
 - `defaultBucket` [object]: Configuration options for a rate limit's default bucket. This bucket remains in use until the actual rate limit is detected via headers. Must have `timespan` (in milliseconds) and `limit`.
 - `rateLimitTypeApplication` [object]: Rate limit type object for the application rate limit. Containing strings `name`, `headerLimit`, and `headerCount`. `name` is the name of the rate limit used for detecting which type caused a 429. `headerLimit` and `headerCount` are header names for the max rate limit and rate limit count respectively.
 - `rateLimitTypeMethod` [object/null]: Same as `rateLimitTypeApplication` but for method rate limits. May be null if the API does not have per-method rate limits.
@@ -68,7 +72,6 @@ let api = TeemoJS(configWithKey);
 - `keyHeader` [string/null]: Name of header to put key in or `null` to use query parameters.
 - `keyQueryParam` [string/null]: Name of query parameter to put key in. `keyHeader` must be set to `null` for this to be used.
 - `endpoints` [nested object]: A (optionally) nested object structure where the leaf values are API endpoint URLs with leading forward slashes. Objects may be nested to any level for organizational purposes. When using the API, the period-delimited path is supplied.
-- `key` [OPTIONAL string]: Overrides the `key` argument passed into the constructor. Do not set unless you actually use this key.
 
 ## Setting `defaultConfig` & Other premade configurations
 
