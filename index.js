@@ -124,7 +124,7 @@ Region.prototype._getMethodLimit = function(method) {
 function RateLimit(type, distFactor, config) {
   this.config = config;
   this.type = type;
-  this.buckets = [ new TokenBucket(this.config.defaultBucket.timespan, this.config.defaultBucket.limit, this.config.defaultBucket) ];
+  this.buckets = this.config.defaultBuckets.map(b => new TokenBucket(b.timespan, b.limit, b));
   this.retryAfter = 0;
   this.distFactor = distFactor;
 }

@@ -3,10 +3,13 @@
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
-  "defaultBucket": {
+  "defaultBuckets": [{
     "timespan": 600000,
     "limit": 3000
-  },
+  }, {
+    "timespan": 10000,
+    "limit": 50
+  }],
   "rateLimitTypeApplication": {
     "name": "application",
     "headerLimit": null,
