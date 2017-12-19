@@ -40,7 +40,6 @@ describe('TeemoJS', function() {
         .then(data => {
           assert.ok(data);
           assert.ok(data.matches);
-          assert.ok(data.matches.length, 6); // 11 ?
         });
     });
     it('match.getMatch', function() {

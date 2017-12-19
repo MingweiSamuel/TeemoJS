@@ -22,6 +22,7 @@
   "defaultLimitType": "application",
   "keyHeader": null,
   "keyQueryParam": "api_key",
+  "collapseQueryArrays": true,
   "endpoints": {
     "champion": {
       "getAllChampions": "/v2/champions",

@@ -65,6 +65,10 @@ Region.prototype.get = function() {
     qs = args.pop();
   if (suffix.split('%s').length - 1 !== args.length)
     throw new Error(util.format('Wrong number of path arguments: "%j", for path "%s".', args, suffix));
+  if (this.config.collapseQueryArrays) {
+    qs = JSON.parse(JSON.stringify(qs)); // Clone object so we can modify without confusion.
+    Object.entries(qs).forEach(([ key, val ]) => qs[key] = Array.isArray(val) ? val.join(',') : val);
+  }
   suffix = util.format(suffix, ...args);
   let uri = prefix + suffix;
 
@@ -83,9 +87,9 @@ Region.prototype.get = function() {
     let reqConfig = {
       uri, qs,
       forever: true, // keep-alive.
-      qsStringifyOptions: { indices: false },
       simple: false,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
+      qsStringifyOptions: { arrayFormat: { indices: false }}
     };
     if (this.config.keyHeader)
       reqConfig.headers = { [this.config.keyHeader]: this.config.key };

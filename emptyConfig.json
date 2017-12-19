@@ -25,5 +25,6 @@
   "defaultLimitType": null,
   "keyHeader": "X-Riot-Token",
   "keyQueryParam": null,
+  "collapseQueryArrays": true,
   "endpoints": {}
 }

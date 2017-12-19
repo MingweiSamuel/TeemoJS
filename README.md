@@ -73,6 +73,7 @@ Only modify the following properties if you know what you're doing.
 - `defaultLimitType` [string/null]: Default `name` value to use when the API doesn't return which limit is hit. Set to `null` to throw an error if a 429 happens for no reason. Set to `rateLimitTypeXYZ.name` to default to rate limit type XYZ.
 - `keyHeader` [string/null]: Name of header to put key in or `null` to use query parameters.
 - `keyQueryParam` [string/null]: Name of query parameter to put key in. `keyHeader` must be set to `null` for this to be used.
+- `collapseQueryArrays` [boolean]: If `false`, query arrays will be represented as `a=1&a=2&a=3`. If `true`, `a=1,2,3` will be used. Riot API uses the former, champion.gg uses the later.
 - `endpoints` [nested object]: A (optionally) nested object structure where the leaf values are API endpoint URLs with leading forward slashes. Objects may be nested to any level for organizational purposes. When using the API, the period-delimited path is supplied.
 
 ## Setting `defaultConfig` & Other premade configurations
