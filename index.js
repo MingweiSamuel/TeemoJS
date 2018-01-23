@@ -69,7 +69,7 @@ Region.prototype.get = function() {
     qs = JSON.parse(JSON.stringify(qs)); // Clone object so we can modify without confusion.
     Object.entries(qs).forEach(([ key, val ]) => qs[key] = Array.isArray(val) ? val.join(',') : val);
   }
-  suffix = util.format(suffix, ...args);
+  suffix = util.format(suffix, ...args.map(arg => encodeURIComponent(arg)));
   let uri = prefix + suffix;
 
   let rateLimits = [ this.appLimit ];

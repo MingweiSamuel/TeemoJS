@@ -27,6 +27,7 @@
   "defaultLimitType": null,
   "keyHeader": "X-Riot-Token",
   "keyQueryParam": null,
+  "collapseQueryArrays": false,
   "endpoints": {
     "championMastery": {
       "getAllChampionMasteries": "/lol/champion-mastery/v3/champion-masteries/by-summoner/%s",
@@ -39,7 +40,6 @@
     },
     "league": {
       "getChallengerLeague": "/lol/league/v3/challengerleagues/by-queue/%s",
-      "getAllLeaguesForSummoner": "/lol/league/v3/leagues/by-summoner/%s",
       "getLeagueById": "/lol/league/v3/leagues/%s",
       "getMasterLeague": "/lol/league/v3/masterleagues/by-queue/%s",
       "getAllLeaguePositionsForSummoner": "/lol/league/v3/positions/by-summoner/%s"
@@ -65,9 +65,6 @@
     "lolStatus": {
       "getShardData": "/lol/status/v3/shard-data"
     },
-    "masteries": {
-      "getMasteryPagesBySummonerId": "/lol/platform/v3/masteries/by-summoner/%s"
-    },
     "match": {
       "getMatchIdsByTournamentCode": "/lol/match/v3/matches/by-tournament-code/%s/ids",
       "getMatch": "/lol/match/v3/matches/%s",
@@ -75,9 +72,6 @@
       "getMatchlist": "/lol/match/v3/matchlists/by-account/%s",
       "getRecentMatchlist": "/lol/match/v3/matchlists/by-account/%s/recent",
       "getMatchTimeline": "/lol/match/v3/timelines/by-match/%s"
-    },
-    "runes": {
-      "getRunePagesBySummonerId": "/lol/platform/v3/runes/by-summoner/%s"
     },
     "spectator": {
       "getCurrentGameInfoBySummoner": "/lol/spectator/v3/active-games/by-summoner/%s",
@@ -87,6 +81,9 @@
       "getByAccountId": "/lol/summoner/v3/summoners/by-account/%s",
       "getBySummonerName": "/lol/summoner/v3/summoners/by-name/%s",
       "getBySummonerId": "/lol/summoner/v3/summoners/%s"
+    },
+    "thirdPartyCode": {
+      "getThirdPartyCodeBySummonerId": "/lol/platform/v3/third-party-code/by-summoner/%s"
     }
   }
 }

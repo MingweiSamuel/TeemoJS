@@ -60,6 +60,15 @@ describe('TeemoJS', function() {
           assert.ok(data.summonerLevel > 30); // Level up.
         });
     });
+    it('summoner.getBySummonerName encoding test', function() {
+      return api.get('na1', 'summoner.getBySummonerName', 'The Øne And Ønly')
+        .then(data => {
+          assert.ok(data);
+          assert.equal(data.id, 83429340);
+          assert.ok(data.summonerLevel >= 49);
+          assert.equal(data.name, "The Øne And Ønly");
+        });
+    });
     // it('summoner.getBySummonerId many', function() {
     //   let ids = require('./ids.json');
     //   return Promise.all(ids.map(id =>
@@ -78,8 +87,8 @@ describe('TeemoJS', function() {
     //     });
     // });
 
-    it('league.getAllLeaguePositionsForSummoner (euw)', function() {
-      return api.get('euw1', 'league.getAllLeaguePositionsForSummoner', '95457313')
+    it('league.getAllLeaguePositionsForSummoner', function() {
+      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', 51405)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           console.log(entry.wins);
