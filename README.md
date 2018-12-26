@@ -1,7 +1,8 @@
 # TeemoJS
+[![](https://img.shields.io/npm/v/teemojs.svg)](https://www.npmjs.com/package/teemojs)
 
 TeemoJS is a fast and lightweight Riot API wrapper written in Node.js.
-Contained in less than 300 lines,
+Contained in about 300 lines,
 it has a minimalist design to make it flexible and easy to maintain.
 There is a specific set of things TeemoJS aims to do, and it aims to do them well:
 
@@ -61,7 +62,7 @@ let api = TeemoJS(configWithKey);
 - `distFator` [float 0..1]: Factor to multiply rate limits by. This can be changed at any time using the `api.setDistFactor(x)` method. For example, if your API key was distributed across two computers, you could set this to 0.5.
 - `key` [OPTIONAL string]: Overrides the `key` argument passed into the constructor. Do not set unless you actually use this key.
 
-Only modify the following properties if you know what you're doing.
+Only modify the following properties if you know what you're doing. This is mainly documentation for future reference.
 
 - `prefix` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
 - `defaultBuckets` [object[]]: Array of configuration options for a rate limit's default buckets. These buckets remain in use until the actual rate limit is detected via headers. Each must have at least `timespan` (in milliseconds) and `limit`.
