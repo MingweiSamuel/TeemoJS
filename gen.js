@@ -5,7 +5,8 @@ const req = require("request-promise-native");
 const fs = Promise.promisifyAll(require("fs"));
 const { JSDOM } = require("jsdom");
 
-let emptyConfig = require('./emptyConfig.json');
+let defaultConfig = require('./emptyConfig.json');
+let defaultV3Config = JSON.parse(JSON.stringify(defaultConfig));
 
 req('https://developer.riotgames.com/api-methods/')
   .then(body => {
@@ -24,15 +25,23 @@ req('https://developer.riotgames.com/api-methods/')
     return Promise.props(endpoints);
   })
   .then(endpoints => {
-    let res = {};
+    let resV4 = {};
+    let resV3 = {};
     for (let [name, body] of Object.entries(endpoints)) {
       let camelName = '';
       let tokens = name.split('-');
-      for (let i = 0; i < tokens.length - 1; i++) {
+      let version = tokens.pop(); // V3 or V4
+      for (let i = 0; i < tokens.length; i++) {
         camelName += i ? tokens[i].charAt(0).toUpperCase() + tokens[i].substr(1) : tokens[i];
       }
       console.log(camelName);
-      let endpoint = res[camelName] = {};
+
+      let endpoint = {};
+      if ('v3' === version) {
+        resV3[camelName] = endpoint;
+      }
+      resV4[camelName] = endpoint;
+
       let data = JSON.parse(body);
       let dom = new JSDOM(data.html);
       let ops = dom.window.document.getElementsByClassName('operation');
@@ -44,7 +53,11 @@ req('https://developer.riotgames.com/api-methods/')
         endpoint[opName] = path;
       }
     }
-    emptyConfig.endpoints = res;
-    return emptyConfig;
-  })
-  .then(res => fs.writeFileAsync('defaultConfig.json', JSON.stringify(res, null, 2)));
+    defaultConfig.endpoints = resV4;
+    defaultV3Config.endpoints = resV3;
+    return Promise.all([
+      fs.writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2)),
+      fs.writeFileAsync('defaultV3Config.json', JSON.stringify(defaultV3Config, null, 2))
+    ]);
+  });
+//  .then(res => fs.writeFileAsync('defaultConfig.json', JSON.stringify(res, null, 2)));

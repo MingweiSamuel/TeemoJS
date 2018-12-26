@@ -39,6 +39,7 @@
     },
     "league": {
       "getChallengerLeague": "/lol/league/v4/challengerleagues/by-queue/%s",
+      "getGrandmasterLeague": "/lol/league/v4/grandmasterleagues/by-queue/%s",
       "getLeagueById": "/lol/league/v4/leagues/%s",
       "getMasterLeague": "/lol/league/v4/masterleagues/by-queue/%s",
       "getAllLeaguePositionsForSummoner": "/lol/league/v4/positions/by-summoner/%s"
@@ -47,7 +48,7 @@
       "getShardData": "/lol/status/v3/shard-data"
     },
     "match": {
-      "getMatchIdsByTournamentCode": "/lol/match/v3/matches/by-tournament-code/%s/ids",
+      "getMatchIdsByTournamentCode": "/lol/match/v4/matches/by-tournament-code/%s/ids",
       "getMatch": "/lol/match/v4/matches/%s",
       "getMatchByTournamentCode": "/lol/match/v4/matches/%s/by-tournament-code/%s",
       "getMatchlist": "/lol/match/v4/matchlists/by-account/%s",

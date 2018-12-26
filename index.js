@@ -2,7 +2,7 @@
 
 const util = require("util");
 const req = require("request-promise-native");
-([ 'defaultConfig', 'emptyConfig', 'championGGConfig' ].forEach(
+([ 'emptyConfig', 'defaultConfig', 'defaultV3Config', 'championGGConfig' ].forEach(
   config => RiotApi[config] = require('./' + config + '.json')));
 const DEBUG = typeof global.it === 'function';
 const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));

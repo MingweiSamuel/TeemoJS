@@ -1,21 +1,19 @@
 const TeemoJS = require("../index");
 const assert = require("assert");
 
-const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
-const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
-const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
-
-describe('TeemoJS', function() {
+describe('TeemoJS V3', function() {
   let api;
   before(function() {
     let apiKey = process.env.RIOT_API_KEY;
     if (!apiKey)
       throw new Error('Must set RIOT_API_KEY in environment.');
-    api = TeemoJS(apiKey, { maxConcurrent: 2 });
+    let config = TeemoJS.defaultV3Config;
+    config.maxConcurrent = 2;
+    api = TeemoJS(apiKey, config);
   });
   describe('#get()', function() {
     it('championMastery.getAllChampionMasteries', function() {
-      return api.get('na1', 'championMastery.getAllChampionMasteries', SID_LUGNUTSK)
+      return api.get('na1', 'championMastery.getAllChampionMasteries', 69009277)
         .then(data => {
           assert.ok(data);
           assert.ok(data.length >= 48);
@@ -23,7 +21,7 @@ describe('TeemoJS', function() {
         });
     });
     it('championMastery.getChampionMastery', function() {
-      return api.get('na1', 'championMastery.getChampionMastery', SID_LUGNUTSK, 143)
+      return api.get('na1', 'championMastery.getChampionMastery', 69009277, 143)
         .then(data => {
           assert.equal(data.championId, 143);
           assert.ok(data.championPoints >= 349767);
@@ -31,7 +29,7 @@ describe('TeemoJS', function() {
     });
 
     it('match.getMatchlist', function() {
-      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 8 })
+      return api.get('na1', 'match.getMatchlist', 78247, { champion: 429, season: 8 })
         .then(data => {
           //console.log(data);
           assert.ok(data);
@@ -40,7 +38,7 @@ describe('TeemoJS', function() {
         });
     });
     it('match.getMatchlist (list params)', function() {
-      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: [81, 429], season: 8 })
+      return api.get('na1', 'match.getMatchlist', 78247, { champion: [81, 429], season: 8 })
         .then(data => {
           assert.ok(data);
           assert.ok(data.matches);
@@ -60,7 +58,7 @@ describe('TeemoJS', function() {
       return api.get('na1', 'summoner.getBySummonerName', 'Lugn uts k')
         .then(data => {
           assert.ok(data);
-          assert.equal(data.id, SID_LUGNUTSK);
+          assert.equal(data.id, 69009277);
           assert.ok(data.summonerLevel > 30); // Level up.
         });
     });
@@ -68,7 +66,7 @@ describe('TeemoJS', function() {
       return api.get('na1', 'summoner.getBySummonerName', 'The Øne And Ønly')
         .then(data => {
           assert.ok(data);
-          assert.equal(data.id, 'hJqNbVEFncBg2KuHNUjztd6fJyy9ymX8LjYcGfrIuPXATow');
+          assert.equal(data.id, 83429340);
           assert.ok(data.summonerLevel >= 49);
           assert.equal(data.name, "The Øne And Ønly");
         });
@@ -92,7 +90,7 @@ describe('TeemoJS', function() {
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', SID_C9SNEAKY)
+      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', 51405)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           console.log(entry.wins);
