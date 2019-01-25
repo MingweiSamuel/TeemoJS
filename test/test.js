@@ -3,6 +3,7 @@ const assert = require("assert");
 
 const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
 const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
+const SID_TCTRE    = 'rF8-YEID3MSbgPF6Hsqdbq92FgdLjilZdhVgI7UARMbzzTk';
 const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
 
 describe('TeemoJS', function() {
@@ -92,7 +93,7 @@ describe('TeemoJS', function() {
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', SID_C9SNEAKY)
+      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', SID_TCTRE)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           console.log(entry.wins);

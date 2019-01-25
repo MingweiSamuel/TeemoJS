@@ -1,7 +1,8 @@
 const TeemoJS = require("../index");
 const assert = require("assert");
 
-describe('TeemoJS Champion.GG', function() {
+// disabled, c.gg down.
+xdescribe('TeemoJS Champion.GG', function() {
   let api;
   before(function() {
     let apiKey = process.env.CGG_API_KEY;

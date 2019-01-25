@@ -90,7 +90,7 @@ describe('TeemoJS V3', function() {
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', 51405)
+      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', 58738179)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           console.log(entry.wins);
