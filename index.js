@@ -57,8 +57,10 @@ Region.prototype.get = function() {
   let prefix = arguments[0];
   let target = arguments[1];
   let suffix = this.config.endpoints;
-  for (let path of target.split('.'))
+  for (let path of target.split('.')) {
     suffix = suffix[path];
+    if (!suffix) throw new Error(util.format('Missing path "%s" in "%s".', path, target));
+  }
   let qs = {};
   let args = Array.prototype.slice.call(arguments, 2);
   if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off.
