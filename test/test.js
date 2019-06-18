@@ -32,12 +32,12 @@ describe('TeemoJS', function() {
     });
 
     it('match.getMatchlist', function() {
-      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 8 })
+      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
         .then(data => {
           //console.log(data);
           assert.ok(data);
           assert.ok(data.matches);
-          assert.equal(data.matches.length, 3);
+          assert.ok(data.matches.length > 10);
         });
     });
     it('match.getMatchlist (list params)', function() {
@@ -93,7 +93,7 @@ describe('TeemoJS', function() {
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.get('na1', 'league.getAllLeaguePositionsForSummoner', SID_TCTRE)
+      return api.get('na1', 'league.getLeagueEntriesForSummoner', SID_TCTRE)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           console.log(entry.wins);
