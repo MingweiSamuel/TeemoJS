@@ -37,6 +37,9 @@
     "champion": {
       "getChampionInfo": "/lol/platform/v3/champion-rotations"
     },
+    "leagueExp": {
+      "getLeagueEntries": "/lol/league-exp/v4/entries/%s/%s/%s"
+    },
     "league": {
       "getChallengerLeague": "/lol/league/v4/challengerleagues/by-queue/%s",
       "getLeagueEntriesForSummoner": "/lol/league/v4/entries/by-summoner/%s",
