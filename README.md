@@ -11,6 +11,8 @@ There is a specific set of things TeemoJS aims to do, and it aims to do them wel
 
 It is up to the developer to do the rest.
 
+TeemoJS supports the new TFT APIs.
+
 ## Installation
 
 ```sh
