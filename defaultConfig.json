@@ -68,6 +68,24 @@
       "getByPUUID": "/lol/summoner/v4/summoners/by-puuid/%s",
       "getBySummonerId": "/lol/summoner/v4/summoners/%s"
     },
+    "tftLeague": {
+      "getChallengerLeague": "/tft/league/v1/challenger",
+      "getLeagueEntriesForSummoner": "/tft/league/v1/entries/by-summoner/%s",
+      "getLeagueEntries": "/tft/league/v1/entries/%s/%s",
+      "getGrandmasterLeague": "/tft/league/v1/grandmaster",
+      "getLeagueById": "/tft/league/v1/leagues/%s",
+      "getMasterLeague": "/tft/league/v1/master"
+    },
+    "tftMatch": {
+      "getMatchIdsByPUUID": "/tft/match/v1/matches/by-puuid/%s/ids",
+      "getMatch": "/tft/match/v1/matches/%s"
+    },
+    "tftSummoner": {
+      "getByAccountId": "/tft/summoner/v1/summoners/by-account/%s",
+      "getBySummonerName": "/tft/summoner/v1/summoners/by-name/%s",
+      "getByPUUID": "/tft/summoner/v1/summoners/by-puuid/%s",
+      "getBySummonerId": "/tft/summoner/v1/summoners/%s"
+    },
     "thirdPartyCode": {
       "getThirdPartyCodeBySummonerId": "/lol/platform/v4/third-party-code/by-summoner/%s"
     }

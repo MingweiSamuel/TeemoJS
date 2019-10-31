@@ -86,8 +86,6 @@ There are three more premade configurations provided:
 is the same as `TeemoJS.defaultConfig` but without any `endpoints`.
 - [`TeemoJS.championGGConfig`](https://github.com/MingweiSamuel/TeemoJS/blob/master/championGGConfig.json)
 is a configuration for the [Champion.GG API](http://api.champion.gg/). Oh, by the way, TeemoJS also supports the Champion.GG API.
-- [`TeemoJS.defaultV3Config`](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultV3Config.json)
-for old V3 endpoints being removed at the end of January 2019.
 - (`TeemoJS.ddragonConfig` TODO)
 
 Champion.GG Example:
