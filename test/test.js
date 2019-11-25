@@ -74,16 +74,24 @@ describe('TeemoJS', function() {
           assert.equal(data.name, "The Øne And Ønly");
         });
     });
-    // it('summoner.getBySummonerId many', function() {
-    //   let ids = require('./ids.json');
-    //   return Promise.all(ids.map(id =>
-    //     api.get('na1', 'summoner.getBySummonerId', id)
-    //       .then(data => {
-    //         assert.ok(data);
-    //         assert.equal(data.id, id);
-    //       })
-    //     ));
-    // });
+    xit('summoner.getBySummonerName many', function() {
+      // return api.get('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5')
+      //   .then(data => console.log(JSON.stringify(data.entries.map(s => s.summonerName), null, 2)));
+      const names = require('./names.json');
+      const count = 100;
+      return Promise.all(names.slice(0, count).map(name =>
+        api.get('eun1', 'summoner.getBySummonerName', name)
+          .then(data => {
+            if (null !== data) { // Null means name no longer exists.
+              //assert.ok(data);
+              //assert.equal(data.name, name); // TODO: handle case and space.
+            }
+            else {
+              console.log(`Name not found: "${name}".`);
+            }
+          })
+        ));
+    });
 
     // it('lolStaticData.getChampionList', function() {
     //   return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
