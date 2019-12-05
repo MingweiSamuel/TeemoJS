@@ -8,13 +8,35 @@ const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
 
 describe('TeemoJS', function() {
   let api;
+
   before(function() {
     let apiKey = process.env.RIOT_API_KEY;
     if (!apiKey)
       throw new Error('Must set RIOT_API_KEY in environment.');
     api = TeemoJS(apiKey, { maxConcurrent: 2 });
   });
+
+  describe('bad args', function() {
+    it('handles bad dist factor', function() {
+      assert.throws(() => api.setDistFactor(0));
+    });
+    it('handles missing path', function() {
+      // TODO return promises?
+      assert.throws(() => api.get('hello'));
+      assert.throws(() => api.get('hello.world'));
+    });
+    it('handles missing path', function() {
+      // TODO return promises?
+      assert.throws(() => api.get('hello'));
+      assert.throws(() => api.get('hello.world'));
+    });
+    it('handles wrong number of args', function() {
+      assert.throws(() => api.get('league.getLeagueEntries', 'hi'));
+    })
+  });
+
   describe('#get()', function() {
+    this.slow(500);
     it('championMastery.getAllChampionMasteries', function() {
       return api.get('na1', 'championMastery.getAllChampionMasteries', SID_LUGNUTSK)
         .then(data => {

@@ -26,15 +26,11 @@ function testBurst(timespan, limit, count) {
       assert.ok(j - i <= limit, (j - i) + ':\n' + JSON.stringify(timestamps.slice(i, j + 1), null, 2));
     }
   });
-  return api.get('na1', 'championMastery.getAllChampionMasteries', 69009277)
-    .then(data => {
-      assert.ok(data);
-      assert.ok(data.length >= 48);
-      assert.equal(data[0].championId, 143);
-    });
 }
 
 describe('TokenBucket', function() {
+  this.slow(2000);
+
   for (let i = 50; i < 200; i += 10) {
     let timespan = i * 2;
     let limit = i * 10 - 10;
