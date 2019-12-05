@@ -1,11 +1,23 @@
 'use strict';
 
-const util = require("util");
 const req = require("request-promise-native");
 ([ 'emptyConfig', 'defaultConfig', 'championGGConfig' ].forEach(
   config => RiotApi[config] = require('./' + config + '.json')));
 const DEBUG = typeof global.it === 'function';
-const delayPromise = delay => new Promise(resolve => setTimeout(resolve, delay));
+
+/** Returns a formatted string, replacing "%s" with supplied args. */
+function format(format, ...args) {
+  let i = 0;
+  const result = format.replace(/%s/g, () => args[i++]);
+  if (i !== args.length)
+    throw new Error(`Wrong number of args provided for format "${format}", ${args.length} provided, ${i} needed.`);
+  return result;
+}
+
+/** Returns a promise that resolves after the supplied delay. */
+function delayPromise(millis) {
+  return new Promise(resolve => setTimeout(resolve, millis));
+}
 
 /** `RiotApi(key [, config])` or `RiotApi(config)` with `config.key` set. */
 function RiotApi(key, config = {}) {
@@ -23,7 +35,7 @@ RiotApi.prototype.get = function() {
   if (!this.hasRegions)
     return this._getRegion(null).get(this.config.prefix, ...arguments);
   let [ region, ...rest ] = arguments;
-  rest.unshift(util.format(this.config.prefix, region));
+  rest.unshift(format(this.config.prefix, region));
   return this._getRegion(region).get(...rest);
 };
 /**
@@ -59,19 +71,17 @@ Region.prototype.get = function() {
   let suffix = this.config.endpoints;
   for (let path of target.split('.')) {
     suffix = suffix[path];
-    if (!suffix) throw new Error(util.format('Missing path "%s" in "%s".', path, target));
+    if (!suffix) throw new Error(`Missing path "${path}" in "${target}".`);
   }
   let qs = {};
   let args = Array.prototype.slice.call(arguments, 2);
   if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off.
     qs = args.pop();
-  if (suffix.split('%s').length - 1 !== args.length)
-    throw new Error(util.format('Wrong number of path arguments: "%j", for path "%s".', args, suffix));
   if (this.config.collapseQueryArrays) {
     qs = JSON.parse(JSON.stringify(qs)); // Clone object so we can modify without confusion.
     Object.entries(qs).forEach(([ key, val ]) => qs[key] = Array.isArray(val) ? val.join(',') : val);
   }
-  suffix = util.format(suffix, ...args.map(arg => encodeURIComponent(arg)));
+  suffix = format(suffix, ...args.map(arg => encodeURIComponent(arg)));
   let uri = prefix + suffix;
 
   let rateLimits = [ this.appLimit ];
