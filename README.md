@@ -35,13 +35,13 @@ api.get('na1', 'match.getMatchlist', 78247, { champion: [81, 429], season: 8 })
 
 All requests are done via `.get(...)`.
 - The first argument is the region.*
-- The second is the `endpoint` path
+- The second is the `endpoint` "path", period-delimited.
 (see [`defaultConfig.json`](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultConfig.json)).
 - Then come any path arguments (usually zero or one, or two for `getChampionMastery`) which are for
 summoner/match IDs, names, etc.
 - Last is an optional object for any query parameters.
 
-\*Note: this is optional if `config.prefix` isn't interpolated in custom or Champion.GG configurations.
+\*Note: this is optional if `config.origin` isn't interpolated in custom or Champion.GG configurations.
 
 ## Configuration
 
@@ -66,7 +66,7 @@ let api = TeemoJS(configWithKey);
 
 Only modify the following properties if you know what you're doing. This is mainly documentation for future reference.
 
-- `prefix` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
+- `origin` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
 - `defaultBuckets` [object[]]: Array of configuration options for a rate limit's default buckets. These buckets remain in use until the actual rate limit is detected via headers. Each must have at least `timespan` (in milliseconds) and `limit`.
 - `rateLimitTypeApplication` [object]: Rate limit type object for the application rate limit. Containing strings `name`, `headerLimit`, and `headerCount`. `name` is the name of the rate limit used for detecting which type caused a 429. `headerLimit` and `headerCount` are header names for the max rate limit and rate limit count respectively.
 - `rateLimitTypeMethod` [object/null]: Same as `rateLimitTypeApplication` but for method rate limits. May be null if the API does not have per-method rate limits.

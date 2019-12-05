@@ -1,5 +1,5 @@
 {
-  "prefix": "http://api.champion.gg",
+  "origin": "http://api.champion.gg",
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,

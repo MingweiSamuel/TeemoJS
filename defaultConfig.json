@@ -1,5 +1,5 @@
 {
-  "prefix": "https://%s.api.riotgames.com",
+  "origin": "https://%s.api.riotgames.com",
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,

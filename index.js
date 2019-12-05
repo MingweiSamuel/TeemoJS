@@ -1,9 +1,26 @@
 'use strict';
 
-const req = require("request-promise-native");
-([ 'emptyConfig', 'defaultConfig', 'championGGConfig' ].forEach(
-  config => RiotApi[config] = require('./' + config + '.json')));
-const DEBUG = typeof global.it === 'function';
+/** Check if running in tests. */
+const DEBUG = /test[\\\/]test[-\w]*\.js$/.test(module && module.parent && module.parent.filename);
+
+// Find Fetch API.
+const fetch = (typeof window !== 'undefined' && window.fetch) ||
+  (typeof require === 'function' && require(`${'node-fetch'}`));
+if (!fetch)
+  throw new Error('Failed to find Fetch API. On NodeJS, make sure node-fetch is properly installed. ' +
+    'In browser, make sure window.fetch is available, or use a polyfill.');
+
+// Find URL.
+const URL = (typeof window !== 'undefined' && window.URL) ||
+  (typeof require === 'function' && require(`${'url'}`).URL);
+
+// Assign configurations if require is provided by NodeJS or browserify/webpack.
+if (typeof require === 'function') {
+  RiotApi.emptyConfig      = require('./emptyConfig.json');
+  RiotApi.defaultConfig    = require('./defaultConfig.json');
+  RiotApi.championGGConfig = require('./championGGConfig.json');
+}
+
 
 /** Returns a formatted string, replacing "%s" with supplied args. */
 function format(format, ...args) {
@@ -19,6 +36,7 @@ function delayPromise(millis) {
   return new Promise(resolve => setTimeout(resolve, millis));
 }
 
+
 /** `RiotApi(key [, config])` or `RiotApi(config)` with `config.key` set. */
 function RiotApi(key, config = {}) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
@@ -29,20 +47,18 @@ function RiotApi(key, config = {}) {
     this.config.key = key;
   Object.assign(this.config, config);
   this.regions = {};
-  this.hasRegions = this.config.prefix.includes('%s');
+  this.hasRegions = this.config.origin.includes('%s');
 }
 RiotApi.prototype.get = function() {
   if (!this.hasRegions)
-    return this._getRegion(null).get(this.config.prefix, ...arguments);
+    return this._getRegion(null).get(this.config.origin, ...arguments);
   let [ region, ...rest ] = arguments;
-  rest.unshift(format(this.config.prefix, region));
+  rest.unshift(format(this.config.origin, region));
   return this._getRegion(region).get(...rest);
 };
-/**
- * Limits requests to FACTOR fraction of normal rate limits, allowing multiple
- * instances to be used across multiple processes/machines.
- * This can be called at any time.
- */
+/** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
+  * instances to be used across multiple processes/machines.
+  * This can be called at any time. */
 RiotApi.prototype.setDistFactor = function(factor) {
   if (factor <= 0 || factor > 1)
     throw new Error("Factor must be greater than zero and non-greater than one.");
@@ -65,62 +81,70 @@ function Region(config) {
   this.methodLimits = {};
   this.liveRequests = 0;
 }
-Region.prototype.get = function() {
-  let prefix = arguments[0];
-  let target = arguments[1];
-  let suffix = this.config.endpoints;
-  for (let path of target.split('.')) {
-    suffix = suffix[path];
-    if (!suffix) throw new Error(`Missing path "${path}" in "${target}".`);
+Region.prototype.get = function(origin, target, ...args) {
+  // Get query param arg.
+  let queryParams = {};
+  if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off and apply it.
+    queryParams = args.pop();
+
+  // Interpolate path.
+  let path = this.config.endpoints;
+  for (let segment of target.split('.')) {
+    path = path[segment];
+    if (!path) throw new Error(`Missing path segment "${segment}" in "${target}".`);
   }
-  let qs = {};
-  let args = Array.prototype.slice.call(arguments, 2);
-  if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off.
-    qs = args.pop();
-  if (this.config.collapseQueryArrays) {
-    qs = JSON.parse(JSON.stringify(qs)); // Clone object so we can modify without confusion.
-    Object.entries(qs).forEach(([ key, val ]) => qs[key] = Array.isArray(val) ? val.join(',') : val);
+  path = format(path, ...args.map(arg => encodeURIComponent(arg)));
+
+  // Build URL.
+  let urlBuilder = new URL(path, origin);
+  // Build URL query params.
+  for (let [ key, vals ] of Object.entries(queryParams)) {
+    if (!Array.isArray(vals)) // Not array.
+      urlBuilder.searchParams.set(key, vals);
+    else if (this.config.collapseQueryArrays) // Array, collapse.
+      urlBuilder.searchParams.set(key, vals.join(','));
+    else // Array, do not collapse.
+      vals.forEach(val => urlBuilder.searchParams.append(key, val));
   }
-  suffix = format(suffix, ...args.map(arg => encodeURIComponent(arg)));
-  let uri = prefix + suffix;
+
+  // Create fetch config.
+  let fetchConfig = {
+    // TODO: method.
+    headers: {}, // TODO.
+    keepalive: true // keep-alive.
+  };
+  if (this.config.keyHeader)
+    fetchConfig.headers[this.config.keyHeader] = this.config.key;
+  else
+    urlBuilder.searchParams.set(this.config.keyQueryParam, this.config.key);
 
   let rateLimits = [ this.appLimit ];
   if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
     rateLimits.push(this._getMethodLimit(target));
   let retries = 0;
 
+  // Fetch retry loop.
   let fn = () => {
     let delay = RateLimit.getAllOrDelay(rateLimits);
     if (delay >= 0)
       return delayPromise(delay).then(fn);
     if (this.liveRequests >= this.config.maxConcurrent)
-      return delayPromise(20).then(fn);
+      return delayPromise(20).then(fn); // HACKY.
     this.liveRequests++;
-    let reqConfig = {
-      uri, qs,
-      forever: true, // keep-alive.
-      simple: false,
-      resolveWithFullResponse: true,
-      qsStringifyOptions: { arrayFormat: { indices: false }}
-    };
-    if (this.config.keyHeader)
-      reqConfig.headers = { [this.config.keyHeader]: this.config.key };
-    else
-      qs[this.config.keyQueryParam] = this.config.key;
-    return req(reqConfig).then(res => {
+    return fetch(urlBuilder.href, fetchConfig).then(res => {
       this.liveRequests--;
       rateLimits.forEach(rl => rl.onResponse(res));
       if (400 === res.statusCode)
-        throw new Error('Bad request, responded with: ' + res.body + '\nurl:' + reqConfig.uri);
+        throw new Error(`Bad request, url: "${urlBuilder.href}",\nbody: "${res.body}".`);
       if ([404, 422].includes(res.statusCode))
         return null;
       if (429 === res.statusCode || 500 <= res.statusCode) {
         if (retries >= this.config.retries)
-          throw new Error('Failed after ' + retries + ' retries with code ' + res.statusCode + '.');
+          throw new Error(`Failed after ${retries} retries with code ${res.statusCode}.`);
         retries++;
         return fn();
       }
-      return JSON.parse(res.body);
+      return res.json();
     });
   };
   return Promise.resolve(fn());
@@ -306,8 +330,8 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   return -1;
 };
 
-module.exports = RiotApi;
 if (DEBUG) {
-  module.exports.delayPromise = delayPromise;
-  module.exports.TokenBucket = TokenBucket;
+  RiotApi.delayPromise = delayPromise;
+  RiotApi.TokenBucket = TokenBucket;
 }
+module.exports = RiotApi;
