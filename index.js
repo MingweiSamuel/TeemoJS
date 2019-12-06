@@ -70,7 +70,7 @@ function Region(config) {
   this.config = config;
   this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
   this.methodLimits = {};
-  this.liveRequests = 0;
+  this.concurrentSema = new Semaphore(this.config.maxConcurrent);
 }
 Region.prototype.get = function(origin, target, ...args) {
   // Get query param arg.
@@ -112,37 +112,40 @@ Region.prototype.get = function(origin, target, ...args) {
   let rateLimits = [ this.appLimit ];
   if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
     rateLimits.push(this._getMethodLimit(target));
-  let retries = 0;
 
-  // Fetch retry loop.
-  let fn = () => {
-    // Wait for semaphore. TODO HACKY.
-    if (this.liveRequests >= this.config.maxConcurrent)
-      return delayPromise(20).then(fn);
+  return (async () => {
+    // Acquire concurrent request permit.
+    // Note: This considers the time spent waiting for rate limits.
+    await this.concurrentSema.acquire();
+    // Fetch retry loop.
+    let response, delay;
+    for (let retries = 0; retries < this.config.retries; retries++) {
+      // Waut for rate limits.
+      while ((delay = RateLimit.getAllOrDelay(rateLimits)) >= 0)
+        await delayPromise(delay);
 
-    // Wait for rate limits.
-    let delay = RateLimit.getAllOrDelay(rateLimits);
-    if (delay >= 0)
-      return delayPromise(delay).then(fn);
+      response = await fetch(urlBuilder.href, fetchConfig);
+      // Release concurrent request permit.
+      // Note: This may be released before the full response body is read.
+      this.concurrentSema.release();
 
-    this.liveRequests++;
-    return fetch(urlBuilder.href, fetchConfig).then(res => {
-      this.liveRequests--;
-      rateLimits.forEach(rl => rl.onResponse(res));
-      if (400 === res.status)
-        throw new Error(`Bad request, url: "${urlBuilder.href}".`);
-      if ([ 204, 404, 422 ].includes(res.status))
+      // Update if rate limits changed or 429 returned.
+      rateLimits.forEach(rl => rl.onResponse(response));
+
+      // Handle status codes.
+      if ([ 204, 404, 422 ].includes(response.status)) // Successful response, but no data found.
         return null;
-      if (429 === res.status || 500 <= res.status) {
-        if (retries >= this.config.retries)
-          throw new Error(`Failed after ${retries} retries with code ${res.status}.`);
-        retries++;
-        return fn();
-      }
-      return res.json();
-    });
-  };
-  return Promise.resolve(fn());
+      if (response.ok) // Successful response (presumably) with body.
+        return await response.json();
+      if (429 !== response.status && response.status < 500) // Non-retryable responses.
+        break;
+    }
+    // Request failed.
+    const err = new Error(`Request failed after ${retries} with code ${response.status}. ` +
+      "The 'response' field of this Error contains the failed Response for debugging or error handling.");
+    err.response = response;
+    throw err;
+  })();
 };
 Region.prototype.updateDistFactor = function() {
   this.appLimit.setDistFactor(this.config.distFactor);
@@ -167,21 +170,22 @@ RateLimit.prototype.retryDelay = function() {
   let now = Date.now();
   return now > this.retryAfter ? -1 : this.retryAfter - now;
 };
-RateLimit.prototype.onResponse = function(res) {
-  if (429 === res.status) {
-    let type = res.headers.get(this.config.headerLimitType) || this.config.defaultLimitType;
+RateLimit.prototype.onResponse = function(response) {
+  // Handle 429 retry-after header (if exists).
+  if (429 === response.status) {
+    let type = response.headers.get(this.config.headerLimitType) || this.config.defaultLimitType;
     if (!type)
       throw new Error('Response missing type.');
     if (this.type.name === type.toLowerCase()) {
-      let retryAfter = +res.headers.get(this.config.headerRetryAfter);
+      let retryAfter = +response.headers.get(this.config.headerRetryAfter);
       if (Number.isNaN(retryAfter))
         throw new Error('Response 429 missing retry-after header.');
       this.retryAfter = Date.now() + retryAfter * 1000 + 500;
     }
   }
-
-  let limitHeader = res.headers.get(this.type.headerLimit);
-  let countHeader = res.headers.get(this.type.headerCount);
+  // Update rate limit from headers (if changed).
+  let limitHeader = response.headers.get(this.type.headerLimit);
+  let countHeader = response.headers.get(this.type.headerCount);
   if (this._bucketsNeedUpdate(limitHeader, countHeader))
     this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader);
 };
@@ -201,17 +205,17 @@ RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
   let limits = limitHeader.split(',');
   let counts = countHeader.split(',');
   if (limits.length !== counts.length)
-    throw new Error('Limit and count headers do not match: ' + limitHeader + ', ' + countHeader + '.');
+    throw new Error(`Limit and count headers do not match: ${limitHeader}, ${countHeader}.`);
 
   return limits
     .map((limit, i) => {
       let count = counts[i];
-      let [limitVal, limitSpan] = limit.split(':').map(Number);
-      let [countVal, countSpan] = count.split(':').map(Number);
+      let [ limitVal, limitSpan ] = limit.split(':').map(Number);
+      let [ countVal, countSpan ] = count.split(':').map(Number);
       limitSpan *= 1000;
       countSpan *= 1000;
       if (limitSpan != countSpan)
-        throw new Error('Limit span and count span do not match: ' + limitSpan + ', ' + countSpan + '.');
+        throw new Error(`Limit span and count span do not match: ${limitSpan}, ${countSpan}.`);
 
       let bucket = new TokenBucket(limitSpan, limitVal, { distFactor: this.distFactor });
       bucket.getTokens(countVal);
@@ -303,7 +307,7 @@ TokenBucket.prototype._update = function() {
     this.buffer[index] = 0;
   }
   if (this._getIndex(this.time) != index)
-    throw new Error('Get index time wrong:' + this._getIndex(this.time) + ', ' + index + '.');
+    throw new Error(`Get index time wrong: ${this._getIndex(this.time)}, ${index}.`);
   return index;
 };
 TokenBucket.prototype._getIndex = function(ts) {
@@ -324,6 +328,27 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   tokenBuckets.forEach(b => b.getTokens(1));
   return -1;
 };
+
+
+function Semaphore(count) {
+  this.permits = count;
+  this.queue = [];
+}
+Semaphore.prototype.acquire = function() {
+  return new Promise(resolve => {
+    if (this.permits) {
+      this.permits--;
+      resolve();
+    }
+    else
+      this.queue.push(resolve);
+  });
+};
+Semaphore.prototype.release = function() {
+  const resolve = this.queue.shift();
+  (resolve ? resolve() : this.permits++);
+};
+
 
 if (DEBUG) {
   RiotApi.delayPromise = delayPromise;
