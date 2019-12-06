@@ -9,9 +9,9 @@
   ],
   "main": "index.js",
   "scripts": {
-    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js",
+    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s RiotApi",
     "test": "node ./node_modules/mocha/bin/mocha",
-    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js"
+    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s RiotApi"
   },
   "repository": {
     "type": "git",
