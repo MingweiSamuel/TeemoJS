@@ -1,25 +1,16 @@
 'use strict';
 
-/** Check if running in tests. */
-const DEBUG = /test[\\\/]test[-\w]*\.js$/.test(module && module.parent && module.parent.filename);
+/** True if running in tests. */
+const DEBUG = /test[\\\/]test[-\w]*\.js$/.test(module.parent && module.parent.filename);
 
-// Find Fetch API.
-const fetch = (typeof window !== 'undefined' && window.fetch) ||
-  (typeof require === 'function' && require(`${'node-fetch'}`));
-if (!fetch)
-  throw new Error('Failed to find Fetch API. On NodeJS, make sure node-fetch is properly installed. ' +
-    'In browser, make sure window.fetch is available, or use a polyfill.');
+// Load dependencies.
+const fetch = global.fetch || require(`${'node-fetch'}`);
+const URL   = global.URL   || require(`${'url'}`).URL;
 
-// Find URL.
-const URL = (typeof window !== 'undefined' && window.URL) ||
-  (typeof require === 'function' && require(`${'url'}`).URL);
-
-// Assign configurations if require is provided by NodeJS or browserify/webpack.
-if (typeof require === 'function') {
-  RiotApi.emptyConfig      = require('./emptyConfig.json');
-  RiotApi.defaultConfig    = require('./defaultConfig.json');
-  RiotApi.championGGConfig = require('./championGGConfig.json');
-}
+// Assign configurations.
+RiotApi.emptyConfig      = require('./emptyConfig.json');
+RiotApi.defaultConfig    = require('./defaultConfig.json');
+RiotApi.championGGConfig = require('./championGGConfig.json');
 
 
 /** Returns a formatted string, replacing "%s" with supplied args. */

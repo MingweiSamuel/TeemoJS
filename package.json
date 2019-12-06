@@ -1,10 +1,12 @@
 {
   "name": "teemojs",
-  "version": "1.3.4",
+  "version": "2.0.0-alpha.0",
   "description": "A Fast & Lightweight Riot API Wrapper",
   "main": "index.js",
+  "browser": "browser.js",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha"
+    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js",
+    "test":  "node ./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -29,10 +31,10 @@
   },
   "homepage": "https://github.com/MingweiSamuel/TeemoJS#readme",
   "dependencies": {
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.4"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "browserify": "^16.5.0",
     "bluebird": "^3.5.0",
     "jsdom": "^11.2.0",
     "mocha": "^4.1.0"
