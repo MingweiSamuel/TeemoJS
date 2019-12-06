@@ -125,22 +125,26 @@ Region.prototype.get = function(origin, target, ...args) {
 
   // Fetch retry loop.
   let fn = () => {
+    // Wait for semaphore. TODO HACKY.
+    if (this.liveRequests >= this.config.maxConcurrent)
+      return delayPromise(20).then(fn);
+
+    // Wait for rate limits.
     let delay = RateLimit.getAllOrDelay(rateLimits);
     if (delay >= 0)
       return delayPromise(delay).then(fn);
-    if (this.liveRequests >= this.config.maxConcurrent)
-      return delayPromise(20).then(fn); // HACKY.
+
     this.liveRequests++;
     return fetch(urlBuilder.href, fetchConfig).then(res => {
       this.liveRequests--;
       rateLimits.forEach(rl => rl.onResponse(res));
-      if (400 === res.statusCode)
-        throw new Error(`Bad request, url: "${urlBuilder.href}",\nbody: "${res.body}".`);
-      if ([404, 422].includes(res.statusCode))
+      if (400 === res.status)
+        throw new Error(`Bad request, url: "${urlBuilder.href}".`);
+      if ([ 204, 404, 422 ].includes(res.status))
         return null;
-      if (429 === res.statusCode || 500 <= res.statusCode) {
+      if (429 === res.status || 500 <= res.status) {
         if (retries >= this.config.retries)
-          throw new Error(`Failed after ${retries} retries with code ${res.statusCode}.`);
+          throw new Error(`Failed after ${retries} retries with code ${res.status}.`);
         retries++;
         return fn();
       }
@@ -173,20 +177,20 @@ RateLimit.prototype.retryDelay = function() {
   return now > this.retryAfter ? -1 : this.retryAfter - now;
 };
 RateLimit.prototype.onResponse = function(res) {
-  if (429 === res.statusCode) {
-    let type = res.headers[this.config.headerLimitType] || this.config.defaultLimitType;
+  if (429 === res.status) {
+    let type = res.headers.get(this.config.headerLimitType) || this.config.defaultLimitType;
     if (!type)
       throw new Error('Response missing type.');
     if (this.type.name === type.toLowerCase()) {
-      let retryAfter = +res.headers[this.config.headerRetryAfter];
+      let retryAfter = +res.headers.get(this.config.headerRetryAfter);
       if (Number.isNaN(retryAfter))
         throw new Error('Response 429 missing retry-after header.');
       this.retryAfter = Date.now() + retryAfter * 1000 + 500;
     }
   }
 
-  let limitHeader = res.headers[this.type.headerLimit];
-  let countHeader = res.headers[this.type.headerCount];
+  let limitHeader = res.headers.get(this.type.headerLimit);
+  let countHeader = res.headers.get(this.type.headerCount);
   if (this._bucketsNeedUpdate(limitHeader, countHeader))
     this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader);
 };
