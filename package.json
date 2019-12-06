@@ -2,11 +2,15 @@
   "name": "teemojs",
   "version": "2.0.0-alpha.0",
   "description": "A Fast & Lightweight Riot API Wrapper",
+  "files": [
+    "index.js",
+    "browser.js"
+  ],
   "main": "index.js",
-  "browser": "browser.js",
   "scripts": {
-    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js",
-    "test":  "node ./node_modules/mocha/bin/mocha"
+    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js",
+    "test": "node ./node_modules/mocha/bin/mocha",
+    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +29,7 @@
     "kindred"
   ],
   "author": "Mingwei Samuel",
-  "license": "LGPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/MingweiSamuel/TeemoJS/issues"
   },
