@@ -1,10 +1,11 @@
 {
   "name": "teemojs",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-alpha.1",
   "description": "A Fast & Lightweight Riot API Wrapper",
   "files": [
     "index.js",
-    "browser.js"
+    "browser.js",
+    "*Config.json"
   ],
   "main": "index.js",
   "scripts": {
