@@ -6,6 +6,7 @@ See API Changes for possible changes you will need to make to upgrade.
 
 ## API Changes
 
+* TeemoJS is now `MIT`-licensed (switched from `LGPL-3.0`).
 * In the config, `"prefix"` has been renamed to `"origin"`.
 * On failed requests (when retries run out or the request is not retryable),
   an `Error` will always be thrown. Previously, some error codes (`403`, `401`,

@@ -1,5 +1,12 @@
-# TeemoJS
-[![](https://img.shields.io/npm/v/teemojs.svg)](https://www.npmjs.com/package/teemojs)
+<h1 align="center">
+  TeemoJS
+</h1>
+<p align="center">
+  <a href="https://github.com/MingweiSamuel/TeemoJS/"><img src="https://cdn.communitydragon.org/latest/champion/Teemo/square" width="20" height="20" alt="Github"></a>
+  <a href="https://www.npmjs.com/package/teemojs"><img src="https://img.shields.io/npm/v/teemojs.svg?style=flat-square&logo=npm" alt="NPM"></a>
+  <a href="https://packagephobia.now.sh/result?p=teemojs%40next"><img src="https://flat.badgen.net/packagephobia/install/teemojs@next" alt="Install Size"></a>
+  <a href="https://bundlephobia.com/result?p=teemojs%40next"><img src="https://flat.badgen.net/bundlephobia/min/teemojs%40next" alt="Minified Size"></a>
+</p>
 
 TeemoJS is a fast and lightweight Riot API wrapper written in Node.js.
 Contained in about 300 lines,
