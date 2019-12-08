@@ -28,16 +28,22 @@ npm install --save teemojs
 
 ## Usage
 
-```node
+```js
 const TeemoJS = require('teemojs');
-let api = TeemoJS('RGAPI-KEY-HERE');
+const api = TeemoJS('RGAPI-KEY-HERE');
 
-api.get('na1', 'summoner.getBySummonerName', 'LUG nutsk')
-  .then(data => console.log(data.name + "'s summoner id is " + data.id + '.'));
+async function main() {
+  const summoner = await api.get('na1', 'summonerV4.getBySummonerName', 'x blotter')
+  console.log(`${summoner.name}'s account id is ${summoner.accountId}.`);
 
-// Get C9 Sneaky's games on Ezreal and Kalista for a particular season.
-api.get('na1', 'match.getMatchlist', 78247, { champion: [81, 429], season: 8 })
-  .then(...);
+  // Get summoner's games on Teemo and Illaoi for a particular season.
+  const matchlist = await api.get('na1', 'matchV4.getMatchlist', summoner.accountId, { champion: [ 17, 420 ] });
+  console.log(`Fetched ${matchlist.matches.length} games.`);
+
+  // ...
+}
+
+main();
 ```
 
 All requests are done via `.get(...)`.
