@@ -1,11 +1,18 @@
 // This file creates defaultConfig.json
 // This is not meant to be `require`d in a project.
 const Promise = require("bluebird");
-const req = require("request-promise-native");
+const fetch = require("node-fetch");
 const fs = Promise.promisifyAll(require("fs"));
 const { JSDOM } = require("jsdom");
 
 let defaultConfig = require('./emptyConfig.json');
+
+async function req(url) {
+  var res = await fetch(url);
+  if (200 !== res.status)
+    throw new Error(`Request failed: "${url}".`);
+  return await res.text();
+}
 
 req('https://developer.riotgames.com/api-methods/')
   .then(body => {
