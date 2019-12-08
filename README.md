@@ -55,7 +55,7 @@ dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyP
 ```
 
 #### Parameters
-- `platform`  
+- `platform`*  
   The regional platform to request to. This is:
   - A `string` such as `'na1'`, `'euw1'`, or `'americas'`.
 
@@ -71,8 +71,7 @@ dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyP
   Path parameters for the request. This must match the URL format. This is:
   - An `Array` with number of values equal to the number of path params. Values will be interpolated in order.
   - An `object` with corresponding keys for each of the path params. Values will be interpolated by name (key).
-  - A single value for endpoints needing a single path param. Non-`string` values will be converted to `string` using
-    `encodeURIComponent(...)`.
+  - A single value for endpoints needing a single path param. Non-`string` values will be converted to `string`.
   - `[]`, `{}`, or `undefined` for endpoints needing no path params.
 
 - `queryParams` (optional for some endpoints)  
@@ -85,13 +84,18 @@ dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyP
   - A JSON value (`object`, `string`, `Number`) which will be `JSON.stringify`ed into the request body.
   - `null` or `undefined` for no body param.
 
-^{\*Note: `platform` should be omitted if using a non-Riot API that doesn't use platforms/regions.}
+<sup>*Note: platform should be omitted if using a non-Riot API that doesn't use platforms/regions.</sup>
 
 #### Return Value
 - `dataPromise`  
   The data returned by the Riot API. This is the `JSON.parse`d body of the response. This is:
-  - A JSON value (`object`, `string`, `NUmber`, `null`) parsed from the response body.
-  - `null` if the response had no body.
+  - A `Promise` resolving to a JSON value (`object`, `string`, `Number`, `null`) parsed from the response body.
+  - A `Promise` resolving to `null` if the response had no body (status code 204, 404, 422).
+  - A `Promise` rejecting with an `Error`. The `Error` may have a `.response` field containing the failed repsonse.
+
+#### Throws
+Throws an `Error` if the request could not be made. This happens when the `endpointPath` and/or `*params` were
+missing or invalid.
 
 
 ## Configuration
