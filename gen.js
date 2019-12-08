@@ -33,12 +33,11 @@ req('https://developer.riotgames.com/api-methods/')
   .then(endpoints => {
     let res = {};
     for (let [name, body] of Object.entries(endpoints)) {
-      let camelName = '';
       let tokens = name.split('-');
-      let version = tokens.pop(); // V3 or V4
-      for (let i = 0; i < tokens.length; i++) {
-        camelName += i ? tokens[i].charAt(0).toUpperCase() + tokens[i].substr(1) : tokens[i];
-      }
+      let camelName = tokens.shift(); // Don't change capitalization of first.
+      for (let token of tokens)
+        camelName += token.charAt(0).toUpperCase() + token.slice(1);
+
       console.log(camelName);
 
       let endpoint = {};
@@ -51,7 +50,7 @@ req('https://developer.riotgames.com/api-methods/')
         let opName = op.getAttribute('id').substr(1);
         let path = op.getElementsByClassName('path')[0].textContent;
         path = path.trim().replace(/\{\S+?\}/g, '%s');
-        console.log('  ' + opName + ': ' + path);
+        console.log(`  ${opName}: ${path}`);
         endpoint[opName] = path;
       }
     }

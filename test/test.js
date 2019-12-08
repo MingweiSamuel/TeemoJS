@@ -31,14 +31,14 @@ describe('TeemoJS', function() {
       assert.throws(() => api.get('hello.world'));
     });
     it('handles wrong number of args', function() {
-      assert.throws(() => api.get('league.getLeagueEntries', 'hi'));
+      assert.throws(() => api.get('league.getLeagueEntries', 'hiV4'));
     })
   });
 
   describe('#get()', function() {
     this.slow(500);
     it('championMastery.getAllChampionMasteries', function() {
-      return api.get('na1', 'championMastery.getAllChampionMasteries', SID_LUGNUTSK)
+      return api.get('na1', 'championMasteryV4.getAllChampionMasteries', SID_LUGNUTSK)
         .then(data => {
           assert.ok(data);
           assert.ok(data.length >= 48);
@@ -46,7 +46,7 @@ describe('TeemoJS', function() {
         });
     });
     it('championMastery.getChampionMastery', function() {
-      return api.get('na1', 'championMastery.getChampionMastery', SID_LUGNUTSK, 143)
+      return api.get('na1', 'championMasteryV4.getChampionMastery', SID_LUGNUTSK, 143)
         .then(data => {
           assert.equal(data.championId, 143);
           assert.ok(data.championPoints >= 349767);
@@ -54,7 +54,7 @@ describe('TeemoJS', function() {
     });
 
     it('match.getMatchlist', function() {
-      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
+      return api.get('na1', 'matchV4.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
         .then(data => {
           //console.log(data);
           assert.ok(data);
@@ -63,14 +63,14 @@ describe('TeemoJS', function() {
         });
     });
     it('match.getMatchlist (list params)', function() {
-      return api.get('na1', 'match.getMatchlist', AID_C9SNEAKY, { champion: [81, 429], season: 8 })
+      return api.get('na1', 'matchV4.getMatchlist', AID_C9SNEAKY, { champion: [81, 429], season: 8 })
         .then(data => {
           assert.ok(data);
           assert.ok(data.matches);
         });
     });
     it('match.getMatch', function() {
-      return api.get('na1', 'match.getMatch', 2351868633)
+      return api.get('na1', 'matchV4.getMatch', 2351868633)
         .then(data => {
           assert.ok(data);
           assert.equal(data.gameId, 2351868633);
@@ -80,7 +80,7 @@ describe('TeemoJS', function() {
     });
 
     it('summoner.getBySummonerName', function() {
-      return api.get('na1', 'summoner.getBySummonerName', 'Lugn uts k')
+      return api.get('na1', 'summonerV4.getBySummonerName', 'Lugn uts k')
         .then(data => {
           assert.ok(data);
           assert.equal(data.id, SID_LUGNUTSK);
@@ -88,7 +88,7 @@ describe('TeemoJS', function() {
         });
     });
     it('summoner.getBySummonerName encoding test', function() {
-      return api.get('na1', 'summoner.getBySummonerName', 'The Øne And Ønly')
+      return api.get('na1', 'summonerV4.getBySummonerName', 'The Øne And Ønly')
         .then(data => {
           assert.ok(data);
           assert.equal(data.id, 'hJqNbVEFncBg2KuHNUjztd6fJyy9ymX8LjYcGfrIuPXATow');
@@ -97,12 +97,12 @@ describe('TeemoJS', function() {
         });
     });
     xit('summoner.getBySummonerName many', function() {
-      // return api.get('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5')
+      // return api.get('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5V4')
       //   .then(data => console.log(JSON.stringify(data.entries.map(s => s.summonerName), null, 2)));
       const names = require('./names.json');
       const count = 100;
       return Promise.all(names.slice(0, count).map(name =>
-        api.get('eun1', 'summoner.getBySummonerName', name)
+        api.get('eun1', 'summonerV4.getBySummonerName', name)
           .then(data => {
             if (null !== data) { // Null means name no longer exists.
               //assert.ok(data);
@@ -116,17 +116,17 @@ describe('TeemoJS', function() {
     });
 
     // it('lolStaticData.getChampionList', function() {
-    //   return api.get('na1', 'lolStaticData.getChampionList', { tags: 'all' })
+    //   return api.get('na1', 'lolStaticDataV4.getChampionList', { tags: 'all' })
     //     .then(data => {
     //       assert.ok(data);
     //     });
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.get('na1', 'league.getLeagueEntriesForSummoner', SID_TCTRE)
+      return api.get('na1', 'leagueV4.getLeagueEntriesForSummoner', SID_TCTRE)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
-          console.log(entry.wins);
+          assert.ok(entry.wins);
         });
     });
   });
