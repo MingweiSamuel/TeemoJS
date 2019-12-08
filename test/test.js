@@ -134,4 +134,31 @@ describe('TeemoJS', function() {
         });
     });
   });
+  describe('#send() tournament', function() {
+    it('works for tournament endpoints', async function() {
+      const providerId = await api.send('americas', 'tournamentStubV4.registerProviderData', {}, {}, {
+        region: "NA",
+        url: "https://github.com/MingweiSamuel/TeemoJS"
+      });
+      const tournamentId = await api.send('americas', 'tournamentStubV4.registerTournament', {}, {}, {
+        name: "teemo tournament :)",
+        providerId
+      });
+      const codes = await api.send('americas', 'tournamentStubV4.createTournamentCode', {},
+        {
+          count: 10,
+          tournamentId
+        },
+        {
+          //allowedSummonerIds: {},
+          mapType: "SUMMONERS_RIFT",
+          metadata: "eW91IGZvdW5kIHRoZSBzZWNyZXQgbWVzc2FnZQ==",
+          pickType: "TOURNAMENT_DRAFT",
+          spectatorType: "ALL",
+          teamSize: 5
+        });
+      assert.ok(codes)
+      assert.equal(codes.length, 10);
+    })
+  })
 });

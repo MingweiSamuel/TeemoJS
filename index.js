@@ -122,7 +122,7 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
   };
   // Add body to fetchConfig, if supplied.
   if (bodyParams) {
-    fetchConfig.body = JSON.stringify(body);
+    fetchConfig.body = JSON.stringify(bodyParams);
     fetchConfig.headers['Content-Type'] = 'application/json';
   }
 
