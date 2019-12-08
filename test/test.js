@@ -22,19 +22,20 @@ describe('TeemoJS', function() {
     });
     it('handles missing path', function() {
       // TODO return promises?
-      assert.throws(() => api.send('hello'));
-      assert.throws(() => api.send('hello.world'));
+      assert.throws(() => api.send('na1', 'hello'));
+      assert.throws(() => api.send('na1', 'hello.world'));
     });
     it('handles missing path', function() {
       // TODO return promises?
-      assert.throws(() => api.send('hello'));
-      assert.throws(() => api.send('hello.world'));
+      assert.throws(() => api.send('na1', 'hello'));
+      assert.throws(() => api.send('na1', 'hello.world'));
+      assert.throws(() => api.send('na1', 'league'));
     });
     it('handles wrong path args', function() {
       // queue, tier, division.
-      assert.throws(() => api.send('league.getLeagueEntries', 'hiV4'));
-      assert.throws(() => api.send('league.getLeagueEntries', [ 'hello', 'world' ]));
-      assert.throws(() => api.send('league.getLeagueEntries', { tier: 'DIAMOND', division: '5' }));
+      assert.throws(() => api.send('na1', 'league.getLeagueEntries', 'hi'));
+      assert.throws(() => api.send('na1', 'league.getLeagueEntries', [ 'RANKED_SOLO_5x5', 'GOLD' ]));
+      assert.throws(() => api.send('na1', 'league.getLeagueEntries', { tier: 'DIAMOND', division: '5' }));
     });
   });
 
