@@ -81,7 +81,7 @@ function Region(config) {
   this.methodLimits = {};
   this.concurrentSema = new Semaphore(this.config.maxConcurrent);
 }
-Region.prototype.send = function(origin, target, pathParams = {}, queryParams = {}, bodyParams = null) {
+Region.prototype.send = function(origin, target, pathParams = {}, queryParams = {}, bodyParam = null) {
   // Get reqConfig.
   let reqConfig = this.config.endpoints;
   for (let segment of target.split('.'))
@@ -121,8 +121,8 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
     keepalive: true // keep-alive.
   };
   // Add body to fetchConfig, if supplied.
-  if (bodyParams) {
-    fetchConfig.body = JSON.stringify(bodyParams);
+  if (bodyParam) {
+    fetchConfig.body = JSON.stringify(bodyParam);
     fetchConfig.headers['Content-Type'] = 'application/json';
   }
 

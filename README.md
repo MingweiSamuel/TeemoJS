@@ -28,6 +28,7 @@ npm install --save teemojs
 
 ## Usage
 
+### Example
 ```js
 const TeemoJS = require('teemojs');
 const api = TeemoJS('RGAPI-KEY-HERE');
@@ -46,15 +47,52 @@ async function main() {
 main();
 ```
 
-All requests are done via `.get(...)`.
-- The first argument is the region.*
-- The second is the `endpoint` "path", period-delimited.
-(see [`defaultConfig.json`](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultConfig.json)).
-- Then come any path arguments (usually zero or one, or two for `getChampionMastery`) which are for
-summoner/match IDs, names, etc.
-- Last is an optional object for any query parameters.
+### Syntax
 
-\*Note: this is optional if `config.origin` isn't interpolated in custom or Champion.GG configurations.
+Requests are done via `.send(...)`, which returns a promise.
+```js
+dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyParam]]]);
+```
+
+#### Parameters
+- `platform`  
+  The regional platform to request to. This is:
+  - A `string` such as `'na1'`, `'euw1'`, or `'americas'`.
+
+- `endpointPath`  
+  The endpoint path, such as `'matchV4.getMatch'`. These can by found in the
+  [config file](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultConfig.json)
+  or by looking at the hash (`#`) in the API reference URL, such
+  as in [/apis#match-v4/GET_getMatch](https://developer.riotgames.com/apis#match-v4/GET_getMatch).
+  This is:
+  - A `string`, such as `'matchV4.getMatch'` or `'tftMatchV1.getMatchIdsByPUUID'`.
+
+- `pathParams` (optional for some endpoints)  
+  Path parameters for the request. This must match the URL format. This is:
+  - An `Array` with number of values equal to the number of path params. Values will be interpolated in order.
+  - An `object` with corresponding keys for each of the path params. Values will be interpolated by name (key).
+  - A single value for endpoints needing a single path param. Non-`string` values will be converted to `string` using
+    `encodeURIComponent(...)`.
+  - `[]`, `{}`, or `undefined` for endpoints needing no path params.
+
+- `queryParams` (optional for some endpoints)  
+  Query parameters (AKA GET or search parameters) for the request. This is:
+  - An `object` with entries specifying query parameters. The value for a key may be a single value, or a list of values.
+  - `{}` or `undefined` for no query params.
+
+- `bodyParam` (optional for most endpoints)  
+  Body parameter for POST, PUT requests in the tournament APIs. This is:
+  - A JSON value (`object`, `string`, `Number`) which will be `JSON.stringify`ed into the request body.
+  - `null` or `undefined` for no body param.
+
+^{\*Note: `platform` should be omitted if using a non-Riot API that doesn't use platforms/regions.}
+
+#### Return Value
+- `dataPromise`  
+  The data returned by the Riot API. This is the `JSON.parse`d body of the response. This is:
+  - A JSON value (`object`, `string`, `NUmber`, `null`) parsed from the response body.
+  - `null` if the response had no body.
+
 
 ## Configuration
 
