@@ -1,6 +1,6 @@
 {
   "name": "teemojs",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "A Fast & Lightweight Riot API Wrapper",
   "files": [
     "index.js",
@@ -8,10 +8,11 @@
     "*Config.json"
   ],
   "main": "index.js",
+  "browser": "browser.js",
   "scripts": {
-    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s RiotApi",
+    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s TeemoJS --no-bf",
     "test": "node ./node_modules/mocha/bin/mocha",
-    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s RiotApi"
+    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s TeemoJS --no-bf"
   },
   "repository": {
     "type": "git",
