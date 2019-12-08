@@ -7,8 +7,11 @@ See API Changes for possible changes you will need to make to upgrade.
 ## API Changes
 
 * TeemoJS is now `MIT`-licensed (switched from `LGPL-3.0`).
+* The `get` method has been renamed to `send`. `get` still exists as an alias for `send`, but is deprecated.
 * Endpoint paths now include the version number (`V1`, `V3`, `V4`, etc).
   For example, `api.get('na1', 'match.getMatch', 3022273777)` is now `api.get('na1', 'matchV4.getMatch', 3022273777)`.
+
+
 * On failed requests (when retries run out or the request is not retryable),
   an `Error` will always be thrown. Previously, some error codes (`403`, `401`,
   ?) would not result in `Error`s thrown.

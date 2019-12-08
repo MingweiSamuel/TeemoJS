@@ -49,12 +49,12 @@ function RiotApi(key, config = {}) {
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
-RiotApi.prototype.get = function() {
+RiotApi.prototype.send = RiotApi.prototype.get = function() {
   if (!this.hasRegions)
-    return this._getRegion(null).get(this.config.origin, ...arguments);
+    return this._getRegion(null).send(this.config.origin, ...arguments);
   let [ region, ...rest ] = arguments;
   rest.unshift(format(this.config.origin, [ region ]));
-  return this._getRegion(region).get(...rest);
+  return this._getRegion(region).send(...rest);
 };
 /** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
   * instances to be used across multiple processes/machines.
@@ -81,7 +81,7 @@ function Region(config) {
   this.methodLimits = {};
   this.concurrentSema = new Semaphore(this.config.maxConcurrent);
 }
-Region.prototype.get = function(origin, target, pathParams = {}, queryParams = {}, bodyParams = null) {
+Region.prototype.send = function(origin, target, pathParams = {}, queryParams = {}, bodyParams = null) {
   // Get reqConfig.
   let reqConfig = this.config.endpoints;
   for (let segment of target.split('.'))
