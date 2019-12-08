@@ -30,9 +30,12 @@ describe('TeemoJS', function() {
       assert.throws(() => api.get('hello'));
       assert.throws(() => api.get('hello.world'));
     });
-    it('handles wrong number of args', function() {
+    it('handles wrong path args', function() {
+      // queue, tier, division.
       assert.throws(() => api.get('league.getLeagueEntries', 'hiV4'));
-    })
+      assert.throws(() => api.get('league.getLeagueEntries', [ 'hello', 'world' ]));
+      assert.throws(() => api.get('league.getLeagueEntries', { tier: 'DIAMOND', division: '5' }));
+    });
   });
 
   describe('#get()', function() {
