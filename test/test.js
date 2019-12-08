@@ -39,7 +39,7 @@ describe('TeemoJS', function() {
     });
   });
 
-  describe('#get()', function() {
+  describe('#send()', function() {
     this.slow(500);
     it('championMastery.getAllChampionMasteries', function() {
       return api.send('na1', 'championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
