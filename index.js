@@ -78,13 +78,18 @@ Region.prototype.get = function(origin, target, ...args) {
   if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off and apply it.
     queryParams = args.pop();
 
-  // Interpolate path.
-  let path = this.config.endpoints;
-  for (let segment of target.split('.')) {
-    path = path[segment];
-    if (!path) throw new Error(`Missing path segment "${segment}" in "${target}".`);
-  }
-  path = format(path, ...args.map(arg => encodeURIComponent(arg)));
+  // Get reqConfig, interpolate path.
+  let reqConfig = this.config.endpoints;
+  for (let segment of target.split('.'))
+    if (!(reqConfig = reqConfig[segment]))
+      throw new Error(`Missing path segment "${segment}" in "${target}".`);
+
+  if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
+  let path = format(reqConfig.path, ...args.map(encodeURIComponent));
+
+  // Apply reqConfig.query (if exists) underneath queryParams.
+  if (reqConfig.query)
+    queryParams = Object.assign({}, reqConfig.query, queryParams);
 
   // Build URL.
   let urlBuilder = new URL(path, origin);
@@ -104,11 +109,21 @@ Region.prototype.get = function(origin, target, ...args) {
     headers: {}, // TODO.
     keepalive: true // keep-alive.
   };
+
+  // Apply reqConfig.fetch (if exists) underneath fetchConfig.
+  if (reqConfig.fetch) {
+    if (reqConfig.fetch.headers) // Merge headers.
+      fetchConfig.headers = Object.assign({}, reqConfig.fetch, fetchConfig.headers);
+    fetchConfig = Object.assign({}, reqConfig.fetch, fetchConfig);
+  }
+
+  // Add API key.
   if (this.config.keyHeader)
     fetchConfig.headers[this.config.keyHeader] = this.config.key;
   else
     urlBuilder.searchParams.set(this.config.keyQueryParam, this.config.key);
 
+  // Get rate limits to obey.
   let rateLimits = [ this.appLimit ];
   if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
     rateLimits.push(this._getMethodLimit(target));

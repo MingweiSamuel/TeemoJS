@@ -30,64 +30,191 @@
   "collapseQueryArrays": false,
   "endpoints": {
     "championMasteryV4": {
-      "getAllChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s",
-      "getChampionMastery": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s",
-      "getChampionMasteryScore": "/lol/champion-mastery/v4/scores/by-summoner/%s"
+      "getAllChampionMasteries": {
+        "path": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s"
+      },
+      "getChampionMastery": {
+        "path": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s"
+      },
+      "getChampionMasteryScore": {
+        "path": "/lol/champion-mastery/v4/scores/by-summoner/%s"
+      }
     },
     "championV3": {
-      "getChampionInfo": "/lol/platform/v3/champion-rotations"
+      "getChampionInfo": {
+        "path": "/lol/platform/v3/champion-rotations"
+      }
     },
     "leagueExpV4": {
-      "getLeagueEntries": "/lol/league-exp/v4/entries/%s/%s/%s"
+      "getLeagueEntries": {
+        "path": "/lol/league-exp/v4/entries/%s/%s/%s"
+      }
     },
     "leagueV4": {
-      "getChallengerLeague": "/lol/league/v4/challengerleagues/by-queue/%s",
-      "getLeagueEntriesForSummoner": "/lol/league/v4/entries/by-summoner/%s",
-      "getLeagueEntries": "/lol/league/v4/entries/%s/%s/%s",
-      "getGrandmasterLeague": "/lol/league/v4/grandmasterleagues/by-queue/%s",
-      "getLeagueById": "/lol/league/v4/leagues/%s",
-      "getMasterLeague": "/lol/league/v4/masterleagues/by-queue/%s"
+      "getChallengerLeague": {
+        "path": "/lol/league/v4/challengerleagues/by-queue/%s"
+      },
+      "getLeagueEntriesForSummoner": {
+        "path": "/lol/league/v4/entries/by-summoner/%s"
+      },
+      "getLeagueEntries": {
+        "path": "/lol/league/v4/entries/%s/%s/%s"
+      },
+      "getGrandmasterLeague": {
+        "path": "/lol/league/v4/grandmasterleagues/by-queue/%s"
+      },
+      "getLeagueById": {
+        "path": "/lol/league/v4/leagues/%s"
+      },
+      "getMasterLeague": {
+        "path": "/lol/league/v4/masterleagues/by-queue/%s"
+      }
     },
     "lolStatusV3": {
-      "getShardData": "/lol/status/v3/shard-data"
+      "getShardData": {
+        "path": "/lol/status/v3/shard-data"
+      }
     },
     "matchV4": {
-      "getMatchIdsByTournamentCode": "/lol/match/v4/matches/by-tournament-code/%s/ids",
-      "getMatch": "/lol/match/v4/matches/%s",
-      "getMatchByTournamentCode": "/lol/match/v4/matches/%s/by-tournament-code/%s",
-      "getMatchlist": "/lol/match/v4/matchlists/by-account/%s",
-      "getMatchTimeline": "/lol/match/v4/timelines/by-match/%s"
+      "getMatchIdsByTournamentCode": {
+        "path": "/lol/match/v4/matches/by-tournament-code/%s/ids"
+      },
+      "getMatch": {
+        "path": "/lol/match/v4/matches/%s"
+      },
+      "getMatchByTournamentCode": {
+        "path": "/lol/match/v4/matches/%s/by-tournament-code/%s"
+      },
+      "getMatchlist": {
+        "path": "/lol/match/v4/matchlists/by-account/%s"
+      },
+      "getMatchTimeline": {
+        "path": "/lol/match/v4/timelines/by-match/%s"
+      }
     },
     "spectatorV4": {
-      "getCurrentGameInfoBySummoner": "/lol/spectator/v4/active-games/by-summoner/%s",
-      "getFeaturedGames": "/lol/spectator/v4/featured-games"
+      "getCurrentGameInfoBySummoner": {
+        "path": "/lol/spectator/v4/active-games/by-summoner/%s"
+      },
+      "getFeaturedGames": {
+        "path": "/lol/spectator/v4/featured-games"
+      }
     },
     "summonerV4": {
-      "getByAccountId": "/lol/summoner/v4/summoners/by-account/%s",
-      "getBySummonerName": "/lol/summoner/v4/summoners/by-name/%s",
-      "getByPUUID": "/lol/summoner/v4/summoners/by-puuid/%s",
-      "getBySummonerId": "/lol/summoner/v4/summoners/%s"
+      "getByAccountId": {
+        "path": "/lol/summoner/v4/summoners/by-account/%s"
+      },
+      "getBySummonerName": {
+        "path": "/lol/summoner/v4/summoners/by-name/%s"
+      },
+      "getByPUUID": {
+        "path": "/lol/summoner/v4/summoners/by-puuid/%s"
+      },
+      "getBySummonerId": {
+        "path": "/lol/summoner/v4/summoners/%s"
+      }
     },
     "tftLeagueV1": {
-      "getChallengerLeague": "/tft/league/v1/challenger",
-      "getLeagueEntriesForSummoner": "/tft/league/v1/entries/by-summoner/%s",
-      "getLeagueEntries": "/tft/league/v1/entries/%s/%s",
-      "getGrandmasterLeague": "/tft/league/v1/grandmaster",
-      "getLeagueById": "/tft/league/v1/leagues/%s",
-      "getMasterLeague": "/tft/league/v1/master"
+      "getChallengerLeague": {
+        "path": "/tft/league/v1/challenger"
+      },
+      "getLeagueEntriesForSummoner": {
+        "path": "/tft/league/v1/entries/by-summoner/%s"
+      },
+      "getLeagueEntries": {
+        "path": "/tft/league/v1/entries/%s/%s"
+      },
+      "getGrandmasterLeague": {
+        "path": "/tft/league/v1/grandmaster"
+      },
+      "getLeagueById": {
+        "path": "/tft/league/v1/leagues/%s"
+      },
+      "getMasterLeague": {
+        "path": "/tft/league/v1/master"
+      }
     },
     "tftMatchV1": {
-      "getMatchIdsByPUUID": "/tft/match/v1/matches/by-puuid/%s/ids",
-      "getMatch": "/tft/match/v1/matches/%s"
+      "getMatchIdsByPUUID": {
+        "path": "/tft/match/v1/matches/by-puuid/%s/ids"
+      },
+      "getMatch": {
+        "path": "/tft/match/v1/matches/%s"
+      }
     },
     "tftSummonerV1": {
-      "getByAccountId": "/tft/summoner/v1/summoners/by-account/%s",
-      "getBySummonerName": "/tft/summoner/v1/summoners/by-name/%s",
-      "getByPUUID": "/tft/summoner/v1/summoners/by-puuid/%s",
-      "getBySummonerId": "/tft/summoner/v1/summoners/%s"
+      "getByAccountId": {
+        "path": "/tft/summoner/v1/summoners/by-account/%s"
+      },
+      "getBySummonerName": {
+        "path": "/tft/summoner/v1/summoners/by-name/%s"
+      },
+      "getByPUUID": {
+        "path": "/tft/summoner/v1/summoners/by-puuid/%s"
+      },
+      "getBySummonerId": {
+        "path": "/tft/summoner/v1/summoners/%s"
+      }
     },
     "thirdPartyCodeV4": {
-      "getThirdPartyCodeBySummonerId": "/lol/platform/v4/third-party-code/by-summoner/%s"
+      "getThirdPartyCodeBySummonerId": {
+        "path": "/lol/platform/v4/third-party-code/by-summoner/%s"
+      }
+    },
+    "tournamentStubV4": {
+      "createTournamentCode": {
+        "path": "/lol/tournament-stub/v4/codes",
+        "fetch": {
+          "method": "post"
+        }
+      },
+      "getLobbyEventsByCode": {
+        "path": "/lol/tournament-stub/v4/lobby-events/by-code/%s"
+      },
+      "registerProviderData": {
+        "path": "/lol/tournament-stub/v4/providers",
+        "fetch": {
+          "method": "post"
+        }
+      },
+      "registerTournament": {
+        "path": "/lol/tournament-stub/v4/tournaments",
+        "fetch": {
+          "method": "post"
+        }
+      }
+    },
+    "tournamentV4": {
+      "createTournamentCode": {
+        "path": "/lol/tournament/v4/codes",
+        "fetch": {
+          "method": "post"
+        }
+      },
+      "getTournamentCode": {
+        "path": "/lol/tournament/v4/codes/%s"
+      },
+      "updateCode": {
+        "path": "/lol/tournament/v4/codes/%s",
+        "fetch": {
+          "method": "put"
+        }
+      },
+      "getLobbyEventsByCode": {
+        "path": "/lol/tournament/v4/lobby-events/by-code/%s"
+      },
+      "registerProviderData": {
+        "path": "/lol/tournament/v4/providers",
+        "fetch": {
+          "method": "post"
+        }
+      },
+      "registerTournament": {
+        "path": "/lol/tournament/v4/tournaments",
+        "fetch": {
+          "method": "post"
+        }
+      }
     }
   }
 }

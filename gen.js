@@ -5,58 +5,45 @@ const fetch = require("node-fetch");
 const fs = Promise.promisifyAll(require("fs"));
 const { JSDOM } = require("jsdom");
 
-let defaultConfig = require('./emptyConfig.json');
+let defaultConfig = JSON.parse(JSON.stringify(require('./emptyConfig.json')));
 
-async function req(url) {
-  var res = await fetch(url);
-  if (200 !== res.status)
-    throw new Error(`Request failed: "${url}".`);
-  return await res.text();
+function camelCase(...tokens) {
+  return [
+    tokens.shift(),
+    ...tokens.map(t => t.charAt(0).toUpperCase() + t.slice(1))
+  ].join('');
 }
 
-req('https://developer.riotgames.com/api-methods/')
-  .then(body => {
-    let dom = new JSDOM(body);
+async function main() {
+  const res = await fetch('http://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.json');
+  if (200 !== res.status)
+    throw new Error(`Fetch failed: ${res.status}.`);
 
-    let els = dom.window.document.getElementsByClassName('api_option');
-    let endpoints = {};
-    for (let el of els) {
-      let name = el.getAttribute('api-name');
-      if (name.startsWith('tournament'))
+  const config = {};
+
+  const { paths } = await res.json();
+  for (let [ path, methodOperation ] of Object.entries(paths)) {
+    path = path.replace(/\{\w+\}/g, '%s');
+    for (const [ method, operation ] of Object.entries(methodOperation)) {
+      if (method.startsWith('x-'))
         continue;
-      let url = 'https://developer.riotgames.com/api-details/' + name;
-      endpoints[name] = req(url)
-        .catch(e => req(url)); // 1 retry.
+
+      let [ endpoint, name ] = operation.operationId.split('.');
+      endpoint = camelCase(...endpoint.split('-'));
+
+      console.log(`${endpoint}:\t${method}\t${name}`);
+
+      (config[endpoint] = config[endpoint] || {})[name] = {
+        path,
+        fetch: 'get' === method ? undefined : {
+          method
+        }
+      };
     }
-    return Promise.props(endpoints);
-  })
-  .then(endpoints => {
-    let res = {};
-    for (let [name, body] of Object.entries(endpoints)) {
-      let tokens = name.split('-');
-      let camelName = tokens.shift(); // Don't change capitalization of first.
-      for (let token of tokens)
-        camelName += token.charAt(0).toUpperCase() + token.slice(1);
+  }
 
-      console.log(camelName);
+  defaultConfig.endpoints = config;
+  await fs.writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2));
+}
 
-      let endpoint = {};
-      res[camelName] = endpoint;
-
-      let data = JSON.parse(body);
-      let dom = new JSDOM(data.html);
-      let ops = dom.window.document.getElementsByClassName('operation');
-      for (let op of ops) {
-        let opName = op.getAttribute('id').substr(1);
-        let path = op.getElementsByClassName('path')[0].textContent;
-        path = path.trim().replace(/\{\S+?\}/g, '%s');
-        console.log(`  ${opName}: ${path}`);
-        endpoint[opName] = path;
-      }
-    }
-    defaultConfig.endpoints = res;
-    return Promise.all([
-      fs.writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2)),
-    ]);
-  });
-//  .then(res => fs.writeFileAsync('defaultConfig.json', JSON.stringify(res, null, 2)));
+main().catch(console.err);
