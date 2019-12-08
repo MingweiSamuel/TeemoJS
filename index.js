@@ -13,12 +13,14 @@ RiotApi.defaultConfig    = require('./defaultConfig.json');
 RiotApi.championGGConfig = require('./championGGConfig.json');
 
 
-/** Returns a formatted string, replacing "%s" with supplied args. */
-function format(format, ...args) {
+/** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT. */
+function format(format, argObject) {
   let i = 0;
-  const result = format.replace(/%s/g, () => args[i++]);
-  if (i !== args.length)
-    throw new Error(`Wrong number of args provided for format "${format}", ${args.length} provided, ${i} needed.`);
+  const result = format.replace(/\{(\w*)\}/g, (_, key) => {
+    let val = undefined !== argObject[key] ? argObject[key] : argObject[(key = i++)];
+    if (undefined === val) throw new Error(`Argument provided for format "${format}" missing key "${key}".`);
+    return val;
+  });
   return result;
 }
 
@@ -38,13 +40,13 @@ function RiotApi(key, config = {}) {
     this.config.key = key;
   Object.assign(this.config, config);
   this.regions = {};
-  this.hasRegions = this.config.origin.includes('%s');
+  this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
 RiotApi.prototype.get = function() {
   if (!this.hasRegions)
     return this._getRegion(null).get(this.config.origin, ...arguments);
   let [ region, ...rest ] = arguments;
-  rest.unshift(format(this.config.origin, region));
+  rest.unshift(format(this.config.origin, [ region ]));
   return this._getRegion(region).get(...rest);
 };
 /** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
@@ -85,7 +87,7 @@ Region.prototype.get = function(origin, target, ...args) {
       throw new Error(`Missing path segment "${segment}" in "${target}".`);
 
   if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
-  let path = format(reqConfig.path, ...args.map(encodeURIComponent));
+  let path = format(reqConfig.path, args.map(encodeURIComponent));
 
   // Apply reqConfig.query (if exists) underneath queryParams.
   if (reqConfig.query)

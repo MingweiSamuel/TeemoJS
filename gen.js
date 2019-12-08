@@ -23,7 +23,6 @@ async function main() {
 
   const { paths } = await res.json();
   for (let [ path, methodOperation ] of Object.entries(paths)) {
-    path = path.replace(/\{\w+\}/g, '%s');
     for (const [ method, operation ] of Object.entries(methodOperation)) {
       if (method.startsWith('x-'))
         continue;

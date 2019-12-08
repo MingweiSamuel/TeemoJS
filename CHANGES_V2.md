@@ -15,6 +15,10 @@ See API Changes for possible changes you will need to make to upgrade.
 * Thrown `Error`s may now contain a `.response` field containing the latest
   failed Fetch API `Response` instance.
 * In the config, `"prefix"` has been renamed to `"origin"`.
+* In the config, format strings now use `{}` or `{nameHere}` instead of `%s`.
+  (Python `str.format`-style instead of sprintf-style `%s`).
+* In the config, endpoints are now more than just a path. Now fetch params,
+  query params, and other things can be defined in addition to `path`.
 
 ## Internal Changes
 
