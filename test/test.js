@@ -38,7 +38,7 @@ describe('TeemoJS', function() {
   describe('#get()', function() {
     this.slow(500);
     it('championMastery.getAllChampionMasteries', function() {
-      return api.get('na1', 'championMasteryV4.getAllChampionMasteries', SID_LUGNUTSK)
+      return api.get('na1', 'championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
         .then(data => {
           assert.ok(data);
           assert.ok(data.length >= 48);
@@ -46,7 +46,7 @@ describe('TeemoJS', function() {
         });
     });
     it('championMastery.getChampionMastery', function() {
-      return api.get('na1', 'championMasteryV4.getChampionMastery', SID_LUGNUTSK, 143)
+      return api.get('na1', 'championMasteryV4.getChampionMastery', [ SID_LUGNUTSK, 143 ])
         .then(data => {
           assert.equal(data.championId, 143);
           assert.ok(data.championPoints >= 349767);
@@ -63,7 +63,7 @@ describe('TeemoJS', function() {
         });
     });
     it('match.getMatchlist (list params)', function() {
-      return api.get('na1', 'matchV4.getMatchlist', AID_C9SNEAKY, { champion: [81, 429], season: 8 })
+      return api.get('na1', 'matchV4.getMatchlist', [ AID_C9SNEAKY ], { champion: [81, 429], season: 8 })
         .then(data => {
           assert.ok(data);
           assert.ok(data.matches);
@@ -88,7 +88,7 @@ describe('TeemoJS', function() {
         });
     });
     it('summoner.getBySummonerName encoding test', function() {
-      return api.get('na1', 'summonerV4.getBySummonerName', 'The Øne And Ønly')
+      return api.get('na1', 'summonerV4.getBySummonerName', { summonerName: 'The Øne And Ønly' })
         .then(data => {
           assert.ok(data);
           assert.equal(data.id, 'hJqNbVEFncBg2KuHNUjztd6fJyy9ymX8LjYcGfrIuPXATow');

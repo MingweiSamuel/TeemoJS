@@ -13,7 +13,8 @@ RiotApi.defaultConfig    = require('./defaultConfig.json');
 RiotApi.championGGConfig = require('./championGGConfig.json');
 
 
-/** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT. */
+/** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.
+  * ARGOBJECT may be an object or Array. */
 function format(format, argObject) {
   let i = 0;
   const result = format.replace(/\{(\w*)\}/g, (_, key) => {
@@ -29,11 +30,17 @@ function delayPromise(millis) {
   return new Promise(resolve => setTimeout(resolve, millis));
 }
 
+const objFromEntries = Object.fromEntries || function(entries) {
+  const obj = {};
+  entries.forEach(([ key, val ]) => obj[key] = val);
+  return obj;
+};
+
 
 /** `RiotApi(key [, config])` or `RiotApi(config)` with `config.key` set. */
 function RiotApi(key, config = {}) {
   if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
-  this.config = JSON.parse(JSON.stringify(RiotApi.defaultConfig));
+  this.config = { ...RiotApi.defaultConfig };
   if (key instanceof Object)
     config = key;
   else
@@ -74,22 +81,24 @@ function Region(config) {
   this.methodLimits = {};
   this.concurrentSema = new Semaphore(this.config.maxConcurrent);
 }
-Region.prototype.get = function(origin, target, ...args) {
-  // Get query param arg.
-  let queryParams = {};
-  if (typeof args[args.length - 1] === 'object') // If last obj is query string, pop it off and apply it.
-    queryParams = args.pop();
-
-  // Get reqConfig, interpolate path.
+Region.prototype.get = function(origin, target, pathParams = {}, queryParams = {}, bodyParams = null) {
+  // Get reqConfig.
   let reqConfig = this.config.endpoints;
   for (let segment of target.split('.'))
     if (!(reqConfig = reqConfig[segment]))
       throw new Error(`Missing path segment "${segment}" in "${target}".`);
 
   if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
-  let path = format(reqConfig.path, args.map(encodeURIComponent));
+  // Interpolate path.
+  if (typeof pathParams === 'object') // Object dict.
+    pathParams = objFromEntries(Object.entries(pathParams).map(([ key, val ]) => [ key, encodeURIComponent(val) ]));
+  else if (Array.isArray(pathParams)) // Array.
+    pathParams = pathParams.map(encodeURIComponent);
+  else // Single value.
+    pathParams = [ pathParams ];
+  let path = format(reqConfig.path, pathParams);
 
-  // Apply reqConfig.query (if exists) underneath queryParams.
+  // Apply reqConfig.query (if exists) underneath `queryParams`.
   if (reqConfig.query)
     queryParams = Object.assign({}, reqConfig.query, queryParams);
 
@@ -111,6 +120,11 @@ Region.prototype.get = function(origin, target, ...args) {
     headers: {}, // TODO.
     keepalive: true // keep-alive.
   };
+  // Add body to fetchConfig, if supplied.
+  if (bodyParams) {
+    fetchConfig.body = JSON.stringify(body);
+    fetchConfig.headers['Content-Type'] = 'application/json';
+  }
 
   // Apply reqConfig.fetch (if exists) underneath fetchConfig.
   if (reqConfig.fetch) {

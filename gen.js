@@ -23,6 +23,9 @@ async function main() {
 
   const { paths } = await res.json();
   for (let [ path, methodOperation ] of Object.entries(paths)) {
+    path = path.replace('{encryptedSummonerId}', '{summonerId}')
+      .replace('{encryptedAccountId}', '{accountId}')
+      .replace('{encryptedPUUID}', '{puuid}');
     for (const [ method, operation ] of Object.entries(methodOperation)) {
       if (method.startsWith('x-'))
         continue;
