@@ -28,7 +28,7 @@ function testBurst(timespan, limit, count) {
   });
 }
 
-xdescribe('TokenBucket', function() {
+describe('TokenBucket', function() {
   this.slow(2000);
 
   for (let i = 50; i < 200; i += 10) {
