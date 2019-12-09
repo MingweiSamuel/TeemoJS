@@ -1,9 +1,8 @@
 // This file creates defaultConfig.json
 // This is not meant to be `require`d in a project.
-const Promise = require("bluebird");
 const fetch = require("node-fetch");
-const fs = Promise.promisifyAll(require("fs"));
-const { JSDOM } = require("jsdom");
+const { writeFile } = require("fs");
+const writeFileAsync = require("util").promisify(writeFile);
 
 let defaultConfig = JSON.parse(JSON.stringify(require('./emptyConfig.json')));
 
@@ -45,7 +44,7 @@ async function main() {
   }
 
   defaultConfig.endpoints = config;
-  await fs.writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2));
+  await writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2));
 }
 
 main().catch(console.err);
