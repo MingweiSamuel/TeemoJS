@@ -1,7 +1,7 @@
 'use strict';
 
 /** True if running in tests. */
-const DEBUG = /test[\\\/]test[-\w]*\.js$/.test(module.parent && module.parent.filename);
+const DEBUG = /test[\\\/][-\w]+\.js$/.test(module.parent && module.parent.filename);
 
 // Load dependencies.
 const fetch = global.fetch || require(`${'node-fetch'}`);
@@ -145,20 +145,25 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
     rateLimits.push(this._getMethodLimit(target));
 
   return (async () => {
-    // Acquire concurrent request permit.
-    // Note: This considers the time spent waiting for rate limits.
-    await this.concurrentSema.acquire();
-    // Fetch retry loop.
     let response, delay;
+    // Fetch retry loop.
     for (let retries = 0; retries < this.config.retries; retries++) {
-      // Waut for rate limits.
-      while ((delay = RateLimit.getAllOrDelay(rateLimits)) >= 0)
-        await delayPromise(delay);
-
-      response = await fetch(urlBuilder.href, fetchConfig);
-      // Release concurrent request permit.
-      // Note: This may be released before the full response body is read.
-      this.concurrentSema.release();
+      // Acquire concurrent request permit.
+      // Note: This includes the time spent waiting for rate limits. To obey the rate limit we need to send the request
+      //       immediately after delaying, otherwise the request could be delayed into a different bucket.
+      await this.concurrentSema.acquire();
+      try {
+        // Wait for rate limits.
+        while (0 <= (delay = RateLimit.getAllOrDelay(rateLimits)))
+          await delayPromise(delay);
+        // Send request, get response.
+        response = await fetch(urlBuilder.href, fetchConfig);
+      }
+      finally {
+        // Release concurrent request permit.
+        // Note: This may be released before the full response body is read.
+        this.concurrentSema.release();
+      }
 
       // Update if rate limits changed or 429 returned.
       rateLimits.forEach(rl => rl.onResponse(response));
@@ -384,5 +389,6 @@ Semaphore.prototype.release = function() {
 if (DEBUG) {
   TeemoJS.delayPromise = delayPromise;
   TeemoJS.TokenBucket = TokenBucket;
+  TeemoJS.Semaphore = Semaphore;
 }
 module.exports = TeemoJS;
