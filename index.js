@@ -49,12 +49,9 @@ function TeemoJS(key, config = {}) {
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
-TeemoJS.prototype.send = TeemoJS.prototype.get = function() {
-  if (!this.hasRegions)
-    return this._getRegion(null).send(this.config.origin, ...arguments);
-  let [ region, ...rest ] = arguments;
-  rest.unshift(format(this.config.origin, [ region ]));
-  return this._getRegion(region).send(...rest);
+TeemoJS.prototype.send = TeemoJS.prototype.get = function(...args) {
+  const region = this.hasRegions ? args.shift() : null;
+  return this._getRegion(region).send(format(this.config.origin, [ region ]), ...args);
 };
 /** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
   * instances to be used across multiple processes/machines.
@@ -68,13 +65,11 @@ TeemoJS.prototype.setDistFactor = function(factor) {
   Object.values(this.regions).forEach(r => r.updateDistFactor());
 };
 TeemoJS.prototype._getRegion = function(region) {
-  if (this.regions[region])
-    return this.regions[region];
-  return (this.regions[region] = new Region(this.config));
+  return (this.regions[region] = this.regions[region] || new Region(this.config, region));
 };
 
 
-/** RateLimits for a region. One app limit and any number of method limits. */
+/** Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits. */
 function Region(config) {
   this.config = config;
   this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
@@ -145,9 +140,9 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
     rateLimits.push(this._getMethodLimit(target));
 
   return (async () => {
-    let response, delay;
+    let response, delay, retries;
     // Fetch retry loop.
-    for (let retries = 0; retries < this.config.retries; retries++) {
+    for (retries = 0; retries < this.config.retries; retries++) {
       // Acquire concurrent request permit.
       // Note: This includes the time spent waiting for rate limits. To obey the rate limit we need to send the request
       //       immediately after delaying, otherwise the request could be delayed into a different bucket.
@@ -177,7 +172,7 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
         break;
     }
     // Request failed.
-    const err = new Error(`Request failed after ${retries} with code ${response.status}. ` +
+    const err = new Error(`Request failed after ${retries} retries with code ${response.status}. ` +
       "The 'response' field of this Error contains the failed Response for debugging or error handling.");
     err.response = response;
     throw err;
