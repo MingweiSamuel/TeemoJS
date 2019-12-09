@@ -68,10 +68,10 @@ dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyP
   - A `string`, such as `'matchV4.getMatch'` or `'tftMatchV1.getMatchIdsByPUUID'`.
 
 - `pathParams` (optional for some endpoints)  
-  Path parameters for the request. This must match the URL format. This is:
-  - An `Array` with number of values equal to the number of path params. Values will be interpolated in order.
-  - An `object` with corresponding keys for each of the path params. Values will be interpolated by name (key).
-  - A single value for endpoints needing a single path param. Non-`string` values will be converted to `string`.
+  Path parameters for the request. This must match the path params. This is:
+  - An `Array` with values corresponding to each path param. Values will be interpolated in order.
+  - An `object` with keys corresponding to each path param. Values will be interpolated by name (object key).
+  - A single value for endpoints needing exactly one path param. Non-`string` values will be converted to `string`.
   - `[]`, `{}`, or `undefined` for endpoints needing no path params.
 
 - `queryParams` (optional for some endpoints)  
@@ -81,15 +81,15 @@ dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyP
 
 - `bodyParam` (optional for most endpoints)  
   Body parameter for POST, PUT requests in the tournament APIs. This is:
-  - A JSON value (`object`, `string`, `Number`) which will be `JSON.stringify`ed into the request body.
-  - `null` or `undefined` for no body param.
+  - A JSON value (`object`, `Array`, `string`, etc.) which will be `JSON.stringify`ed into the request body.
+  - `undefined` for no body param.
 
 <sup>*Note: platform should be omitted if using a non-Riot API that doesn't use platforms/regions.</sup>
 
 #### Return Value
 - `dataPromise`  
   The data returned by the Riot API. This is the `JSON.parse`d body of the response. This is:
-  - A `Promise` resolving to a JSON value (`object`, `string`, `Number`, `null`) parsed from the response body.
+  - A `Promise` resolving to a JSON value (`object`, `Array`, `string`, etc.) parsed from the response body.
   - A `Promise` resolving to `null` if the response had no body (status code 204, 404, 422).
   - A `Promise` rejecting with an `Error`. The `Error` may have a `.response` field containing the failed repsonse.
 
