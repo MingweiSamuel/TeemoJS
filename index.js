@@ -10,7 +10,8 @@ const URL   = global.URL   || require(`${'url'}`).URL;
 // Assign configurations.
 TeemoJS.emptyConfig      = require('./emptyConfig.json');
 TeemoJS.defaultConfig    = require('./defaultConfig.json');
-TeemoJS.championGGConfig = require('./championGGConfig.json');
+// TeemoJS.championGGConfig = require('./championGGConfig.json');
+TeemoJS.ddragonConfig    = require('./ddragonConfig.json');
 
 
 /** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.
@@ -131,7 +132,7 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
   // Add API key.
   if (this.config.keyHeader)
     fetchConfig.headers[this.config.keyHeader] = this.config.key;
-  else
+  else if (this.config.keyQueryParam)
     urlBuilder.searchParams.set(this.config.keyQueryParam, this.config.key);
 
   // Get rate limits to obey.

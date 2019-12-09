@@ -127,7 +127,7 @@ Only modify the following properties if you know what you're doing. This is main
 - `rateLimitTypeMethod` [object/null]: Same as `rateLimitTypeApplication` but for method rate limits. May be null if the API does not have per-method rate limits.
 - `defaultRetryAfter` [string/null]: Default retry after in seconds if the `headerRetryAfter` is not provided in a 429. Use `null` to cause missing `headerRetryAfter` headers to throw an error.
 - `headerRetryAfter` [string/null]: Header name to look for retry after time in seconds when a 429 is hit. If `null`, `defaultRetryAfter` should be set.
-- `headerLimitType` [string]: Header name to match with the `name` of a rateLimitType to determine which rate limit hit a 429.
+- `headerLimitType` [string/null]: Header name to match with the `name` of a rateLimitType to determine which rate limit hit a 429. `null` always use `defaultLimitType`.
 - `defaultLimitType` [string/null]: Default `name` value to use when the API doesn't return which limit is hit. Set to `null` to throw an error if a 429 happens for no reason. Set to `rateLimitTypeXYZ.name` to default to rate limit type XYZ.
 - `keyHeader` [string/null]: Name of header to put key in or `null` to use query parameters.
 - `keyQueryParam` [string/null]: Name of query parameter to put key in. `keyHeader` must be set to `null` for this to be used.
