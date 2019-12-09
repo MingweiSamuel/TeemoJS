@@ -8,9 +8,9 @@ const fetch = global.fetch || require(`${'node-fetch'}`);
 const URL   = global.URL   || require(`${'url'}`).URL;
 
 // Assign configurations.
-RiotApi.emptyConfig      = require('./emptyConfig.json');
-RiotApi.defaultConfig    = require('./defaultConfig.json');
-RiotApi.championGGConfig = require('./championGGConfig.json');
+TeemoJS.emptyConfig      = require('./emptyConfig.json');
+TeemoJS.defaultConfig    = require('./defaultConfig.json');
+TeemoJS.championGGConfig = require('./championGGConfig.json');
 
 
 /** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.
@@ -37,10 +37,10 @@ const objFromEntries = Object.fromEntries || function(entries) {
 };
 
 
-/** `RiotApi(key [, config])` or `RiotApi(config)` with `config.key` set. */
-function RiotApi(key, config = {}) {
-  if (!(this instanceof RiotApi)) return new RiotApi(...arguments);
-  this.config = { ...RiotApi.defaultConfig };
+/** `TeemoJS(key [, config])` or `TeemoJS(config)` with `config.key` set. */
+function TeemoJS(key, config = {}) {
+  if (!(this instanceof TeemoJS)) return new TeemoJS(...arguments);
+  this.config = { ...TeemoJS.defaultConfig };
   if (key instanceof Object)
     config = key;
   else
@@ -49,7 +49,7 @@ function RiotApi(key, config = {}) {
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
-RiotApi.prototype.send = RiotApi.prototype.get = function() {
+TeemoJS.prototype.send = TeemoJS.prototype.get = function() {
   if (!this.hasRegions)
     return this._getRegion(null).send(this.config.origin, ...arguments);
   let [ region, ...rest ] = arguments;
@@ -59,7 +59,7 @@ RiotApi.prototype.send = RiotApi.prototype.get = function() {
 /** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
   * instances to be used across multiple processes/machines.
   * This can be called at any time. */
-RiotApi.prototype.setDistFactor = function(factor) {
+TeemoJS.prototype.setDistFactor = function(factor) {
   if (factor <= 0 || factor > 1)
     throw new Error("Factor must be greater than zero and non-greater than one.");
   if (this.config.distFactor === factor)
@@ -67,7 +67,7 @@ RiotApi.prototype.setDistFactor = function(factor) {
   this.config.distFactor = factor;
   Object.values(this.regions).forEach(r => r.updateDistFactor());
 };
-RiotApi.prototype._getRegion = function(region) {
+TeemoJS.prototype._getRegion = function(region) {
   if (this.regions[region])
     return this.regions[region];
   return (this.regions[region] = new Region(this.config));
@@ -382,7 +382,7 @@ Semaphore.prototype.release = function() {
 
 
 if (DEBUG) {
-  RiotApi.delayPromise = delayPromise;
-  RiotApi.TokenBucket = TokenBucket;
+  TeemoJS.delayPromise = delayPromise;
+  TeemoJS.TokenBucket = TokenBucket;
 }
-module.exports = RiotApi;
+module.exports = TeemoJS;
