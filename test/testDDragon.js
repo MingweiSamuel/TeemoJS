@@ -3,7 +3,7 @@ const assert = require("assert");
 
 const TeemoJS = require("../index");
 
-describe('DDragon API', function() {
+parallel('DDragon API', function() {
   this.slow(1500);
 
   const api = TeemoJS(TeemoJS.ddragonConfig);

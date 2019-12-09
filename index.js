@@ -12,6 +12,7 @@ TeemoJS.emptyConfig      = require('./emptyConfig.json');
 TeemoJS.defaultConfig    = require('./defaultConfig.json');
 // TeemoJS.championGGConfig = require('./championGGConfig.json');
 TeemoJS.ddragonConfig    = require('./ddragonConfig.json');
+TeemoJS.cdragonConfig    = require('./cdragonConfig.json');
 
 
 /** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.
