@@ -1,5 +1,7 @@
-const { TokenBucket, delayPromise } = require("../index");
+//const parallel = require('mocha.parallel');
 const assert = require("assert");
+
+const { TokenBucket, delayPromise } = require("../index");
 
 function testBurst(timespan, limit, count) {
   let bucket = new TokenBucket(timespan, limit);
@@ -13,7 +15,7 @@ function testBurst(timespan, limit, count) {
     }
     return delayPromise(0).then(fn);
   }
-  let startTime = Date.now();
+  //let startTime = Date.now();
   let promises = Array(count).fill().map(makeReq);
   return Promise.all(promises).then(timestamps => {
     timestamps.sort();

@@ -1,5 +1,7 @@
-const TeemoJS = require("../index");
+const parallel = require('mocha.parallel');
 const assert = require("assert");
+
+const TeemoJS = require("../index");
 
 const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
 const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
@@ -16,7 +18,7 @@ describe('TeemoJS', function() {
     api = TeemoJS(apiKey, { maxConcurrent: 2 });
   });
 
-  describe('bad args', function() {
+  parallel('bad args', function() {
     it('handles bad dist factor', function() {
       assert.throws(() => api.setDistFactor(0));
     });
@@ -39,8 +41,8 @@ describe('TeemoJS', function() {
     });
   });
 
-  describe('#send()', function() {
-    this.slow(500);
+  parallel('#send()', function() {
+    this.slow(1500);
     it('championMastery.getAllChampionMasteries', function() {
       return api.send('na1', 'championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
         .then(data => {
@@ -134,7 +136,8 @@ describe('TeemoJS', function() {
         });
     });
   });
-  describe('#send() tournament', function() {
+  parallel('#send() tournament', function() {
+    this.slow(500);
     it('works for tournament endpoints', async function() {
       const providerId = await api.send('americas', 'tournamentStubV4.registerProviderData', {}, {}, {
         region: "NA",
