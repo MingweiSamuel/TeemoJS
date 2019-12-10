@@ -49,9 +49,9 @@ main();
 
 ### Syntax
 
-Requests are done via `.send(...)`, which returns a promise.
+Requests are done via `.req(...)`, which returns a promise.
 ```js
-dataPromsie = api.send(platform, endpointPath[, pathParams[, queryParams[, bodyParam]]]);
+dataPromsie = api.req(platform, endpointPath[, pathParams[, queryParams[, bodyParam]]]);
 ```
 
 #### Parameters

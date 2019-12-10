@@ -24,27 +24,27 @@ describe('TeemoJS', function() {
     });
     it('handles missing path', function() {
       // TODO return promises?
-      assert.throws(() => api.send('na1', 'hello'));
-      assert.throws(() => api.send('na1', 'hello.world'));
+      assert.throws(() => api.req('na1', 'hello'));
+      assert.throws(() => api.req('na1', 'hello.world'));
     });
     it('handles missing path', function() {
       // TODO return promises?
-      assert.throws(() => api.send('na1', 'hello'));
-      assert.throws(() => api.send('na1', 'hello.world'));
-      assert.throws(() => api.send('na1', 'league'));
+      assert.throws(() => api.req('na1', 'hello'));
+      assert.throws(() => api.req('na1', 'hello.world'));
+      assert.throws(() => api.req('na1', 'league'));
     });
     it('handles wrong path args', function() {
       // queue, tier, division.
-      assert.throws(() => api.send('na1', 'league.getLeagueEntries', 'hi'));
-      assert.throws(() => api.send('na1', 'league.getLeagueEntries', [ 'RANKED_SOLO_5x5', 'GOLD' ]));
-      assert.throws(() => api.send('na1', 'league.getLeagueEntries', { tier: 'DIAMOND', division: '5' }));
+      assert.throws(() => api.req('na1', 'league.getLeagueEntries', 'hi'));
+      assert.throws(() => api.req('na1', 'league.getLeagueEntries', [ 'RANKED_SOLO_5x5', 'GOLD' ]));
+      assert.throws(() => api.req('na1', 'league.getLeagueEntries', { tier: 'DIAMOND', division: '5' }));
     });
   });
 
-  parallel('#send()', function() {
+  parallel('#req()', function() {
     this.slow(1500);
     it('championMastery.getAllChampionMasteries', function() {
-      return api.send('na1', 'championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
+      return api.req('na1', 'championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
         .then(data => {
           assert.ok(data);
           assert.ok(data.length >= 48);
@@ -52,7 +52,7 @@ describe('TeemoJS', function() {
         });
     });
     it('championMastery.getChampionMastery', function() {
-      return api.send('na1', 'championMasteryV4.getChampionMastery', [ SID_LUGNUTSK, 143 ])
+      return api.req('na1', 'championMasteryV4.getChampionMastery', [ SID_LUGNUTSK, 143 ])
         .then(data => {
           assert.equal(data.championId, 143);
           assert.ok(data.championPoints >= 349767);
@@ -60,7 +60,7 @@ describe('TeemoJS', function() {
     });
 
     it('match.getMatchlist', function() {
-      return api.send('na1', 'matchV4.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
+      return api.req('na1', 'matchV4.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
         .then(data => {
           //console.log(data);
           assert.ok(data);
@@ -69,14 +69,14 @@ describe('TeemoJS', function() {
         });
     });
     it('match.getMatchlist (list params)', function() {
-      return api.send('na1', 'matchV4.getMatchlist', [ AID_C9SNEAKY ], { champion: [81, 429], season: 8 })
+      return api.req('na1', 'matchV4.getMatchlist', [ AID_C9SNEAKY ], { champion: [81, 429], season: 8 })
         .then(data => {
           assert.ok(data);
           assert.ok(data.matches);
         });
     });
     it('match.getMatch', function() {
-      return api.send('na1', 'matchV4.getMatch', 2351868633)
+      return api.req('na1', 'matchV4.getMatch', 2351868633)
         .then(data => {
           assert.ok(data);
           assert.equal(data.gameId, 2351868633);
@@ -86,7 +86,7 @@ describe('TeemoJS', function() {
     });
 
     it('summoner.getBySummonerName', function() {
-      return api.send('na1', 'summonerV4.getBySummonerName', 'Lugn uts k')
+      return api.req('na1', 'summonerV4.getBySummonerName', 'Lugn uts k')
         .then(data => {
           assert.ok(data);
           assert.equal(data.id, SID_LUGNUTSK);
@@ -94,7 +94,7 @@ describe('TeemoJS', function() {
         });
     });
     it('summoner.getBySummonerName encoding test', function() {
-      return api.send('na1', 'summonerV4.getBySummonerName', { summonerName: 'The Øne And Ønly' })
+      return api.req('na1', 'summonerV4.getBySummonerName', { summonerName: 'The Øne And Ønly' })
         .then(data => {
           assert.ok(data);
           assert.equal(data.id, 'hJqNbVEFncBg2KuHNUjztd6fJyy9ymX8LjYcGfrIuPXATow');
@@ -103,12 +103,12 @@ describe('TeemoJS', function() {
         });
     });
     xit('summoner.getBySummonerName many', function() {
-      // return api.send('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5V4')
+      // return api.req('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5V4')
       //   .then(data => console.log(JSON.stringify(data.entries.map(s => s.summonerName), null, 2)));
       const names = require('./names.json');
       const count = 100;
       return Promise.all(names.slice(0, count).map(name =>
-        api.send('eun1', 'summonerV4.getBySummonerName', name)
+        api.req('eun1', 'summonerV4.getBySummonerName', name)
           .then(data => {
             if (null !== data) { // Null means name no longer exists.
               //assert.ok(data);
@@ -122,32 +122,32 @@ describe('TeemoJS', function() {
     });
 
     // it('lolStaticData.getChampionList', function() {
-    //   return api.send('na1', 'lolStaticDataV4.getChampionList', { tags: 'all' })
+    //   return api.req('na1', 'lolStaticDataV4.getChampionList', { tags: 'all' })
     //     .then(data => {
     //       assert.ok(data);
     //     });
     // });
 
     it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.send('na1', 'leagueV4.getLeagueEntriesForSummoner', SID_TCTRE)
+      return api.req('na1', 'leagueV4.getLeagueEntriesForSummoner', SID_TCTRE)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
           assert.ok(entry.wins);
         });
     });
   });
-  parallel('#send() tournament', function() {
+  parallel('#req() tournament', function() {
     this.slow(500);
     it('works for tournament endpoints', async function() {
-      const providerId = await api.send('americas', 'tournamentStubV4.registerProviderData', {}, {}, {
+      const providerId = await api.req('americas', 'tournamentStubV4.registerProviderData', {}, {}, {
         region: "NA",
         url: "https://github.com/MingweiSamuel/TeemoJS"
       });
-      const tournamentId = await api.send('americas', 'tournamentStubV4.registerTournament', {}, {}, {
+      const tournamentId = await api.req('americas', 'tournamentStubV4.registerTournament', {}, {}, {
         name: "teemo tournament :)",
         providerId
       });
-      const codes = await api.send('americas', 'tournamentStubV4.createTournamentCode', {},
+      const codes = await api.req('americas', 'tournamentStubV4.createTournamentCode', {},
         {
           count: 10,
           tournamentId

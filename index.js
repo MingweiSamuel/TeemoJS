@@ -51,34 +51,11 @@ function TeemoJS(key, config = {}) {
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
-TeemoJS.prototype.send = TeemoJS.prototype.get = function(...args) {
+TeemoJS.prototype.req = function(...args) {
+  // Get region (first arg, or not).
   const region = this.hasRegions ? args.shift() : null;
-  return this._getRegion(region).send(format(this.config.origin, [ region ]), ...args);
-};
-/** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
-  * instances to be used across multiple processes/machines.
-  * This can be called at any time. */
-TeemoJS.prototype.setDistFactor = function(factor) {
-  if (factor <= 0 || factor > 1)
-    throw new Error("Factor must be greater than zero and non-greater than one.");
-  if (this.config.distFactor === factor)
-    return;
-  this.config.distFactor = factor;
-  Object.values(this.regions).forEach(r => r.updateDistFactor());
-};
-TeemoJS.prototype._getRegion = function(region) {
-  return (this.regions[region] = this.regions[region] || new Region(this.config, region));
-};
+  let [ target, pathParams = {}, queryParams = {}, bodyParam = undefined ] = args;
 
-
-/** Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits. */
-function Region(config) {
-  this.config = config;
-  this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
-  this.methodLimits = {};
-  this.concurrentSema = new Semaphore(this.config.maxConcurrent);
-}
-Region.prototype.send = function(origin, target, pathParams = {}, queryParams = {}, bodyParam = undefined) {
   // Get reqConfig.
   let reqConfig = this.config.endpoints;
   for (let segment of target.split('.'))
@@ -87,10 +64,10 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
 
   if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
   // Interpolate path.
-  if (typeof pathParams === 'object') // Object dict.
-    pathParams = objFromEntries(Object.entries(pathParams).map(([ key, val ]) => [ key, encodeURIComponent(val) ]));
-  else if (Array.isArray(pathParams)) // Array.
+  if (Array.isArray(pathParams)) // Array.
     pathParams = pathParams.map(encodeURIComponent);
+  else if (typeof pathParams === 'object') // Object dict.
+    pathParams = objFromEntries(Object.entries(pathParams).map(([ key, val ]) => [ key, encodeURIComponent(val) ]));
   else // Single value.
     pathParams = [ pathParams ];
   let path = format(reqConfig.path, pathParams);
@@ -100,7 +77,7 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
     queryParams = Object.assign({}, reqConfig.query, queryParams);
 
   // Build URL.
-  let urlBuilder = new URL(path, origin);
+  let urlBuilder = new URL(path, format(this.config.origin, [ region ]));
   // Build URL query params.
   for (let [ key, vals ] of Object.entries(queryParams)) {
     if (!Array.isArray(vals)) // Not array.
@@ -136,6 +113,32 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
   else if (this.config.keyQueryParam)
     urlBuilder.searchParams.set(this.config.keyQueryParam, this.config.key);
 
+  return this._getRegion(region).req(target, urlBuilder.href, fetchConfig);
+};
+/** Limits requests to FACTOR fraction of normal rate limits, allowing multiple
+  * instances to be used across multiple processes/machines.
+  * This can be called at any time. */
+TeemoJS.prototype.setDistFactor = function(factor) {
+  if (factor <= 0 || factor > 1)
+    throw new Error("Factor must be greater than zero and non-greater than one.");
+  if (this.config.distFactor === factor)
+    return;
+  this.config.distFactor = factor;
+  Object.values(this.regions).forEach(r => r.updateDistFactor());
+};
+TeemoJS.prototype._getRegion = function(region) {
+  return (this.regions[region] = this.regions[region] || new Region(this.config, region));
+};
+
+
+/** Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits. */
+function Region(config) {
+  this.config = config;
+  this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
+  this.methodLimits = {};
+  this.concurrentSema = new Semaphore(this.config.maxConcurrent);
+}
+Region.prototype.req = function(target, url, fetchConfig) {
   // Get rate limits to obey.
   let rateLimits = [ this.appLimit ];
   if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
@@ -154,7 +157,7 @@ Region.prototype.send = function(origin, target, pathParams = {}, queryParams = 
         while (0 <= (delay = RateLimit.getAllOrDelay(rateLimits)))
           await delayPromise(delay);
         // Send request, get response.
-        response = await fetch(urlBuilder.href, fetchConfig);
+        response = await fetch(url, fetchConfig);
       }
       finally {
         // Release concurrent request permit.

@@ -10,9 +10,9 @@ xdescribe('TeemoJS', function() {
       throw new Error('Must set RIOT_API_KEY in environment.');
     api = TeemoJS(apiKey, { maxConcurrent: 2 });
   });
-  describe('#get() TFT', function() {
+  describe('#req() TFT', function() {
     it('championMastery.getAllChampionMasteries', function() {
-      return api.get('euw1', 'tftLeague.getChallengerLeague')
+      return api.req('euw1', 'tftLeague.getChallengerLeague')
         .then(data => {
           console.log(data);
           assert.ok(data);
