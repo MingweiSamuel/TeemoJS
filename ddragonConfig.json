@@ -22,6 +22,8 @@
   "keyHeader": null,
   "keyQueryParam": null,
   "collapseQueryArrays": false,
+  "overrides": {},
+  "endpointOverrides": {},
   "endpoints": {
     "api": {
       "versions": {

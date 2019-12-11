@@ -40,29 +40,40 @@ const objFromEntries = Object.fromEntries || function(entries) {
 
 
 /** `TeemoJS(key [, config])` or `TeemoJS(config)` with `config.key` set. */
-function TeemoJS(key, config = {}) {
+function TeemoJS(key, config = TeemoJS.defaultConfig) {
   if (!(this instanceof TeemoJS)) return new TeemoJS(...arguments);
-  this.config = { ...TeemoJS.defaultConfig };
   if (key instanceof Object)
-    config = key;
-  else
+    this.config = key;
+  else {
+    this.config = { ...config };
     this.config.key = key;
-  Object.assign(this.config, config);
+  }
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
 TeemoJS.prototype.req = function(...args) {
   // Get region (first arg, or not).
-  const region = this.hasRegions ? args.shift() : null;
+  let region = this.hasRegions ? args.shift() : null;
   let [ target, pathParams = {}, queryParams = {}, bodyParam = undefined ] = args;
 
   // Get reqConfig.
   let reqConfig = this.config.endpoints;
-  for (let segment of target.split('.'))
+  let overrideName = this.config.endpointOverrides;
+  for (const segment of target.split('.')) {
     if (!(reqConfig = reqConfig[segment]))
       throw new Error(`Missing path segment "${segment}" in "${target}".`);
-
+    if (typeof overrideName === 'object')
+      overrideName = overrideName[segment];
+  }
   if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
+  // Override.
+  const override = this.config.overrides[overrideName || '*'];
+  if (this.hasRegions) {
+    if (!override.regionTable[region]) throw new Error('Failed to determine platform for region: ' +
+      `"${region}", available regions (for this endpoint): ${Object.keys(override.regionTable).join(', ')}.`)
+    region = override.regionTable[region]
+  }
+
   // Interpolate path.
   if (Array.isArray(pathParams)) // Array.
     pathParams = pathParams.map(encodeURIComponent);

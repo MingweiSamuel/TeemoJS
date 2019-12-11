@@ -4,7 +4,12 @@ const fetch = require("node-fetch");
 const { writeFile } = require("fs");
 const writeFileAsync = require("util").promisify(writeFile);
 
-let defaultConfig = JSON.parse(JSON.stringify(require('./emptyConfig.json')));
+const endpointOverrideTable = {
+  "tournament": "tournament",
+  "tftMatch": "tftMatch"
+}
+
+const defaultConfig = require('./emptyConfig.json');
 
 function camelCase(...tokens) {
   return [
@@ -18,7 +23,8 @@ async function main() {
   if (200 !== res.status)
     throw new Error(`Fetch failed: ${res.status}.`);
 
-  const config = {};
+  const endpoints = {};
+  const endpointOverrides = {};
 
   const { paths } = await res.json();
   for (let [ path, methodOperation ] of Object.entries(paths)) {
@@ -34,17 +40,25 @@ async function main() {
 
       console.log(`${endpoint}:\t${method}\t${name}`);
 
-      (config[endpoint] = config[endpoint] || {})[name] = {
+      (endpoints[endpoint] = endpoints[endpoint] || {})[name] = {
         path,
         fetch: 'get' === method ? undefined : {
           method
         }
       };
+      for (const [ endpointPrefix, endpointOverride ] of Object.entries(endpointOverrideTable)) {
+        if (endpoint.startsWith(endpointPrefix))
+          endpointOverrides[endpoint] = endpointOverride;
+      }
     }
   }
 
-  defaultConfig.endpoints = config;
-  await writeFileAsync('defaultConfig.json', JSON.stringify(defaultConfig, null, 2));
+  const output = {
+    ...defaultConfig,
+    endpoints,
+    endpointOverrides
+  }
+  await writeFileAsync('defaultConfig.json', JSON.stringify(output, null, 2));
 }
 
 main().catch(console.err);
