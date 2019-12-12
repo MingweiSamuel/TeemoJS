@@ -10,6 +10,7 @@ const URL   = global.URL   || require(`${'url'}`).URL;
 // Assign configurations.
 TeemoJS.emptyConfig   = require('./emptyConfig.json');
 TeemoJS.defaultConfig = require('./defaultConfig.json');
+TeemoJS.kernelConfig  = require('./kernelConfig.json');
 TeemoJS.ddragonConfig = require('./ddragonConfig.json');
 TeemoJS.cdragonConfig = require('./cdragonConfig.json');
 
@@ -90,7 +91,7 @@ TeemoJS.prototype.req = function(...args) {
   }
 
   // OriginParams. But first override origin.
-  let origin = reqConfig.orgin || this.config.origin;
+  let origin = reqConfig.origin || this.config.origin;
   if (reqConfig.originParams) origin = format(origin, reqConfig.originParams);
 
   // PathParams. Interpolate path.

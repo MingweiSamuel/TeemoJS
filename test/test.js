@@ -8,7 +8,7 @@ const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
 const SID_TCTRE    = 'rF8-YEID3MSbgPF6Hsqdbq92FgdLjilZdhVgI7UARMbzzTk';
 const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
 
-describe('TeemoJS', function() {
+describe('TeemoJS LoL', function() {
   let api;
 
   before(function() {

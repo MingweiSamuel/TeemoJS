@@ -4,6 +4,8 @@ const assert = require("assert");
 
 // No API key access.
 parallel('TeemoJS Multiple Keys', function() {
+  this.slow(1500);
+
   let api;
   before(function() {
     let apiKey = process.env.RIOT_API_KEY;

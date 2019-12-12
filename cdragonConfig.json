@@ -1,5 +1,4 @@
 {
-  "origin": "https://raw.communitydragon.org",
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
@@ -24,7 +23,18 @@
   "collapseQueryArrays": false,
   "endpointOverrides": {},
   "endpoints": {
-    "data": {
+    "cdn": {
+      "*": {
+        "origin": "https://cdn.communitydragon.org"
+      },
+      "champion": {
+        "path": "/{patch}/champion/{champion}/data"
+      }
+    },
+    "raw": {
+      "*": {
+        "origin": "https://raw.communitydragon.org"
+      },
       "championSummary": {
         "path": "/{version}/plugins/rcp-be-lol-game-data/global/{locale}/v1/champion-summary.json"
       },

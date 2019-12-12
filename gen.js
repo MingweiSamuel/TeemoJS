@@ -107,12 +107,22 @@ async function main() {
     }
   }
 
-  const output = {
+  const outputDefault = {
     ...defaultConfig,
     endpoints
-  }
-  objectInsert(output.endpoints, overrides);
-  await writeFileAsync('defaultConfig.json', JSON.stringify(output, null, 2));
+  };
+  objectInsert(outputDefault.endpoints, overrides);
+  const promiseDefault = writeFileAsync('defaultConfig.json', JSON.stringify(outputDefault, null, 2));
+
+  const outputKernel = {
+    ...outputDefault,
+    key: undefined,
+    keyPath: undefined,
+    regionPath: "queryParams.platform"
+  };
+  const promiseKernel = writeFileAsync('kernelConfig.json', JSON.stringify(outputKernel, null, 2));
+
+  await Promise.all([ promiseDefault, promiseKernel ]);
 }
 
 /* Insert fields value into target recursively. Throws if a field in target would be overwritten. */
