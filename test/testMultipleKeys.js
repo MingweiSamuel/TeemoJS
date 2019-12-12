@@ -1,5 +1,5 @@
 const parallel = require('mocha.parallel');
-const TeemoJS = require("../index");
+const TeemoJS = require("../src");
 const assert = require("assert");
 
 // No API key access.

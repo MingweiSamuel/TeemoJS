@@ -8,11 +8,11 @@ const fetch = global.fetch || require(`${'node-fetch'}`);
 const URL   = global.URL   || require(`${'url'}`).URL;
 
 // Assign configurations.
-TeemoJS.emptyConfig   = require('./emptyConfig.json');
-TeemoJS.defaultConfig = require('./defaultConfig.json');
-TeemoJS.kernelConfig  = require('./kernelConfig.json');
-TeemoJS.ddragonConfig = require('./ddragonConfig.json');
-TeemoJS.cdragonConfig = require('./cdragonConfig.json');
+TeemoJS.emptyConfig   = require('../config/empty.json');
+TeemoJS.defaultConfig = require('../config/default.json');
+TeemoJS.kernelConfig  = require('../config/kernel.json');
+TeemoJS.ddragonConfig = require('../config/ddragon.json');
+TeemoJS.cdragonConfig = require('../config/cdragon.json');
 
 
 /** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.

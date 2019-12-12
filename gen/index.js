@@ -65,7 +65,7 @@ const overrides = {
   }
 };
 
-const defaultConfig = require('./emptyConfig.json');
+const defaultConfig = require('../config/empty.json');
 
 function camelCase(...tokens) {
   return tokens.shift() + tokens.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join('');
@@ -112,7 +112,7 @@ async function main() {
     endpoints
   };
   objectInsert(outputDefault.endpoints, overrides);
-  const promiseDefault = writeFileAsync('defaultConfig.json', JSON.stringify(outputDefault, null, 2));
+  const promiseDefault = writeFileAsync(__dirname + '/../config/default.json', JSON.stringify(outputDefault, null, 2));
 
   const outputKernel = {
     ...outputDefault,
@@ -120,7 +120,7 @@ async function main() {
     keyPath: undefined,
     regionPath: "queryParams.platform"
   };
-  const promiseKernel = writeFileAsync('kernelConfig.json', JSON.stringify(outputKernel, null, 2));
+  const promiseKernel = writeFileAsync(__dirname + '/../config/kernel.json', JSON.stringify(outputKernel, null, 2));
 
   await Promise.all([ promiseDefault, promiseKernel ]);
 }

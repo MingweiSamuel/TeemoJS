@@ -3,16 +3,17 @@
   "version": "2.0.0-alpha.3",
   "description": "A Fast & Lightweight Riot API Wrapper",
   "files": [
-    "index.js",
-    "browser.js",
-    "*Config.json"
+    "src/*",
+    "dist/*",
+    "config/*",
+    "*.md"
   ],
-  "main": "index.js",
-  "browser": "browser.js",
+  "main": "src/index.js",
+  "browser": "dist/browser.js",
   "scripts": {
-    "prepare": "node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s TeemoJS --no-bf",
+    "prepare": "node ./node_modules/browserify/bin/cmd.js src/index.js -o dist/browser.js -s TeemoJS --no-bf",
     "test": "node ./node_modules/mocha/bin/mocha",
-    "build": "node gen.js && node ./node_modules/browserify/bin/cmd.js index.js -o browser.js -s TeemoJS --no-bf"
+    "build": "node gen && node ./node_modules/browserify/bin/cmd.js src/index.js -o dist/browser.js -s TeemoJS --no-bf"
   },
   "repository": {
     "type": "git",

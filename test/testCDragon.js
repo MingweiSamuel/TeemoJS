@@ -1,7 +1,7 @@
 const parallel = require('mocha.parallel');
 const assert = require("assert");
 
-const TeemoJS = require("../index");
+const TeemoJS = require("../src");
 
 parallel('CDragon API', function() {
   this.slow(1500);

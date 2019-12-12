@@ -1,7 +1,7 @@
 //const parallel = require('mocha.parallel');
 const assert = require("assert");
 
-const { TokenBucket, delayPromise } = require("../index");
+const { TokenBucket, delayPromise } = require("../src");
 
 function testBurst(timespan, limit, count) {
   let bucket = new TokenBucket(timespan, limit);

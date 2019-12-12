@@ -1,7 +1,7 @@
 const parallel = require('mocha.parallel');
 const assert = require("assert");
 
-const TeemoJS = require("../index");
+const TeemoJS = require("../src");
 
 const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
 const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';

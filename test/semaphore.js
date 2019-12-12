@@ -1,7 +1,7 @@
 //const parallel = require('mocha.parallel');
 const assert = require("assert");
 
-const { Semaphore, delayPromise } = require("../index");
+const { Semaphore, delayPromise } = require("../src");
 
 describe('Semaphore', function() {
   this.slow(1000);
