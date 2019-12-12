@@ -22,7 +22,6 @@
   "keyHeader": null,
   "keyQueryParam": null,
   "collapseQueryArrays": false,
-  "overrides": {},
   "endpointOverrides": {},
   "endpoints": {
     "data": {

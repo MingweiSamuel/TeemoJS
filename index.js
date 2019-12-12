@@ -8,11 +8,10 @@ const fetch = global.fetch || require(`${'node-fetch'}`);
 const URL   = global.URL   || require(`${'url'}`).URL;
 
 // Assign configurations.
-TeemoJS.emptyConfig      = require('./emptyConfig.json');
-TeemoJS.defaultConfig    = require('./defaultConfig.json');
-// TeemoJS.championGGConfig = require('./championGGConfig.json');
-TeemoJS.ddragonConfig    = require('./ddragonConfig.json');
-TeemoJS.cdragonConfig    = require('./cdragonConfig.json');
+TeemoJS.emptyConfig   = require('./emptyConfig.json');
+TeemoJS.defaultConfig = require('./defaultConfig.json');
+TeemoJS.ddragonConfig = require('./ddragonConfig.json');
+TeemoJS.cdragonConfig = require('./cdragonConfig.json');
 
 
 /** Returns a formatted string, replacing "{}" or "{name}" with supplied ARGOBJECT.
@@ -20,8 +19,8 @@ TeemoJS.cdragonConfig    = require('./cdragonConfig.json');
 function format(format, argObject) {
   let i = 0;
   const result = format.replace(/\{(\w*)\}/g, (_, key) => {
-    let val = undefined !== argObject[key] ? argObject[key] : argObject[(key = i++)];
-    if (undefined === val) throw new Error(`Argument provided for format "${format}" missing key "${key}".`);
+    let val = undefined !== argObject[key] ? argObject[key] : argObject[i++];
+    if (undefined === val) throw new Error(`Argument provided for format "${format}" missing key "{${key}}".`);
     return val;
   });
   return result;
@@ -43,11 +42,10 @@ const objFromEntries = Object.fromEntries || function(entries) {
 function TeemoJS(key, config = TeemoJS.defaultConfig) {
   if (!(this instanceof TeemoJS)) return new TeemoJS(...arguments);
   if (key instanceof Object)
-    this.config = key;
-  else {
-    this.config = { ...config };
-    this.config.key = key;
-  }
+    config = key;
+  else
+    config.key = key;
+  this.config = config;
   this.regions = {};
   this.hasRegions = !!this.config.origin.match(/\{\w*\}/);
 }
@@ -57,22 +55,28 @@ TeemoJS.prototype.req = function(...args) {
   let [ target, pathParams = {}, queryParams = {}, bodyParam = undefined ] = args;
 
   // Get reqConfig.
-  let reqConfig = this.config.endpoints;
-  let overrideName = this.config.endpointOverrides;
+  const reqConfigs = [];
+  let endpointTree = this.config.endpoints;
   for (const segment of target.split('.')) {
-    if (!(reqConfig = reqConfig[segment]))
-      throw new Error(`Missing path segment "${segment}" in "${target}".`);
-    if (typeof overrideName === 'object')
-      overrideName = overrideName[segment];
+    if (endpointTree['*']) reqConfigs.push(endpointTree['*'])
+    if (!(endpointTree = endpointTree[segment])) throw new Error(`Missing path segment "${segment}" in "${target}".`);
   }
-  if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find endpoint: "${target}".`);
-  // Override.
-  const override = this.config.overrides[overrideName || '*'];
+  reqConfigs.push(endpointTree);
+  const reqConfig = Object.assign({}, ...reqConfigs);
+  if (reqConfig.fetch) {
+    reqConfig.fetch = Object.assign({}, ...reqConfigs.map(rc => rc.fetch));
+    if (reqConfig.fetch.headers)
+      reqConfig.fetch.headers = Object.assign({}, ...reqConfigs.map(rc => rc.fetch && rc.fetch.headers));
+  }
+  if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find path for target: "${target}".`);
+  // Lookup regions.
   if (this.hasRegions) {
-    if (!override.regionTable[region]) throw new Error('Failed to determine platform for region: ' +
-      `"${region}", available regions (for this endpoint): ${Object.keys(override.regionTable).join(', ')}.`)
-    region = override.regionTable[region]
+    if (!reqConfig.regionTable[region]) throw new Error('Failed to determine platform for region: ' +
+      `"${region}", available regions (for this endpoint): ${Object.keys(reqConfig.regionTable).join(', ')}.`)
+    region = reqConfig.regionTable[region]
   }
+  // Override key.
+  const key = reqConfig.key || this.config.key;
 
   // Interpolate path.
   if (Array.isArray(pathParams)) // Array.
@@ -120,9 +124,9 @@ TeemoJS.prototype.req = function(...args) {
 
   // Add API key.
   if (this.config.keyHeader)
-    fetchConfig.headers[this.config.keyHeader] = this.config.key;
+    fetchConfig.headers[this.config.keyHeader] = key;
   else if (this.config.keyQueryParam)
-    urlBuilder.searchParams.set(this.config.keyQueryParam, this.config.key);
+    urlBuilder.searchParams.set(this.config.keyQueryParam, config.key);
 
   return this._getRegion(region).req(target, urlBuilder.href, fetchConfig);
 };
@@ -138,7 +142,7 @@ TeemoJS.prototype.setDistFactor = function(factor) {
   Object.values(this.regions).forEach(r => r.updateDistFactor());
 };
 TeemoJS.prototype._getRegion = function(region) {
-  return (this.regions[region] = this.regions[region] || new Region(this.config, region));
+  return this.regions[region] || (this.regions[region] = new Region(this.config, region));
 };
 
 

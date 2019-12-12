@@ -34,11 +34,11 @@ const TeemoJS = require('teemojs');
 const api = TeemoJS('RGAPI-KEY-HERE');
 
 async function main() {
-  const summoner = await api.get('na1', 'summonerV4.getBySummonerName', 'x blotter')
+  const summoner = await api.get('na', 'lol.summonerV4.getBySummonerName', 'x blotter')
   console.log(`${summoner.name}'s account id is ${summoner.accountId}.`);
 
   // Get summoner's games on Teemo and Illaoi for a particular season.
-  const matchlist = await api.get('na1', 'matchV4.getMatchlist', summoner.accountId, { champion: [ 17, 420 ] });
+  const matchlist = await api.get('na', 'lol.matchV4.getMatchlist', summoner.accountId, { champion: [ 17, 420 ] });
   console.log(`Fetched ${matchlist.matches.length} games.`);
 
   // ...
@@ -56,16 +56,16 @@ dataPromsie = api.req(platform, endpointPath[, pathParams[, queryParams[, bodyPa
 
 #### Parameters
 - `platform`*  
-  The regional platform to request to. This is:
-  - A `string` such as `'na1'`, `'euw1'`, or `'americas'`.
+  The region to request to. This is:
+  - A region `string` such as `'na'`, `'euw'`, (on some endpoints) `'americas'`, etc.
 
 - `endpointPath`  
-  The endpoint path, such as `'matchV4.getMatch'`. These can by found in the
+  The endpoint path, such as `'lol.matchV4.getMatch'`. These can by found in the
   [config file](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultConfig.json)
   or by looking at the hash (`#`) in the API reference URL, such
   as in [/apis#match-v4/GET_getMatch](https://developer.riotgames.com/apis#match-v4/GET_getMatch).
   This is:
-  - A `string`, such as `'matchV4.getMatch'` or `'tftMatchV1.getMatchIdsByPUUID'`.
+  - A `string`, such as `'lol.matchV4.getMatch'` or `'tft.matchV1.getMatchIdsByPUUID'`.
 
 - `pathParams` (optional for some endpoints)  
   Path parameters for the request. This must match the path params. This is:
