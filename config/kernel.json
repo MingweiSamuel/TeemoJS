@@ -4,29 +4,24 @@
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
-  "defaultBuckets": [
-    {
-      "timespan": 1000,
-      "limit": 1,
-      "factor": 1,
-      "spread": 0
-    }
-  ],
+  "defaultBuckets": [{
+    "timespan": 10000,
+    "limit": 500,
+    "factor": 1,
+    "spread": 0
+  }],
   "rateLimitTypeApplication": {
     "name": "application",
-    "headerLimit": "x-app-rate-limit",
-    "headerCount": "x-app-rate-limit-count"
+    "headerLimit": null,
+    "headerCount": null
   },
-  "rateLimitTypeMethod": {
-    "name": "method",
-    "headerLimit": "x-method-rate-limit",
-    "headerCount": "x-method-rate-limit-count"
-  },
+  "rateLimitTypeMethod": null,
   "defaultRetryAfter": null,
   "headerRetryAfter": "retry-after",
-  "headerLimitType": "x-rate-limit-type",
-  "defaultLimitType": null,
+  "headerLimitType": null,
+  "defaultLimitType": "application",
   "collapseQueryArrays": false,
+  "endpointOverrides": {},
   "endpoints": {
     "lol": {
       "championMasteryV4": {

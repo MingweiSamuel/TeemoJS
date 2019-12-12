@@ -19,10 +19,7 @@
   "headerRetryAfter": "retry-after",
   "headerLimitType": null,
   "defaultLimitType": "application",
-  "keyHeader": null,
-  "keyQueryParam": null,
   "collapseQueryArrays": false,
-  "endpointOverrides": {},
   "endpoints": {
     "api": {
       "versions": {
