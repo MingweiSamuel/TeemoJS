@@ -1,5 +1,8 @@
 {
-  "origin": "https://{}.api.riotgames.com",
+  "key": null,
+  "keyPath": "fetch.headers.X-Riot-Token",
+  "origin": "https://{region}.api.riotgames.com",
+  "regionPath": "originParams.region",
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
@@ -23,8 +26,6 @@
   "headerRetryAfter": "retry-after",
   "headerLimitType": "x-rate-limit-type",
   "defaultLimitType": null,
-  "keyHeader": "X-Riot-Token",
-  "keyQueryParam": null,
   "collapseQueryArrays": false,
   "endpoints": {}
 }

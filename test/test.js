@@ -165,6 +165,6 @@ describe('TeemoJS', function() {
         });
       assert.ok(codes)
       assert.equal(codes.length, 10);
-    })
-  })
+    });
+  });
 });

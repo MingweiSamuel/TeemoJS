@@ -121,7 +121,9 @@ let api = TeemoJS(configWithKey);
 
 Only modify the following properties if you know what you're doing. This is mainly documentation for future reference.
 
+- `keyPath` [OPTIONAL string]: JSON path the key will be inserted into in the `reqConfig`. Or `null` if no key needed.
 - `origin` [interpolated string]: String containing the protocol and host without a trailing forward slash. May have one `%s` for the region or none if the API has no separate regions.
+- `regionPath` [OPTIONAL string]: JSON path the region will be inserted into in the `reqConfig`. Or `null` if no region needed.
 - `defaultBuckets` [object[]]: Array of configuration options for a rate limit's default buckets. These buckets remain in use until the actual rate limit is detected via headers. Each must have at least `timespan` (in milliseconds) and `limit`.
 - `rateLimitTypeApplication` [object]: Rate limit type object for the application rate limit. Containing strings `name`, `headerLimit`, and `headerCount`. `name` is the name of the rate limit used for detecting which type caused a 429. `headerLimit` and `headerCount` are header names for the max rate limit and rate limit count respectively.
 - `rateLimitTypeMethod` [object/null]: Same as `rateLimitTypeApplication` but for method rate limits. May be null if the API does not have per-method rate limits.
@@ -129,8 +131,6 @@ Only modify the following properties if you know what you're doing. This is main
 - `headerRetryAfter` [string/null]: Header name to look for retry after time in seconds when a 429 is hit. If `null`, `defaultRetryAfter` should be set.
 - `headerLimitType` [string/null]: Header name to match with the `name` of a rateLimitType to determine which rate limit hit a 429. `null` always use `defaultLimitType`.
 - `defaultLimitType` [string/null]: Default `name` value to use when the API doesn't return which limit is hit. Set to `null` to throw an error if a 429 happens for no reason. Set to `rateLimitTypeXYZ.name` to default to rate limit type XYZ.
-- `keyHeader` [string/null]: Name of header to put key in or `null` to use query parameters.
-- `keyQueryParam` [string/null]: Name of query parameter to put key in. `keyHeader` must be set to `null` for this to be used.
 - `collapseQueryArrays` [boolean]: If `false`, query arrays will be represented as `a=1&a=2&a=3`. If `true`, `a=1,2,3` will be used. Riot API uses the former, champion.gg uses the later.
 - `endpoints` [nested object]: A (optionally) nested object structure where the leaf values are API endpoint URLs with leading forward slashes. Objects may be nested to any level for organizational purposes. When using the API, the period-delimited path is supplied.
 
