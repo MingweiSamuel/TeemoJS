@@ -10,7 +10,7 @@ describe('TeemoJS LoL', function() {
     let apiKey = process.env.RIOT_API_KEY;
     if (!apiKey)
       throw new Error('Must set RIOT_API_KEY in environment.');
-    api = TeemoJS(apiKey, { ...TeemoJS.defaultConfig, maxConcurrent: 10 });
+    api = TeemoJS(apiKey, { ...TeemoJS.defaultConfig, maxConcurrent: 50 });
   });
 
   parallel('bad args', function() {
@@ -92,11 +92,11 @@ describe('TeemoJS LoL', function() {
           assert.equal(data.name, "The Øne And Ønly");
         });
     });
-    xit('summoner.getBySummonerName many', function() {
+    it('summoner.getBySummonerName many', function() {
       // return api.req('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5V4')
       //   .then(data => console.log(JSON.stringify(data.entries.map(s => s.summonerName), null, 2)));
       const names = require('./names.json');
-      const count = 100;
+      const count = 150;
       return Promise.all(names.slice(0, count).map(name =>
         api.req('eune', 'lol.summonerV4.getBySummonerName', name)
           .then(data => {

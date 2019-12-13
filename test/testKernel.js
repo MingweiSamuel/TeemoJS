@@ -1,9 +1,10 @@
 const parallel = require('mocha.parallel');
+const xparallel = xdescribe;
 const TeemoJS = require("../src");
 const assert = require("assert");
 
-// No API key access.
-parallel('TeemoJS Meraki-Analytics Kernel', function() {
+// Disabled (needs kernel running, localhost:8080).
+xparallel('TeemoJS Meraki-Analytics Kernel', function() {
   this.slow(2000);
 
   // Make a deep copy to not modify the original (in case something else uses it).
