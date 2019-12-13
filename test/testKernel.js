@@ -28,4 +28,12 @@ xparallel('TeemoJS Meraki-Analytics Kernel', function() {
     assert.ok(data);
     assert.ok(data.name);
   });
+  it('gets matchlist with query params', async function() {
+    const summoner = await api.req('euw', 'lol.summonerV4.getBySummonerName', 'mithy');
+    assert.equal(summoner.platform, 'EUW1');
+    const data = await api.req('euw', 'lol.matchV4.getMatchlist', summoner.accountId, { champion: 555, queue: 420 });
+    assert.ok(data);
+    assert.ok(data.matches);
+    assert.ok(data.matches.length > 10);
+  });
 });
