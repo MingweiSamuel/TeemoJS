@@ -92,7 +92,7 @@ describe('TeemoJS LoL', function() {
           assert.equal(data.name, "The Øne And Ønly");
         });
     });
-    it('summoner.getBySummonerName many', function() {
+    xit('summoner.getBySummonerName many', function() {
       // return api.req('eun1','league.getMasterLeague', 'RANKED_SOLO_5x5V4')
       //   .then(data => console.log(JSON.stringify(data.entries.map(s => s.summonerName), null, 2)));
       const names = require('./names.json');

@@ -118,7 +118,22 @@ async function main() {
     ...outputDefault,
     key: undefined,
     keyPath: undefined,
-    regionPath: "queryParams.platform"
+    regionPath: "queryParams.platform",
+    defaultBuckets: [{
+      timespan: 10000,
+      limit: 500,
+      bins: 1,
+      binFactor: 1,
+      overhead: 0
+    }],
+    rateLimitTypeApplication: {
+      name: 'application',
+      headerLimit: null,
+      headerCount: null
+    },
+    rateLimitTypeMethod: null,
+    headerLimitType: null,
+    defaultLimitType: 'application',
   };
   const promiseKernel = writeFileAsync(__dirname + '/../config/kernel.json', JSON.stringify(outputKernel, null, 2));
 

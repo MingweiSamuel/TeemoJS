@@ -10,10 +10,12 @@
     {
       "timespan": 1000,
       "limit": 1,
-      "factor": 1,
-      "spread": 0
+      "bins": 1,
+      "binFactor": 1,
+      "overhead": 0
     }
   ],
+  "bucketsConfig": {},
   "rateLimitTypeApplication": {
     "name": "application",
     "headerLimit": "x-app-rate-limit",

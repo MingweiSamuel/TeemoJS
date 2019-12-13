@@ -6,12 +6,16 @@
   "retries": 3,
   "maxConcurrent": 2000,
   "distFactor": 1,
-  "defaultBuckets": [{
-    "timespan": 1000,
-    "limit": 1,
-    "factor": 1,
-    "spread": 0
-  }],
+  "defaultBuckets": [
+    {
+      "timespan": 1000,
+      "limit": 1,
+      "bins": 1,
+      "binFactor": 1,
+      "overhead": 0
+    }
+  ],
+  "bucketsConfig": {},
   "rateLimitTypeApplication": {
     "name": "application",
     "headerLimit": "x-app-rate-limit",

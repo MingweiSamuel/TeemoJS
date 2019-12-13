@@ -6,9 +6,11 @@
   "defaultBuckets": [{
     "timespan": 10000,
     "limit": 500,
-    "factor": 1,
-    "spread": 0
+    "bins": 1,
+    "binFactor": 1,
+    "overhead": 0
   }],
+  "bucketsConfig": {},
   "rateLimitTypeApplication": {
     "name": "application",
     "headerLimit": null,

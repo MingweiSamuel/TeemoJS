@@ -196,9 +196,8 @@ Region.prototype.updateDistFactor = function() {
   Object.values(this.methodLimits).forEach(rl => rl.setDistFactor(this.config.distFactor));
 };
 Region.prototype._getMethodLimit = function(method) {
-  if (this.methodLimits[method])
-    return this.methodLimits[method];
-  return (this.methodLimits[method] = new RateLimit(this.config.rateLimitTypeMethod, 1, this.config));
+  return this.methodLimits[method] ||
+    (this.methodLimits[method] = new RateLimit(this.config.rateLimitTypeMethod, 1, this.config));
 };
 
 
@@ -231,7 +230,7 @@ RateLimit.prototype.onResponse = function(response) {
   let limitHeader = response.headers.get(this.type.headerLimit);
   let countHeader = response.headers.get(this.type.headerCount);
   if (this._bucketsNeedUpdate(limitHeader, countHeader))
-    this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader);
+    this.buckets = RateLimit._getBucketsFromHeaders(limitHeader, countHeader, this.config.bucketsConfig);
 };
 RateLimit.prototype.setDistFactor = function(factor) {
   this.distFactor = factor;
@@ -243,7 +242,7 @@ RateLimit.prototype._bucketsNeedUpdate = function(limitHeader, countHeader) {
   let limits = this.buckets.map(b => b.toLimitString()).join(',');
   return limitHeader !== limits;
 };
-RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
+RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader, bucketsConfig = {}) {
   // Limits: "20000:10,1200000:600"
   // Counts: "7:10,58:600"
   let limits = limitHeader.split(',');
@@ -261,7 +260,7 @@ RateLimit._getBucketsFromHeaders = function(limitHeader, countHeader) {
       if (limitSpan != countSpan)
         throw new Error(`Limit span and count span do not match: ${limitSpan}, ${countSpan}.`);
 
-      let bucket = new TokenBucket(limitSpan, limitVal, { distFactor: this.distFactor });
+      let bucket = new TokenBucket(limitSpan, limitVal, { distFactor: this.distFactor, ...bucketsConfig });
       bucket.getTokens(countVal);
       return bucket;
     });
@@ -276,35 +275,40 @@ RateLimit.getAllOrDelay = function(rateLimits) {
   return TokenBucket.getAllOrDelay(allBuckets);
 };
 
-/** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair. */
-function TokenBucket(timespan, limit, { distFactor = 1, factor = 20, spread = 500 / timespan, now = Date.now } = {}) {
+/** Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair.
+  * `bins`: Number of discrete bins to count into per timespan. `limit * binFactor` tokens alloted per bin.
+  * `binFactor`: Value in range (0, 1], representing the fraction of `limit` requests allowed per bin.
+  * `Overhead`: Time to extend `timespan` by in milliseconds. This is to prevent literal edge cases where requests can
+  *             be counted into the wrong bucket, causing 429s.
+  * `now`: Function which returns millisecond time.
+  * `distFactor`: Value in range (0, 1] representing the fraction of the total rate limit this instance can use. */
+function TokenBucket(timespan, limit,
+    { distFactor = 1, bins = 20, binFactor = 0.95, overhead = 20 } = {}, now = Date.now) {
+  if (binFactor <= 0 || 1 < binFactor) throw new Error(`binFactor ${binFactor} must be in range (0, 1].`);
   this.now = now;
-
-  this.timespan = timespan;
-  // this.givenLimit is the limit given to the constructor, this.limit is the
-  // functional limit, accounting for this.distFactor.
+  // Given values for checking equality when updating buckets.
+  this.givenTimespan = timespan;
   this.givenLimit = limit;
-  this.factor = factor;
-  this.spread = spread;
-  this.timespanIndex = Math.ceil(timespan / factor);
+  // Configuration values (rarely change).
+  this.binFactor = binFactor;
+  this.timespan = timespan + overhead;
+  this.binTimespan = Math.ceil(this.timespan / bins); // Timespan per bin.
+  // Fields that track requests, (change frequently).
   this.total = 0;
   this.time = -1;
-  this.buffer = new Array(this.factor + 1).fill(0);
+  this.buffer = new Array(bins + 1).fill(0);
 
   this.setDistFactor(distFactor);
 }
 TokenBucket.prototype.setDistFactor = function(distFactor) {
   this.limit = this.givenLimit * distFactor;
-  // TODO: this math is ugly and basically wrong
-  this.limitPerIndex = Math.floor(this.givenLimit / this.spread / this.factor) * distFactor;
-  if (this.limitPerIndex * this.factor < this.limit) // TODO: hack to fix math above
-    this.limitPerIndex = Math.ceil(this.limit / this.factor);
+  this.binLimit = Math.max(1, Math.floor(this.limit * this.binFactor));
 };
 /** Returns delay in milliseconds or -1 if token available. */
 TokenBucket.prototype.getDelay = function() {
   let index = this._update();
   if (this.total < this.limit) {
-    if (this.buffer[index] >= this.limitPerIndex)
+    if (this.buffer[index] >= this.binLimit)
       return this._getTimeToBucket(1);
     return -1;
   }
@@ -321,10 +325,10 @@ TokenBucket.prototype.getTokens = function(n) {
   let index = this._update();
   this.buffer[index] += n;
   this.total += n;
-  return this.total <= this.limit && this.buffer[index] <= this.limitPerIndex;
+  return this.total <= this.limit && this.buffer[index] <= this.binLimit;
 };
 TokenBucket.prototype.toLimitString = function() {
-  return this.givenLimit + ':' + (this.timespan / 1000);
+  return this.givenLimit + ':' + (this.givenTimespan / 1000);
 };
 TokenBucket.prototype._update = function() {
   if (this.time < 0) {
@@ -355,13 +359,13 @@ TokenBucket.prototype._update = function() {
   return index;
 };
 TokenBucket.prototype._getIndex = function(ts) {
-  return Math.floor((ts / this.timespanIndex) % this.buffer.length);
+  return Math.floor((ts / this.binTimespan) % this.buffer.length);
 };
 TokenBucket.prototype._getLength = function(start, end) {
-  return Math.floor(end / this.timespanIndex) - Math.floor(start / this.timespanIndex);
+  return Math.floor(end / this.binTimespan) - Math.floor(start / this.binTimespan);
 };
 TokenBucket.prototype._getTimeToBucket = function(n) {
-  return n * this.timespanIndex - (this.time % this.timespanIndex);
+  return n * this.binTimespan - (this.time % this.binTimespan);
 };
 TokenBucket.getAllOrDelay = function(tokenBuckets) {
   let delay = tokenBuckets
