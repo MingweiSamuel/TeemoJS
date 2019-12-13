@@ -3,11 +3,6 @@ const assert = require("assert");
 
 const TeemoJS = require("../src");
 
-const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
-const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
-const SID_TCTRE    = 'rF8-YEID3MSbgPF6Hsqdbq92FgdLjilZdhVgI7UARMbzzTk';
-const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
-
 describe('TeemoJS LoL', function() {
   let api;
 
@@ -46,37 +41,32 @@ describe('TeemoJS LoL', function() {
 
   parallel('#req()', function() {
     this.slow(1500);
-    it('championMastery.getAllChampionMasteries', function() {
-      return api.req('na', 'lol.championMasteryV4.getAllChampionMasteries', { summonerId: SID_LUGNUTSK })
-        .then(data => {
-          assert.ok(data);
-          assert.ok(data.length >= 48);
-          assert.equal(data[0].championId, 143);
-        });
+    it('championMastery.getAllChampionMasteries', async function() {
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'lugnutsk');
+      const data = await api.req('na', 'lol.championMasteryV4.getAllChampionMasteries', { summonerId: summoner.id });
+      assert.ok(data);
+      assert.ok(data.length >= 48);
+      assert.equal(data[0].championId, 143);
     });
-    it('championMastery.getChampionMastery', function() {
-      return api.req('na', 'lol.championMasteryV4.getChampionMastery', [ SID_LUGNUTSK, 143 ])
-        .then(data => {
-          assert.equal(data.championId, 143);
-          assert.ok(data.championPoints >= 349767);
-        });
+    it('championMastery.getChampionMastery', async function() {
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'lugnutsk');
+      const data = await api.req('na', 'lol.championMasteryV4.getChampionMastery', [ summoner.id, 143 ]);
+      assert.equal(data.championId, 143);
+      assert.ok(data.championPoints >= 500000);
     });
 
-    it('match.getMatchlist', function() {
-      return api.req('na', 'lol.matchV4.getMatchlist', AID_C9SNEAKY, { champion: 429, season: 10 })
-        .then(data => {
-          //console.log(data);
-          assert.ok(data);
-          assert.ok(data.matches);
-          assert.ok(data.matches.length > 10);
-        });
+    it('match.getMatchlist', async function() {
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 sneaky');
+      const data = await api.req('na', 'lol.matchV4.getMatchlist', summoner.accountId, { champion: 429, queue: 420 });
+      assert.ok(data);
+      assert.ok(data.matches);
+      assert.ok(data.matches.length > 10);
     });
-    it('match.getMatchlist (list params)', function() {
-      return api.req('na', 'lol.matchV4.getMatchlist', [ AID_C9SNEAKY ], { champion: [81, 429], season: 8 })
-        .then(data => {
-          assert.ok(data);
-          assert.ok(data.matches);
-        });
+    it('match.getMatchlist (list params)', async function() {
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 sneaky');
+      const data = await api.req('na', 'lol.matchV4.getMatchlist', [ summoner.accountId ], { champion: [81, 429], queue: 420 });
+      assert.ok(data);
+      assert.ok(data.matches);
     });
     it('match.getMatch', function() {
       return api.req('na', 'lol.matchV4.getMatch', 2351868633)
@@ -88,13 +78,10 @@ describe('TeemoJS LoL', function() {
         });
     });
 
-    it('summoner.getBySummonerName', function() {
-      return api.req('na', 'lol.summonerV4.getBySummonerName', 'Lugn uts k')
-        .then(data => {
-          assert.ok(data);
-          assert.equal(data.id, SID_LUGNUTSK);
-          assert.ok(data.summonerLevel > 30); // Level up.
-        });
+    it('summoner.getBySummonerName', async function() {
+      const data = await api.req('na', 'lol.summonerV4.getBySummonerName', 'Lugn uts k');
+      assert.ok(data);
+      assert.ok(data.summonerLevel > 30); // Level up.
     });
     it('summoner.getBySummonerName encoding test', function() {
       return api.req('na', 'lol.summonerV4.getBySummonerName', { summonerName: 'The Øne And Ønly' })
@@ -131,12 +118,13 @@ describe('TeemoJS LoL', function() {
     //     });
     // });
 
-    it('league.getAllLeaguePositionsForSummoner', function() {
-      return api.req('na', 'lol.leagueV4.getLeagueEntriesForSummoner', SID_TCTRE)
-        .then(data => {
-          let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
-          assert.ok(entry.wins);
-        });
+    it('league.getAllLeaguePositionsForSummoner', async function() {
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'xBlotter');
+      const data = await api.req('na', 'lol.leagueV4.getLeagueEntriesForSummoner', summoner.id);
+      if (0 !== data.length) {
+        let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
+        assert.ok(entry.wins);
+      }
     });
   });
   parallel('#req() tournament', function() {
