@@ -37,6 +37,13 @@
     "champion": {
       "getChampionInfo": "/lol/platform/v3/champion-rotations"
     },
+    "clash": {
+      "getPlayersBySummoner": "/lol/clash/v1/players/by-summoner/%s",
+      "getTeamById": "/lol/clash/v1/teams/%s",
+      "getTournaments": "/lol/clash/v1/tournaments",
+      "getTournamentByTeam": "/lol/clash/v1/tournaments/by-team/%s",
+      "getTournamentById": "/lol/clash/v1/tournaments/%s"
+    },
     "leagueExp": {
       "getLeagueEntries": "/lol/league-exp/v4/entries/%s/%s/%s"
     },
@@ -50,6 +57,9 @@
     },
     "lolStatus": {
       "getShardData": "/lol/status/v3/shard-data"
+    },
+    "lorRanked": {
+      "getLeaderboards": "/lor/ranked/v1/leaderboards"
     },
     "match": {
       "getMatchIdsByTournamentCode": "/lol/match/v4/matches/by-tournament-code/%s/ids",
