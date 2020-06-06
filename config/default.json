@@ -49,6 +49,23 @@
           "path": "/lol/platform/v3/champion-rotations"
         }
       },
+      "clashV1": {
+        "getPlayersBySummoner": {
+          "path": "/lol/clash/v1/players/by-summoner/{summonerId}"
+        },
+        "getTeamById": {
+          "path": "/lol/clash/v1/teams/{teamId}"
+        },
+        "getTournaments": {
+          "path": "/lol/clash/v1/tournaments"
+        },
+        "getTournamentByTeam": {
+          "path": "/lol/clash/v1/tournaments/by-team/{teamId}"
+        },
+        "getTournamentById": {
+          "path": "/lol/clash/v1/tournaments/{tournamentId}"
+        }
+      },
       "leagueExpV4": {
         "getLeagueEntries": {
           "path": "/lol/league-exp/v4/entries/{queue}/{tier}/{division}"
@@ -77,6 +94,11 @@
       "statusV3": {
         "getShardData": {
           "path": "/lol/status/v3/shard-data"
+        }
+      },
+      "lorRankedV1": {
+        "getLeaderboards": {
+          "path": "/lor/ranked/v1/leaderboards"
         }
       },
       "matchV4": {
