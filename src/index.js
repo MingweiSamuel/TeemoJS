@@ -58,7 +58,7 @@ function TeemoJS(key, config = TeemoJS.defaultConfig) {
     config.key = key;
 
   this.config = config;
-  this.regions = {};
+  this.regions = {}; // Map: Key -> Platform -> RegionalRequester.
 }
 TeemoJS.prototype.req = function(...args) {
   // Get region (first arg, or not).
@@ -82,7 +82,8 @@ TeemoJS.prototype.req = function(...args) {
   reqConfig.queryParams = Object.assign({}, ...reqConfigs.map(rc => rc.queryParams), queryParams);
   reqConfig.bodyParam || (reqConfig.bodyParam = bodyParam);
   // Override key.
-  if (this.config.keyPath) assignPath(reqConfig, this.config.keyPath, reqConfig.key || this.config.key);
+  const key = reqConfig.key || this.config.key || null;
+  if (this.config.keyPath) assignPath(reqConfig, this.config.keyPath, key);
   // Lookup regions.
   if (this.config.regionPath) {
     if (!reqConfig.regionTable[region]) throw new Error('Failed to determine platform for region: ' +
@@ -127,15 +128,14 @@ TeemoJS.prototype.req = function(...args) {
   * instances to be used across multiple processes/machines.
   * This can be called at any time. */
 TeemoJS.prototype.setDistFactor = function(factor) {
-  if (factor <= 0 || factor > 1)
-    throw new Error("Factor must be greater than zero and non-greater than one.");
-  if (this.config.distFactor === factor)
-    return;
+  if (factor <= 0 || factor > 1) throw new Error("Factor must be greater than zero and non-greater than one.");
+  if (this.config.distFactor === factor) return;
   this.config.distFactor = factor;
-  Object.values(this.regions).forEach(r => r.updateDistFactor());
+  Object.values(this.regions).forEach(keyRegions => Object.values(keyRegions).forEach(r => r.updateDistFactor()));
 };
-TeemoJS.prototype._getRegion = function(region) {
-  return this.regions[region] || (this.regions[region] = new Region(this.config, region));
+TeemoJS.prototype._getRegion = function(key, region) {
+  const keyRegions = this.regions[key] || (this.regions[key] = {});
+  return keyRegions[region] || (keyRegions[region] = new Region(this.config, region));
 };
 
 
