@@ -11,7 +11,7 @@ parallel('TeemoJS Multiple Keys', function() {
     let apiKey = process.env.RIOT_API_KEY;
     let tftKey = process.env.TFT_API_KEY;
     if (!apiKey || !tftKey)
-      throw new Error('Must set RIOT_API_KEY in environment.');
+      throw new Error('Must set RIOT_API_KEY and TFT_API_KEY in environment.');
 
     // Makes a deep copy.
     const config = JSON.parse(JSON.stringify(TeemoJS.defaultConfig));
@@ -26,7 +26,8 @@ parallel('TeemoJS Multiple Keys', function() {
     assert.ok(data);
     assert.ok(data.entries.length >= 10); // Should be a lot more.
   });
-  it('gets lol challenger league', async function() {
+  // Dev (TFT) key expires every 24 hours.
+  xit('gets lol challenger league', async function() {
     const data = await api.req('euw', 'lol.leagueV4.getChallengerLeague', 'RANKED_SOLO_5x5')
     assert.ok(data);
     assert.ok(data.entries.length >= 10);

@@ -56,14 +56,14 @@ describe('TeemoJS LoL', function() {
     });
 
     it('match.getMatchlist', async function() {
-      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 sneaky');
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 zven');
       const data = await api.req('na', 'lol.matchV4.getMatchlist', summoner.accountId, { champion: 429, queue: 420 });
       assert.ok(data);
       assert.ok(data.matches);
       assert.ok(data.matches.length > 10);
     });
     it('match.getMatchlist (list params)', async function() {
-      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 sneaky');
+      const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'c9 zven');
       const data = await api.req('na', 'lol.matchV4.getMatchlist', [ summoner.accountId ], { champion: [81, 429], queue: 420 });
       assert.ok(data);
       assert.ok(data.matches);
