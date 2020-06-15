@@ -1,0 +1,3 @@
+[submodule "swagger-to-ts"]
+	path = swagger-to-ts
+	url = git@github.com:manifoldco/swagger-to-ts.git
