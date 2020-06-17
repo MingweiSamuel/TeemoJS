@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
         "outDir": "dist/",
-        "module": "es2015",
+        "module": "commonjs",
         "target": "es5",
         "lib": [ "es2015", "es2017" ],
+        "types": [],
 
         "newLine": "lf",
         "sourceMap": true,
