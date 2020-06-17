@@ -41,9 +41,9 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
     "browserify": "^16.5.0",
     "mocha": "^5.2.0",
-    "mocha.parallel": "^0.15.6",
-    "node-fetch": "^2.6.0"
+    "mocha.parallel": "^0.15.6"
   }
 }

@@ -1,6 +1,8 @@
 import { TokenBucket } from "./tokenBucket";
 import { RateLimitType } from "./rateLimitType";
 import { TokenBucketConfig } from "./tokenBucketConfig";
+import { Config } from "./config";
+import { Response } from "node-fetch";
 
 /** Rate limit. A collection of token buckets, updated when needed. */
 export class RateLimit {
@@ -19,14 +21,14 @@ export class RateLimit {
         return TokenBucket.getAllOrDelay(allBuckets);
     }
 
-    private readonly config: TODO;
+    private readonly config: Config;
     private readonly type: RateLimitType;
 
     private buckets: Array<TokenBucket>;
     private retryAfter: number;
     private distFactor: number
 
-    constructor(type: RateLimitType, distFactor: number, config) {
+    constructor(type: RateLimitType, distFactor: number, config: Config) {
         this.config = config;
         this.type = type;
         this.buckets = this.config.defaultBuckets.map(b => new TokenBucket(b.timespan, b.limit, b));
@@ -39,23 +41,23 @@ export class RateLimit {
         return now > this.retryAfter ? -1 : this.retryAfter - now;
     }
 
-    onResponse(response: TODO): void {
+    onResponse(response: Response): void {
         // Handle 429 retry-after header (if exists).
         if (429 === response.status) {
-            const type = response.headers.get(this.config.headerLimitType) || this.config.defaultLimitType;
+            const type = this.config.headerLimitType ? response.headers.get(this.config.headerLimitType) : this.config.defaultLimitType;
             if (!type)
                 throw new Error('Response missing type.');
             if (this.type.name === type.toLowerCase()) {
-                let retryAfter = +response.headers.get(this.config.headerRetryAfter);
+                let retryAfter = Number(response.headers.get(this.config.headerRetryAfter));
                 if (Number.isNaN(retryAfter))
                     throw new Error('Response 429 missing retry-after header.');
                 this.retryAfter = Date.now() + retryAfter * 1000 + 500;
             }
         }
         // Update rate limit from headers (if changed).
-        const limitHeader: string = response.headers.get(this.type.headerLimit);
-        const countHeader: string = response.headers.get(this.type.headerCount);
-        if (this._bucketsNeedUpdate(limitHeader, countHeader))
+        const limitHeader: null | string = response.headers.get(this.type.headerLimit);
+        const countHeader: null | string = response.headers.get(this.type.headerCount);
+        if (limitHeader && countHeader && this._bucketsNeedUpdate(limitHeader))
             this.buckets = this._getBucketsFromHeaders(limitHeader, countHeader, this.config.bucketsConfig);
     }
 
@@ -65,9 +67,7 @@ export class RateLimit {
     }
 
     // PRIVATE METHODS
-    private _bucketsNeedUpdate(limitHeader: string, countHeader: string): boolean {
-        if (!limitHeader || !countHeader)
-            return false;
+    private _bucketsNeedUpdate(limitHeader: string): boolean {
         const limits: string = this.buckets.map(b => b.toLimitString()).join(',');
         return limitHeader !== limits;
     }

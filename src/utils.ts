@@ -13,3 +13,8 @@ export function format(format: string, argObject: Array<any> | { [K in string | 
     });
     return result;
 }
+
+/** Returns a promise that resolves after the supplied delay. */
+export function delayPromise(millis: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}

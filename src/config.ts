@@ -1,10 +1,11 @@
-import { TokenBucketConfig } from "./tokenBucket";
-import { RateLimitType } from "./rateLimit";
+import { RequestInit } from "node-fetch";
+import { TokenBucketConfig, TokenBucketDefaultConfig } from "./tokenBucketConfig";
+import { RateLimitType } from "./rateLimitType";
 
 export interface EndpointConfig {
     path?: string,
     regionTable?: { [k: string]: string },
-    fetch?: TODO,
+    fetch?: RequestInit,
 }
 
 export interface EndpointsConfig {
@@ -20,13 +21,14 @@ export interface Config {
     retries: number,
     maxConcurrent: number,
     distFactor: number,
-    defaultBuckets: Array<TokenBucketConfig>,
+    defaultBuckets: Array<TokenBucketDefaultConfig>,
     bucketsConfig: TokenBucketConfig,
     rateLimitTypeApplication: RateLimitType,
     rateLimitTypeMethod: RateLimitType,
     defaultRetryAfter?: number,
     headerRetryAfter: string,
     string: string,
+    headerLimitType?: string,
     defaultLimitType: string,
     collapseQueryArrays: boolean,
     endpoints: EndpointsConfig,
