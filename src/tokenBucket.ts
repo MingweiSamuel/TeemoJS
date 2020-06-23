@@ -49,8 +49,8 @@ export class TokenBucket {
     private time: number;
     private buffer: Array<number>;
 
-    private limit: number;
-    private binLimit: number;
+    private limit!: number;
+    private binLimit!: number;
 
     constructor(timespan: number, limit: number, config: TokenBucketConfig = {}, now: (() => number) = Date.now) {
         const { distFactor, bins, binFactor, overhead } = { ...TOKENBUCKETCONFIG_DEFAULT, ...config };

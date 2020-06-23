@@ -3,17 +3,19 @@
         "outDir": "dist/",
         "module": "commonjs",
         "target": "es5",
-        "lib": [ "es2015", "es2017" ],
+        "lib": [],
         "types": [],
+        "declaration": true,
 
         "newLine": "lf",
-        "sourceMap": true,
+        // "sourceMap": true,
 
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strictNullChecks": true
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true
     },
     "include": [
         "src/**/*"

@@ -5,7 +5,7 @@ import fetch, { Response, RequestInit } from "node-fetch";
 import { delayPromise } from "./utils";
 
 /** Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits. */
-export class Region {
+export class RegionalRequester {
 
     private readonly config: Config;
 
@@ -22,7 +22,7 @@ export class Region {
         this.concurrentSema = new Semaphore(this.config.maxConcurrent);
     }
 
-    req(methodId: string, url: string, fetchConfig: RequestInit) {
+    req<T>(methodId: string, url: string, fetchConfig: RequestInit): Promise<T | null> {
         // Get rate limits to obey.
         const rateLimits: Array<RateLimit> = [ this.appLimit ];
         if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
@@ -53,14 +53,14 @@ export class Region {
                     if ([ 204, 404, 422 ].includes(response.status)) // Successful response, but no data found.
                         return null;
                     if (response.ok) // Successful response (presumably) with body.
-                        return response.json(); // No await to release semaphore sooner.
+                        return response.json() as Promise<T>; // No `await` to release semaphore sooner.
                     if (429 === response.status || response.status >= 500) // Retryable responses.
                         continue;
 
                     // Request failed.
                     const err = new Error(`Request failed after ${retries} retries with code ${response && response.status}. ` +
                         "The 'response' field of this Error contains the failed Response for debugging or error handling.");
-                    (<any>err).response = response;
+                    (err as any).response = response;
                     throw err;
                 }
                 finally {

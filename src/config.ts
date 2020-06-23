@@ -5,12 +5,14 @@ import { RateLimitType } from "./rateLimitType";
 export interface EndpointConfig {
     path?: string,
     regionTable?: { [k: string]: string },
+    pathParams?: { [k: string]: string },
+    queryParams?: { [k: string]: string },
     fetch?: RequestInit,
 }
 
 export interface EndpointsConfig {
-    '*': EndpointConfig,
-    [segment: string]: EndpointsConfig | EndpointConfig
+    '*': undefined | EndpointConfig,
+    [segment: string]: undefined | EndpointsConfig | EndpointConfig
 }
 
 export interface Config {
