@@ -11,9 +11,8 @@
   "main": "src/index.js",
   "browser": "dist/browser.js",
   "scripts": {
-    "prepare": "node ./node_modules/browserify/bin/cmd.js src/index.js -o dist/browser.js -s TeemoJS --no-bf",
-    "test": "node ./node_modules/mocha/bin/mocha",
-    "build": "node gen && node ./node_modules/browserify/bin/cmd.js src/index.js -o dist/browser.js -s TeemoJS --no-bf"
+    "prepare": "sed -i \"s/'form-data'/'form-data\\/index'/g\" ./node_modules/\\@types/node-fetch/index.d.ts && node ./node_modules/typescript/bin/tsc && node ./node_modules/browserify/bin/cmd.js dist/index.js -o dist/browser.js -s TeemoJS --no-bf",
+    "test": "node ./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -38,12 +37,13 @@
   },
   "homepage": "https://github.com/MingweiSamuel/TeemoJS#readme",
   "dependencies": {
+    "@types/node-fetch": "^2.5.7",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
     "browserify": "^16.5.0",
     "mocha": "^5.2.0",
-    "mocha.parallel": "^0.15.6"
+    "mocha.parallel": "^0.15.6",
+    "typescript": "^3.9.5"
   }
 }

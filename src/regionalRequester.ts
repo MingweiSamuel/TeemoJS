@@ -1,11 +1,8 @@
-import { RateLimit } from "./rateLimit";
-import { Semaphore } from "./semaphore";
-import { Config } from "./config";
-import fetch, { Response, RequestInit } from "node-fetch";
-import { delayPromise } from "./utils";
-
-/** Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits. */
-export class RegionalRequester {
+/**
+ * Regional Requester. Handles `RateLimit`s for a region. One app limit and multiple method limits.
+ * @internal
+ */
+class RegionalRequester {
 
     private readonly config: Config;
 
@@ -22,14 +19,16 @@ export class RegionalRequester {
         this.concurrentSema = new Semaphore(this.config.maxConcurrent);
     }
 
-    req<T>(methodId: string, url: string, fetchConfig: RequestInit): Promise<T | null> {
+    req<T>(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): Promise<T | null> {
+        const fetch: fetch = (global as any).fetch || require("" + "node-fetch"); // Prevent browserify from requireing.
+
         // Get rate limits to obey.
         const rateLimits: Array<RateLimit> = [ this.appLimit ];
         if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
             rateLimits.push(this._getMethodLimit(methodId));
     
         return (async () => {
-            let response: Response;
+            let response: import("node-fetch").Response;
             let retries: number = 0;
 
             // Fetch retry loop.
@@ -45,7 +44,7 @@ export class RegionalRequester {
                         await delayPromise(delay);
                     // Send request, get response.
                     response = await fetch(url, fetchConfig);
-    
+
                     // Update if rate limits changed or 429 returned.
                     rateLimits.forEach(rl => rl.onResponse(response));
         

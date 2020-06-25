@@ -1,21 +1,17 @@
-import { RequestInit } from "node-fetch";
-import { TokenBucketConfig, TokenBucketDefaultConfig } from "./tokenBucketConfig";
-import { RateLimitType } from "./rateLimitType";
-
-export interface EndpointConfig {
+interface EndpointConfig {
     path?: string,
-    regionTable?: { [k: string]: string },
-    pathParams?: { [k: string]: string },
-    queryParams?: { [k: string]: string },
-    fetch?: RequestInit,
+    regionTable?: { [key: string]: string },
+    pathParams?:  { [key: string]: string },
+    queryParams?: { [key: string]: string },
+    fetch?: import("node-fetch").RequestInit,
 }
 
-export interface EndpointsConfig {
+interface EndpointsConfig {
     '*': undefined | EndpointConfig,
     [segment: string]: undefined | EndpointsConfig | EndpointConfig
 }
 
-export interface Config {
+interface Config {
     key?: string | undefined,
     keyPath: string,
     origin: string,
@@ -23,13 +19,12 @@ export interface Config {
     retries: number,
     maxConcurrent: number,
     distFactor: number,
-    defaultBuckets: Array<TokenBucketDefaultConfig>,
+    defaultBuckets: Array<InitialTokenBucketConfig>,
     bucketsConfig: TokenBucketConfig,
     rateLimitTypeApplication: RateLimitType,
     rateLimitTypeMethod: RateLimitType,
     defaultRetryAfter?: number,
     headerRetryAfter: string,
-    string: string,
     headerLimitType?: string,
     defaultLimitType: string,
     collapseQueryArrays: boolean,

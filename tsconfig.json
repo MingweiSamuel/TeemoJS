@@ -1,14 +1,17 @@
 {
     "compilerOptions": {
-        "outDir": "dist/",
-        "module": "commonjs",
+        "outFile": "dist/index.js",
+        "module": "none",
         "target": "es5",
         "lib": [],
         "types": [],
         "declaration": true,
 
+        "esModuleInterop": true,
+
         "newLine": "lf",
         // "sourceMap": true,
+        "stripInternal": true,
 
         "noImplicitAny": true,
         "noImplicitThis": true,

@@ -1,4 +1,5 @@
-export class Semaphore {
+/** @internal */
+class Semaphore {
 
     private permits: number;
     private queue: Array<() => void>;

@@ -1,11 +1,8 @@
-import { TokenBucket } from "./tokenBucket";
-import { RateLimitType } from "./rateLimitType";
-import { TokenBucketConfig } from "./tokenBucketConfig";
-import { Config } from "./config";
-import { Response } from "node-fetch";
-
-/** Rate limit. A collection of token buckets, updated when needed. */
-export class RateLimit {
+/**
+ * Rate limit. A collection of token buckets, updated when needed.
+ * @internal
+ */
+class RateLimit {
     /**
      * Get tokens for a single request from all the given rate limits or a delay to wait.
      * Returns -1 if tokens were obtained and the request can proceed, otherwise a positive value in milliseconds to
@@ -41,7 +38,7 @@ export class RateLimit {
         return now > this.retryAfter ? -1 : this.retryAfter - now;
     }
 
-    onResponse(response: Response): void {
+    onResponse(response: import("node-fetch").Response): void {
         // Handle 429 retry-after header (if exists).
         if (429 === response.status) {
             const type = this.config.headerLimitType ? response.headers.get(this.config.headerLimitType) : this.config.defaultLimitType;

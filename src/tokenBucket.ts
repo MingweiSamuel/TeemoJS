@@ -1,7 +1,8 @@
-import { TokenBucketConfig } from "./tokenBucketConfig";
-
-/** Default token bucket configuration. */
-export const TOKENBUCKETCONFIG_DEFAULT = {
+/**
+ * Default token bucket configuration.
+ * @internal
+ */
+const TOKENBUCKETCONFIG_DEFAULT = {
     distFactor: 1,
     bins: 20,
     binFactor: 0.95,
@@ -16,8 +17,9 @@ export const TOKENBUCKETCONFIG_DEFAULT = {
  *     be counted into the wrong bucket, causing 429s.
  * `now`: Function which returns millisecond time.
  * `distFactor`: Value in range (0, 1] representing the fraction of the total rate limit this instance can use.
+ * @internal
  */
-export class TokenBucket {
+class TokenBucket {
 
     /**
      * Get one token from all the given token buckets or a delay to wait.

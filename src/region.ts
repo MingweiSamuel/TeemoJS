@@ -1,4 +1,4 @@
-export enum Region {
+enum Region {
     // Platforms
     BR1  = 1,
     EUN1 = 2,
@@ -18,7 +18,7 @@ export enum Region {
     SEA      = 19,
 }
 
-export namespace Region {
+namespace Region {
     // The AMERICAS routing value serves NA, BR, LAN, LAS, and OCE. The ASIA routing value serves KR and JP. The EUROPE routing value serves EUNE, EUW, TR, and RU.
     export const ROUTES: Array<Region> = ((R: Array<Region>): Array<Region> => {
         // Platforms
@@ -46,3 +46,5 @@ export namespace Region {
         return ROUTES[region];
     }
 }
+
+exports.Region = Region;

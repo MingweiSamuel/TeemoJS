@@ -1,9 +1,4 @@
-import { Config } from "../config";
-import { RegionalRequester } from "../regionalRequester";
-import { RequestInit } from "node-fetch";
-import { Region } from "../region";
-
-class RiotApiImpl {
+class RiotApi {
     private readonly config: Config;
     private readonly regions: { [methodId: string]: RegionalRequester }
 
@@ -16,9 +11,10 @@ class RiotApiImpl {
         return null;
     }
 
-    reqInternal(region: Region | string, methodId: string, url: string, fetchConfig: RequestInit): any {
+    reqInternal(region: Region | string, methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): any {
         const regionStr: string = ('string' === typeof region) ? region : Region[region];
         return null;
     }
 }
-export type RiotApi = RiotApiImpl;
+
+exports.RiotApi = RiotApi;
