@@ -2,7 +2,6 @@ import { Config } from "../config";
 import { RegionalRequester } from "../regionalRequester";
 import { RequestInit } from "node-fetch";
 import { Region } from "../region";
-import { RiotApiExt } from "./riotApiExt";
 
 class RiotApiImpl {
     private readonly config: Config;
@@ -22,6 +21,4 @@ class RiotApiImpl {
         return null;
     }
 }
-
-type RiotApi = RiotApiImpl;
-declare type RiotApi = typeof RiotApiExt;
+export type RiotApi = RiotApiImpl;
