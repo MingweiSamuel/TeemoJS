@@ -1,4 +1,16 @@
 /**
+ * URL class.
+ * @internal
+ */
+const URL: typeof import("url").URL = (global as any).URL || require("url").URL;
+
+/**
+ * Fetch api.
+ * @internal
+ */
+const fetch: fetch = (global as any).fetch || require("node-fetch");
+
+/**
  * Object.fromEntries
  * @internal
  */

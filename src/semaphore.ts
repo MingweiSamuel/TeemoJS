@@ -1,27 +1,27 @@
 /** @internal */
 class Semaphore {
 
-    private permits: number;
-    private queue: Array<() => void>;
+    private _permits: number;
+    private readonly _queue: Array<() => void>;
 
     constructor(count: number) {
-        this.permits = count;
-        this.queue = [];
+        this._permits = count;
+        this._queue = [];
     }
 
     acquire(): Promise<void> {
         return new Promise((resolve: () => void) => {
-            if (this.permits) {
-                this.permits--;
+            if (this._permits) {
+                this._permits--;
                 resolve();
             }
             else
-                this.queue.push(resolve);
+                this._queue.push(resolve);
         });
     }
 
     release(): void {
-        const resolve: (() => void) | undefined = this.queue.shift();
-        (resolve ? resolve() : this.permits++);
+        const resolve: (() => void) | undefined = this._queue.shift();
+        (resolve ? resolve() : this._permits++);
     }
 }

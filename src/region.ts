@@ -18,9 +18,11 @@ enum Region {
     SEA      = 19,
 }
 
+type RegionRoute = Region.AMERICAS | Region.EUROPE | Region.ASIA | Region.SEA;
+
 namespace Region {
     // The AMERICAS routing value serves NA, BR, LAN, LAS, and OCE. The ASIA routing value serves KR and JP. The EUROPE routing value serves EUNE, EUW, TR, and RU.
-    export const ROUTES: Array<Region> = ((R: Array<Region>): Array<Region> => {
+    const ROUTES: Array<RegionRoute> = ((R: Array<RegionRoute>): Array<RegionRoute> => {
         // Platforms
         R[Region.BR1]  = Region.AMERICAS;
         R[Region.EUN1] = Region.EUROPE;
@@ -42,7 +44,7 @@ namespace Region {
         return R;
     })([]);
 
-    export function getRoute(region: Region) {
+    export function getRoute(region: Region): RegionRoute {
         return ROUTES[region];
     }
 }

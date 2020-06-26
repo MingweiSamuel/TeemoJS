@@ -1,0 +1,109 @@
+{{
+    const dotUtils = require('./dotUtils.js');
+    const spec = require('./.spec');
+}}{{= dotUtils.PREAMBLE }}
+
+// http://www.mingweisamuel.com/riotapi-schema/tool/
+// Version {{= spec.info.version }}
+
+{{
+    const endpointGroups = {};
+    for (const path of Object.entries(spec.paths)) {
+        const ep = path[1]['x-endpoint'];
+        (endpointGroups[ep] || (endpointGroups[ep] = [])).push(path);
+    }
+}}
+
+interface RiotApi {
+{{
+    for (const endpointName of Object.keys(endpointGroups))
+    {
+        const endpoint = dotUtils.toUpperCamel(endpointName);
+}}
+    /** Handle for accessing {{= endpoint }} methods. */
+    readonly {{= dotUtils.toLowerCamel(endpointName) }}: {{= endpoint }};
+{{
+    }
+}}
+}
+
+{{
+for (const [ endpointName, endpointMethods ] of Object.entries(endpointGroups))
+{
+    const endpoint = dotUtils.toUpperCamel(endpointName);
+}}
+
+/**
+ * {{= endpoint }} endpoints handle, accessed via `RiotApi.{{= dotUtils.toLowerCamel(endpointName) }}`.
+ * # Riot Developer API Reference
+ * <a href="https://developer.riotgames.com/apis#{{= endpointName }}" target="_blank">`{{= endpointName }}`</a>
+ * 
+ * Note: this is automatically generated.
+ */
+interface {{= endpoint }} {
+{{
+    for (const [ route, path ] of endpointMethods)
+    {
+        for (const [ verb, operation ] of Object.entries(path))
+        {
+            if (verb.startsWith('x-')) continue;
+            const [ endpoint, method ] = operation.operationId.split('.');
+            const ep = dotUtils.toLowerCamel(endpoint);
+            const descArr = operation.description ? operation.description.split('\n') : [];
+
+            let returnType = 'void';
+            const resp200 = operation.responses['200'];
+            if (resp200 && resp200.content) {
+                const jsonInfo = resp200.content['application/json'];
+                returnType = dotUtils.formatPropType(jsonInfo.schema);
+                if (operation['x-nullable-404'])
+                    returnType += ' | null';
+            }
+}}
+    /**
+{{
+            for (const descLine of descArr)
+            {
+}}
+     * {{= descLine }}
+{{
+            }
+}}
+     */
+    {{= method }}(region: Region, args?: object | Array<any>): {{= returnType }};
+{{
+        }
+    }
+}}
+}
+{{
+}
+}}
+
+interface RiotApi {
+{{
+    for (const path of Object.values(spec.paths))
+    {
+        for (const [ verb, operation ] of Object.entries(path))
+        {
+            if (verb.startsWith('x-')) continue;
+            const [ endpoint, method ] = operation.operationId.split('.');
+            const ep = dotUtils.toLowerCamel(endpoint);
+            const descArr = operation.description ? operation.description.split('\n') : [];
+}}
+    /**
+{{
+            for (const descLine of descArr)
+            {
+}}
+     * {{= descLine }}
+{{
+            }
+}}
+     */
+    req(endpoint: "{{= ep }}", method: "{{= method }}", region: Region, args?: object | Array<any>): object;
+{{
+        }
+    }
+}}
+}

@@ -11,8 +11,9 @@
   "main": "src/index.js",
   "browser": "dist/browser.js",
   "scripts": {
-    "prepare": "sed -i \"s/'form-data'/'form-data\\/index'/g\" ./node_modules/\\@types/node-fetch/index.d.ts && node ./node_modules/typescript/bin/tsc && node ./node_modules/browserify/bin/cmd.js dist/index.js -o dist/browser.js -s TeemoJS --no-bf",
-    "test": "node ./node_modules/mocha/bin/mocha"
+    "prepare": "bash build.bash",
+    "test": "node ./node_modules/mocha/bin/mocha",
+    "build": "bash build.bash"
   },
   "repository": {
     "type": "git",
@@ -42,8 +43,12 @@
   },
   "devDependencies": {
     "browserify": "^16.5.0",
+    "dot": "^1.1.3",
+    "glob": "^7.1.2",
+    "glob-promise": "^3.3.0",
     "mocha": "^5.2.0",
     "mocha.parallel": "^0.15.6",
+    "tinyify": "^2.5.2",
     "typescript": "^3.9.5"
   }
 }

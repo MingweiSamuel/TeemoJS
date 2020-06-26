@@ -1,4 +1,3 @@
-/** @internal */
 interface RateLimitType {
     name: string,
     headerLimit: string,

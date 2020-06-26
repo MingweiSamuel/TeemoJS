@@ -1,0 +1,56 @@
+{{
+    const dotUtils = require('./dotUtils.js');
+    const spec = require('./.spec');
+}}{{= dotUtils.PREAMBLE }}
+
+// http://www.mingweisamuel.com/riotapi-schema/tool/
+// Version {{= spec.info.version }}
+
+
+/** 32-bit integer (signed). */
+type int = number;
+/** 64-bit integer (signed). */
+type long = number;
+/** 32-bit single-precision float. */
+type float = number;
+/** 64-bit double-precision float. */
+type double = number;
+
+{{
+    for (const [ name, schema ] of Object.entries(spec.components.schemas))
+    {
+        if ('Error' === name) continue;
+        const [ endpoint, model ] = name.split('.');
+        const { description, properties, required = [] } = schema;
+}}
+
+namespace {{= dotUtils.toLowerCamel(endpoint) }} {
+    /**
+     * {{= model }} data object, automatically generated.
+{{? description }}
+     * # Description
+     * {{= description }}
+{{?}}
+     */
+    export interface {{= model }} {
+{{
+        for (let [ propName, prop ] of Object.entries(properties))
+        {
+            let type = dotUtils.formatPropType(prop);
+            if (!required.includes(propName)) {
+                propName += '?';
+                type += ' | null';
+            }
+}}
+{{? prop.description }}
+        /** {{= prop.description }} */
+{{?}}
+        {{= propName }}: {{= type }};
+{{
+        }
+}}
+    }
+}
+{{
+    }
+}}

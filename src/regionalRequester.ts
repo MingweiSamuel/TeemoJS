@@ -4,27 +4,25 @@
  */
 class RegionalRequester {
 
-    private readonly config: Config;
+    private readonly _config: Config;
 
-    private appLimit: RateLimit;
-    private readonly methodLimits: { [methodId: string]: RateLimit };
-    private readonly concurrentSema: Semaphore;
+    private _appLimit: RateLimit;
+    private readonly _methodLimits: { [methodId: string]: RateLimit };
+    private readonly _concurrentSema: Semaphore;
 
 
     constructor(config: Config) {
-        this.config = config;
+        this._config = config;
 
-        this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
-        this.methodLimits = {};
-        this.concurrentSema = new Semaphore(this.config.maxConcurrent);
+        this._appLimit = new RateLimit(this._config.rateLimitTypeApplication, 1, this._config);
+        this._methodLimits = {};
+        this._concurrentSema = new Semaphore(this._config.maxConcurrent);
     }
 
     req<T>(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): Promise<T | null> {
-        const fetch: fetch = (global as any).fetch || require("" + "node-fetch"); // Prevent browserify from requireing.
-
         // Get rate limits to obey.
-        const rateLimits: Array<RateLimit> = [ this.appLimit ];
-        if (this.config.rateLimitTypeMethod) // Also method limit if applicable.
+        const rateLimits: Array<RateLimit> = [ this._appLimit ];
+        if (this._config.rateLimitTypeMethod) // Also method limit if applicable.
             rateLimits.push(this._getMethodLimit(methodId));
     
         return (async () => {
@@ -36,7 +34,7 @@ class RegionalRequester {
                 // Acquire concurrent request permit.
                 // Note: This includes the time spent waiting for rate limits. To obey the rate limit we need to send the request
                 //             immediately after delaying, otherwise the request could be delayed into a different bucket.
-                await this.concurrentSema.acquire();
+                await this._concurrentSema.acquire();
                 try {
                     // Wait for rate limits.
                     let delay: number;
@@ -65,21 +63,21 @@ class RegionalRequester {
                 finally {
                     // Release concurrent request permit.
                     // Note: This may be released before the full response body is read.
-                    this.concurrentSema.release();
+                    this._concurrentSema.release();
                 }
             }
         })();
     }
 
     updateDistFactor(): void {
-        this.appLimit.setDistFactor(this.config.distFactor);
-        Object.values(this.methodLimits).forEach(rl => rl.setDistFactor(this.config.distFactor));
+        this._appLimit.setDistFactor(this._config.distFactor);
+        Object.values(this._methodLimits).forEach(rl => rl.setDistFactor(this._config.distFactor));
     }
 
     // PRIVATE METHODS
 
     private _getMethodLimit(methodId: string): RateLimit {
-        return this.methodLimits[methodId] ||
-            (this.methodLimits[methodId] = new RateLimit(this.config.rateLimitTypeMethod, 1, this.config));
+        return this._methodLimits[methodId] ||
+            (this._methodLimits[methodId] = new RateLimit(this._config.rateLimitTypeMethod, 1, this._config));
     }
 }
