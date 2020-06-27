@@ -23,7 +23,9 @@ function toLowerCamel(input) {
     return decapitalize(toUpperCamel(input));
 }
 
-function formatPropType(prop) {
+function formatPropType(prop, optional = false) {
+    if (optional)
+        return `${formatPropType(prop)} | null`;
     if ('array' === prop.type)
         return `Array<${formatPropType(prop.items)}>`;
     if ('object' === prop.type)

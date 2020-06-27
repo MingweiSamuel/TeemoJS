@@ -7,7 +7,7 @@ interface RiotApiEndpoint {
 /** @internal */
 const RiotApiEndpointProxyHandler: ProxyHandler<RiotApiEndpoint> = {
     get(target: RiotApiEndpoint, prop: string | number | symbol, receiver: any) {
-        if ('string' === typeof prop)
+        if ('string' === typeof prop) // TODO
             return (region: Region, args?: object | Array<any>): any =>
                 target.base.req(target.endpoint, prop, region, args);
         return Reflect.get(target, prop, receiver);
@@ -18,7 +18,7 @@ const RiotApiEndpointProxyHandler: ProxyHandler<RiotApiEndpoint> = {
 /** @internal */
 const RiotApiProxyHandler: ProxyHandler<RiotApi> = {
     get(target: RiotApi, prop: string | number | symbol, receiver: any) {
-        if ('summonerV4' === prop)
+        if ('string' === typeof prop) // TODO
             return new Proxy({ base: target, endpoint: prop }, RiotApiEndpointProxyHandler);
         return Reflect.get(target, prop, receiver);
     },
@@ -36,11 +36,11 @@ class RiotApi {
         return new Proxy(this, RiotApiProxyHandler);
     }
 
-    req(endpoint: string, method: string, region: Region | string, args?: object | Array<any>): object | null {
+    req(endpoint: string, method: string, region: Region | string, args?: object | Array<any>): any {
         return null;
     }
 
-    reqInternal(region: Region | string, methodId: string, urlStr: string, fetchConfig: import("node-fetch").RequestInit): object | null {
+    reqInternal(region: Region | string, methodId: string, urlStr: string, fetchConfig: import("node-fetch").RequestInit): any {
         const x: import("url").URL = new URL('asdf', 'qwer');
         return null;
 

@@ -8,15 +8,58 @@
 
 {{
     const endpointGroups = {};
-    for (const path of Object.entries(spec.paths)) {
-        const ep = path[1]['x-endpoint'];
-        (endpointGroups[ep] || (endpointGroups[ep] = [])).push(path);
+    const endpointMethodGroups = {};
+
+    for (const endpointPair of Object.entries(spec.paths)) {
+        const [ route, path ] = endpointPair;
+        const ep = path['x-endpoint'];
+        (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
+        endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
+
+        for (const [ verb, operation ] of Object.entries(path)) {
+            if (verb.startsWith('x-')) continue;
+            const [ endpoint, method ] = operation.operationId.split('.');
+            /* const ep = dotUtils.toLowerCamel(endpoint); */
+            const descArr = operation.description ? operation.description.split('\n') : [];
+
+            let returnType = 'void';
+            const resp200 = operation.responses['200'];
+            if (resp200 && resp200.content) {
+                const jsonInfo = resp200.content['application/json'];
+                const returnTypeOptional = operation['x-nullable-404'];
+                returnType = dotUtils.formatPropType(jsonInfo.schema, returnTypeOptional);
+            }
+
+            /* TODO: handle body params? */
+
+            /* Build argument comment & string. */
+            const argBuilder = [];
+            const params = operation.parameters;
+            if (params && params.length) {
+                argBuilder.push(', args');
+                if (params.every(p => !p.required))
+                    argBuilder.push('?');
+                argBuilder.push(': { ');
+                for (const { name, required, schema } of params)
+                    argBuilder.push(name, required ? '' : '?', ': ', dotUtils.formatPropType(schema, !required), ', ');
+                argBuilder.pop();
+                argBuilder.push(' }');
+            }
+            const args = argBuilder.join('');
+
+            endpointMethodGroups[ep].push({
+                descArr,
+                method,
+                args,
+                returnType,
+            });
+        }
     }
 }}
 
 interface RiotApi {
 {{
-    for (const endpointName of Object.keys(endpointGroups))
+    for (const endpointName of Object.keys(endpointMethodGroups))
     {
         const endpoint = dotUtils.toUpperCamel(endpointName);
 }}
@@ -28,9 +71,9 @@ interface RiotApi {
 }
 
 {{
-for (const [ endpointName, endpointMethods ] of Object.entries(endpointGroups))
-{
-    const endpoint = dotUtils.toUpperCamel(endpointName);
+    for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
+    {
+        const endpoint = dotUtils.toUpperCamel(endpointName);
 }}
 
 /**
@@ -42,23 +85,9 @@ for (const [ endpointName, endpointMethods ] of Object.entries(endpointGroups))
  */
 interface {{= endpoint }} {
 {{
-    for (const [ route, path ] of endpointMethods)
-    {
-        for (const [ verb, operation ] of Object.entries(path))
+        for (const endpointMethod of endpointMethods)
         {
-            if (verb.startsWith('x-')) continue;
-            const [ endpoint, method ] = operation.operationId.split('.');
-            const ep = dotUtils.toLowerCamel(endpoint);
-            const descArr = operation.description ? operation.description.split('\n') : [];
-
-            let returnType = 'void';
-            const resp200 = operation.responses['200'];
-            if (resp200 && resp200.content) {
-                const jsonInfo = resp200.content['application/json'];
-                returnType = dotUtils.formatPropType(jsonInfo.schema);
-                if (operation['x-nullable-404'])
-                    returnType += ' | null';
-            }
+            const { descArr, method, args, returnType } = endpointMethod;
 }}
     /**
 {{
@@ -70,26 +99,23 @@ interface {{= endpoint }} {
             }
 }}
      */
-    {{= method }}(region: Region, args?: object | Array<any>): {{= returnType }};
+    {{= method }}(region: Region{{= args }}): {{= returnType }};
 {{
         }
-    }
 }}
 }
 {{
-}
+    }
 }}
 
 interface RiotApi {
 {{
-    for (const path of Object.values(spec.paths))
+    for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
     {
-        for (const [ verb, operation ] of Object.entries(path))
+        for (const endpointMethod of endpointMethods)
         {
-            if (verb.startsWith('x-')) continue;
-            const [ endpoint, method ] = operation.operationId.split('.');
-            const ep = dotUtils.toLowerCamel(endpoint);
-            const descArr = operation.description ? operation.description.split('\n') : [];
+            const { descArr, method, args, returnType } = endpointMethod;
+            const ep = dotUtils.toLowerCamel(endpointName);
 }}
     /**
 {{
@@ -101,7 +127,7 @@ interface RiotApi {
             }
 }}
      */
-    req(endpoint: "{{= ep }}", method: "{{= method }}", region: Region, args?: object | Array<any>): object;
+    req(endpoint: "{{= ep }}", method: "{{= method }}", region: Region{{= args }}): {{= returnType }};
 {{
         }
     }
