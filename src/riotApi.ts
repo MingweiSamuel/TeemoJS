@@ -1,5 +1,5 @@
 type Args = { [argName: string]: any };
-type MethodSpec<ARGS, RETURNTYPE extends Args> = {
+type MethodSpec<TArgs extends Args, TReturn> = {
     path: string,
 }
 type EndpointsSpec = {
@@ -8,38 +8,49 @@ type EndpointsSpec = {
     }
 }
 
-type EndpointMethods<T extends EndpointsSpec> = {
-    [ENDPOINT in keyof T]: {
-        [METHOD in keyof T[ENDPOINT]]:
-            // NonNullable<T[ENDPOINT][METHOD]['fn']>;
-            T[ENDPOINT][METHOD] extends { fn: Function | null }
-                ? NonNullable<T[ENDPOINT][METHOD]['fn']>
-                : (region: Region | string, args?: object | Array<any>) => any;
+type MethodArgs<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
+    TSpec[TEndpoint][TMethod] extends MethodSpec<infer TArgs, any> ? TArgs extends Args ? TArgs : Args : Args;
+
+type MethodReturn<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
+    TSpec[TEndpoint][TMethod] extends MethodSpec<any, infer TReturn> ? Promise<TReturn> : Promise<any>;
+
+type RiotApiFluent<TSpec extends EndpointsSpec> = {
+    [TEndpoint in keyof TSpec]: {
+        [TMethod in keyof TSpec[TEndpoint]]:
+            TSpec[TEndpoint][TMethod] extends { fn: Function | null }
+                ? NonNullable<TSpec[TEndpoint][TMethod]['fn']>
+                : (region: Region | string, args: MethodArgs<TSpec, TEndpoint, TMethod>) => MethodReturn<TSpec, TEndpoint, TMethod>;
     };
 };
 
-
-class RiotApi<T extends EndpointsSpec> {
-    readonly endpoints: T;
+class RiotApi<TSpec extends EndpointsSpec> {
+    readonly endpoints: TSpec;
 
     private readonly _config: Config;
     private readonly _regions: { [key: string]: { [region: string]: RegionalRequester } };
 
-    constructor(endpoints: T, config: Config) {
+    static createRiotApi(): RiotApi<typeof SpecRiotApi> {
+        return new RiotApi(SpecRiotApi, null as any);
+    }
+
+    constructor(endpoints: TSpec, config: Config) {
         this.endpoints = endpoints;
 
         this._config = config;
         this._regions = {};
-
-        return new Proxy(this, getRiotApiProxyHandler());
     }
 
-    req<ENDPOINT extends keyof T, METHOD extends keyof T[ENDPOINT]>(
-        endpoint: ENDPOINT,
-        method: METHOD,
-        args: T[ENDPOINT][METHOD] extends MethodSpec<infer ARGS, any> ? ARGS extends Args ? ARGS : Args : Args,
-    ): T[ENDPOINT][METHOD] extends MethodSpec<any, infer RETURNTYPE> ? RETURNTYPE : any;
-    req(endpoint: string, method: string, args: Args): any
+    toFluent(): RiotApiFluent<TSpec> {
+        return new Proxy(this, getRiotApiProxyHandler()) as any;
+    }
+
+    req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
+        endpoint: TEndpoint,
+        method: TMethod,
+        region: Region | string,
+        args: MethodArgs<TSpec, TEndpoint, TMethod>,
+    ): MethodReturn<TSpec, TEndpoint, TMethod>;
+    req(endpoint: string, method: string, region: Region | string, args: Args): any
     {
         // TODO
         return null;
@@ -57,18 +68,20 @@ class RiotApi<T extends EndpointsSpec> {
 }
 
 /** @internal */
-interface RiotApiEndpoint<T extends EndpointsSpec> {
-    base: RiotApi<T>,
-    endpoint: keyof T;
+interface RiotApiEndpoint<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec> {
+    base: RiotApi<TSpec>,
+    endpoint: TEndpoint;
 }
 
 /** @internal */
-function getRiotApiProxyHandler<T extends EndpointsSpec>(): ProxyHandler<RiotApi<T>> {
+function getRiotApiProxyHandler<TSpec extends EndpointsSpec>():
+    ProxyHandler<RiotApi<TSpec>>
+{
     return {
-        get(target: RiotApi<T>, prop: string | number | symbol, receiver: unknown) {
+        get<TEndpoint extends keyof TSpec>(target: RiotApi<TSpec>, prop: TEndpoint | string | number | symbol, receiver: unknown): any {
             if ('string' === typeof prop && prop in target.endpoints) {
-                const ep: RiotApiEndpoint<T> = { base: target, endpoint: prop };
-                return new Proxy(ep, getRiotApiEndpointProxyHandler<T>());
+                const ep: RiotApiEndpoint<TSpec, TEndpoint> = { base: target, endpoint: prop as TEndpoint };
+                return new Proxy(ep, getRiotApiEndpointProxyHandler<TSpec, TEndpoint>());
             }
             return Reflect.get(target, prop, receiver);
         },
@@ -76,12 +89,14 @@ function getRiotApiProxyHandler<T extends EndpointsSpec>(): ProxyHandler<RiotApi
     };
 }
 /** @internal */
-function getRiotApiEndpointProxyHandler<T extends EndpointsSpec>(): ProxyHandler<RiotApiEndpoint<T>> {
+function getRiotApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec>():
+    ProxyHandler<RiotApiEndpoint<TSpec, TEndpoint>>
+{
     return {
-        get(target: RiotApiEndpoint<T>, prop: string | number | symbol, receiver: unknown) {
+        get<TMethod extends keyof TSpec[TEndpoint]>(target: RiotApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, receiver: unknown) {
             if ('string' === typeof prop && prop in target.base.endpoints[target.endpoint]) {
-                return (region: Region, args?: Args): any =>
-                    target.base.req(target.endpoint, prop, region, args);
+                return (region: Region, args: MethodArgs<TSpec, TEndpoint, TMethod>): any =>
+                    target.base.req(target.endpoint, prop as TMethod, region, args);
             }
             return Reflect.get(target, prop, receiver);
         },

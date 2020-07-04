@@ -10,44 +10,6 @@
 // Version 909460d67267a0122544094d93120b50f8d0f5de
 
 
-/** @internal */
-(RiotApi as { endpoints: RiotApiEndpoints }).endpoints = { "hello": { "world": {} } };
-
-
-interface RiotApi {
-    /** Handle for accessing ChampionMasteryV4 methods. */
-    readonly championMasteryV4: ChampionMasteryV4;
-    /** Handle for accessing ChampionV3 methods. */
-    readonly championV3: ChampionV3;
-    /** Handle for accessing ClashV1 methods. */
-    readonly clashV1: ClashV1;
-    /** Handle for accessing LeagueExpV4 methods. */
-    readonly leagueExpV4: LeagueExpV4;
-    /** Handle for accessing LeagueV4 methods. */
-    readonly leagueV4: LeagueV4;
-    /** Handle for accessing LolStatusV3 methods. */
-    readonly lolStatusV3: LolStatusV3;
-    /** Handle for accessing LorRankedV1 methods. */
-    readonly lorRankedV1: LorRankedV1;
-    /** Handle for accessing MatchV4 methods. */
-    readonly matchV4: MatchV4;
-    /** Handle for accessing SpectatorV4 methods. */
-    readonly spectatorV4: SpectatorV4;
-    /** Handle for accessing SummonerV4 methods. */
-    readonly summonerV4: SummonerV4;
-    /** Handle for accessing TftLeagueV1 methods. */
-    readonly tftLeagueV1: TftLeagueV1;
-    /** Handle for accessing TftMatchV1 methods. */
-    readonly tftMatchV1: TftMatchV1;
-    /** Handle for accessing TftSummonerV1 methods. */
-    readonly tftSummonerV1: TftSummonerV1;
-    /** Handle for accessing ThirdPartyCodeV4 methods. */
-    readonly thirdPartyCodeV4: ThirdPartyCodeV4;
-    /** Handle for accessing TournamentStubV4 methods. */
-    readonly tournamentStubV4: TournamentStubV4;
-    /** Handle for accessing TournamentV4 methods. */
-    readonly tournamentV4: TournamentV4;
-}
 
 
 /**
@@ -61,7 +23,7 @@ interface ChampionMasteryV4 {
     /**
      * Get all champion mastery entries sorted by number of champion points descending,
      */
-    getAllChampionMasteries(region: Region, args: { encryptedSummonerId: string }): Array<championMasteryV4.ChampionMasteryDTO>;
+    getAllChampionMasteries(region: Region, args: { encryptedSummonerId: string }): championMasteryV4.ChampionMasteryDTO[];
     /**
      * Get a champion mastery by player ID and champion ID.
      */
@@ -99,7 +61,7 @@ interface ClashV1 {
      * ## Implementation Notes
      * This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
      */
-    getPlayersBySummoner(region: Region, args: { summonerId: string }): Array<clashV1.PlayerDto>;
+    getPlayersBySummoner(region: Region, args: { summonerId: string }): clashV1.PlayerDto[];
     /**
      * Get team by ID.
      */
@@ -107,7 +69,7 @@ interface ClashV1 {
     /**
      * Get all active or upcoming tournaments.
      */
-    getTournaments(region: Region): Array<clashV1.TournamentDto>;
+    getTournaments(region: Region): clashV1.TournamentDto[];
     /**
      * Get tournament by team ID.
      */
@@ -129,7 +91,7 @@ interface LeagueExpV4 {
     /**
      * Get all the league entries.
      */
-    getLeagueEntries(region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): Array<leagueExpV4.LeagueEntryDTO>;
+    getLeagueEntries(region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): leagueExpV4.LeagueEntryDTO[];
 }
 
 /**
@@ -147,11 +109,11 @@ interface LeagueV4 {
     /**
      * Get league entries in all queues for a given summoner ID.
      */
-    getLeagueEntriesForSummoner(region: Region, args: { encryptedSummonerId: string }): Array<leagueV4.LeagueEntryDTO>;
+    getLeagueEntriesForSummoner(region: Region, args: { encryptedSummonerId: string }): leagueV4.LeagueEntryDTO[];
     /**
      * Get all the league entries.
      */
-    getLeagueEntries(region: Region, args: { division: "I" | "II" | "III" | "IV", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", page?: int | null }): Array<leagueV4.LeagueEntryDTO>;
+    getLeagueEntries(region: Region, args: { division: "I" | "II" | "III" | "IV", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", page?: int | null }): leagueV4.LeagueEntryDTO[];
     /**
      * Get the grandmaster league of a specific queue.
      */
@@ -207,7 +169,7 @@ interface MatchV4 {
     /**
      * Get match IDs by tournament code.
      */
-    getMatchIdsByTournamentCode(region: Region, args: { tournamentCode: string }): Array<long>;
+    getMatchIdsByTournamentCode(region: Region, args: { tournamentCode: string }): long[];
     /**
      * Get match by match ID.
      */
@@ -225,7 +187,7 @@ interface MatchV4 {
      * 
      * If beginTime is specified, but not endTime, then endTime defaults to the the current unix timestamp in milliseconds (the maximum time range limitation is not observed in this specific case). If endTime is specified, but not beginTime, then beginTime defaults to the start of the account's match history returning a 400 due to the maximum time range limitation. If both are specified, then endTime should be greater than beginTime. The maximum time range allowed is one week, otherwise a 400 error code is returned.
      */
-    getMatchlist(region: Region, args: { encryptedAccountId: string, champion?: Array<int> | null, queue?: Array<int> | null, season?: Array<int> | null, endTime?: long | null, beginTime?: long | null, endIndex?: int | null, beginIndex?: int | null }): matchV4.MatchlistDto | null;
+    getMatchlist(region: Region, args: { encryptedAccountId: string, champion?: int[] | null, queue?: int[] | null, season?: int[] | null, endTime?: long | null, beginTime?: long | null, endIndex?: int | null, beginIndex?: int | null }): matchV4.MatchlistDto | null;
     /**
      * Get match timeline by match ID.
      * ## Implementation Notes
@@ -293,11 +255,11 @@ interface TftLeagueV1 {
     /**
      * Get league entries for a given summoner ID.
      */
-    getLeagueEntriesForSummoner(region: Region, args: { encryptedSummonerId: string }): Array<tftLeagueV1.LeagueEntryDTO>;
+    getLeagueEntriesForSummoner(region: Region, args: { encryptedSummonerId: string }): tftLeagueV1.LeagueEntryDTO[];
     /**
      * Get all the league entries.
      */
-    getLeagueEntries(region: Region, args: { tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): Array<tftLeagueV1.LeagueEntryDTO>;
+    getLeagueEntries(region: Region, args: { tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): tftLeagueV1.LeagueEntryDTO[];
     /**
      * Get the grandmaster league.
      */
@@ -323,7 +285,7 @@ interface TftMatchV1 {
     /**
      * Get a list of match ids by PUUID.
      */
-    getMatchIdsByPUUID(region: Region, args: { puuid: String, count?: int | null }): Array<string>;
+    getMatchIdsByPUUID(region: Region, args: { puuid: String, count?: int | null }): string[];
     /**
      * Get a match by match id.
      */
@@ -381,7 +343,7 @@ interface TournamentStubV4 {
     /**
      * Create a mock tournament code for the given tournament.
      */
-    createTournamentCode(region: Region, args: { count?: int | null, tournamentId: long }): Array<string>;
+    createTournamentCode(region: Region, args: { count?: int | null, tournamentId: long }): string[];
     /**
      * Gets a mock list of lobby events by tournament code.
      */
@@ -409,7 +371,7 @@ interface TournamentV4 {
     /**
      * Create a tournament code for the given tournament.
      */
-    createTournamentCode(region: Region, args: { count?: int | null, tournamentId: long }): Array<string>;
+    createTournamentCode(region: Region, args: { count?: int | null, tournamentId: long }): string[];
     /**
      * Returns the tournament code DTO associated with a tournament code string.
      */
@@ -434,229 +396,193 @@ interface TournamentV4 {
     registerTournament(region: Region): int;
 }
 
-interface RiotApi {
-    /**
-     * Get all champion mastery entries sorted by number of champion points descending,
-     */
-    req(endpoint: "championMasteryV4", method: "getAllChampionMasteries", region: Region, args: { encryptedSummonerId: string }): Array<championMasteryV4.ChampionMasteryDTO>;
-    /**
-     * Get a champion mastery by player ID and champion ID.
-     */
-    req(endpoint: "championMasteryV4", method: "getChampionMastery", region: Region, args: { championId: long, encryptedSummonerId: string }): championMasteryV4.ChampionMasteryDTO | null;
-    /**
-     * Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-     */
-    req(endpoint: "championMasteryV4", method: "getChampionMasteryScore", region: Region, args: { encryptedSummonerId: string }): int;
-    /**
-     * Returns champion rotations, including free-to-play and low-level free-to-play rotations (REST)
-     */
-    req(endpoint: "championV3", method: "getChampionInfo", region: Region): championV3.ChampionInfo;
-    /**
-     * Get players by summoner ID.
-     * ## Implementation Notes
-     * This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
-     */
-    req(endpoint: "clashV1", method: "getPlayersBySummoner", region: Region, args: { summonerId: string }): Array<clashV1.PlayerDto>;
-    /**
-     * Get team by ID.
-     */
-    req(endpoint: "clashV1", method: "getTeamById", region: Region, args: { teamId: string }): clashV1.TeamDto | null;
-    /**
-     * Get all active or upcoming tournaments.
-     */
-    req(endpoint: "clashV1", method: "getTournaments", region: Region): Array<clashV1.TournamentDto>;
-    /**
-     * Get tournament by team ID.
-     */
-    req(endpoint: "clashV1", method: "getTournamentByTeam", region: Region, args: { teamId: string }): clashV1.TournamentDto | null;
-    /**
-     * Get tournament by ID.
-     */
-    req(endpoint: "clashV1", method: "getTournamentById", region: Region, args: { tournamentId: int }): clashV1.TournamentDto | null;
-    /**
-     * Get all the league entries.
-     */
-    req(endpoint: "leagueExpV4", method: "getLeagueEntries", region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): Array<leagueExpV4.LeagueEntryDTO>;
-    /**
-     * Get the challenger league for given queue.
-     */
-    req(endpoint: "leagueV4", method: "getChallengerLeague", region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }): leagueV4.LeagueListDTO;
-    /**
-     * Get league entries in all queues for a given summoner ID.
-     */
-    req(endpoint: "leagueV4", method: "getLeagueEntriesForSummoner", region: Region, args: { encryptedSummonerId: string }): Array<leagueV4.LeagueEntryDTO>;
-    /**
-     * Get all the league entries.
-     */
-    req(endpoint: "leagueV4", method: "getLeagueEntries", region: Region, args: { division: "I" | "II" | "III" | "IV", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", page?: int | null }): Array<leagueV4.LeagueEntryDTO>;
-    /**
-     * Get the grandmaster league of a specific queue.
-     */
-    req(endpoint: "leagueV4", method: "getGrandmasterLeague", region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }): leagueV4.LeagueListDTO;
-    /**
-     * Get league with given ID, including inactive entries.
-     */
-    req(endpoint: "leagueV4", method: "getLeagueById", region: Region, args: { leagueId: string }): leagueV4.LeagueListDTO | null;
-    /**
-     * Get the master league for given queue.
-     */
-    req(endpoint: "leagueV4", method: "getMasterLeague", region: Region, args: { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }): leagueV4.LeagueListDTO;
-    /**
-     * Get League of Legends status for the given shard.
-     * ## Rate Limit Notes
-     * Requests to this API are not counted against the application Rate Limits.
-     */
-    req(endpoint: "lolStatusV3", method: "getShardData", region: Region): lolStatusV3.ShardStatus;
-    /**
-     * Get the players in Master tier.
-     */
-    req(endpoint: "lorRankedV1", method: "getLeaderboards", region: Region): lorRankedV1.LeaderboardDto;
-    /**
-     * Get match IDs by tournament code.
-     */
-    req(endpoint: "matchV4", method: "getMatchIdsByTournamentCode", region: Region, args: { tournamentCode: string }): Array<long>;
-    /**
-     * Get match by match ID.
-     */
-    req(endpoint: "matchV4", method: "getMatch", region: Region, args: { matchId: long }): matchV4.MatchDto | null;
-    /**
-     * Get match by match ID and tournament code.
-     */
-    req(endpoint: "matchV4", method: "getMatchByTournamentCode", region: Region, args: { tournamentCode: string, matchId: long }): matchV4.MatchDto;
-    /**
-     * Get matchlist for games played on given account ID and platform ID and filtered using given filter parameters, if any.
-     * ## Implementation Notes
-     * A number of optional parameters are provided for filtering. It is up to the caller to ensure that the combination of filter parameters provided is valid for the requested account, otherwise, no matches may be returned.
-     * 
-     * If beginIndex is specified, but not endIndex, then endIndex defaults to beginIndex+100. If endIndex is specified, but not beginIndex, then beginIndex defaults to 0. If both are specified, then endIndex must be greater than beginIndex. The maximum range allowed is 100, otherwise a 400 error code is returned.
-     * 
-     * If beginTime is specified, but not endTime, then endTime defaults to the the current unix timestamp in milliseconds (the maximum time range limitation is not observed in this specific case). If endTime is specified, but not beginTime, then beginTime defaults to the start of the account's match history returning a 400 due to the maximum time range limitation. If both are specified, then endTime should be greater than beginTime. The maximum time range allowed is one week, otherwise a 400 error code is returned.
-     */
-    req(endpoint: "matchV4", method: "getMatchlist", region: Region, args: { encryptedAccountId: string, champion?: Array<int> | null, queue?: Array<int> | null, season?: Array<int> | null, endTime?: long | null, beginTime?: long | null, endIndex?: int | null, beginIndex?: int | null }): matchV4.MatchlistDto | null;
-    /**
-     * Get match timeline by match ID.
-     * ## Implementation Notes
-     * Not all matches have timeline data.
-     */
-    req(endpoint: "matchV4", method: "getMatchTimeline", region: Region, args: { matchId: long }): matchV4.MatchTimelineDto | null;
-    /**
-     * Get current game information for the given summoner ID.
-     */
-    req(endpoint: "spectatorV4", method: "getCurrentGameInfoBySummoner", region: Region, args: { encryptedSummonerId: string }): spectatorV4.CurrentGameInfo | null;
-    /**
-     * Get list of featured games.
-     */
-    req(endpoint: "spectatorV4", method: "getFeaturedGames", region: Region): spectatorV4.FeaturedGames;
-    /**
-     * Get a summoner by account ID.
-     */
-    req(endpoint: "summonerV4", method: "getByAccountId", region: Region, args: { encryptedAccountId: string }): summonerV4.SummonerDTO;
-    /**
-     * Get a summoner by summoner name.
-     */
-    req(endpoint: "summonerV4", method: "getBySummonerName", region: Region, args: { summonerName: string }): summonerV4.SummonerDTO | null;
-    /**
-     * Get a summoner by PUUID.
-     */
-    req(endpoint: "summonerV4", method: "getByPUUID", region: Region, args: { encryptedPUUID: string }): summonerV4.SummonerDTO;
-    /**
-     * Get a summoner by summoner ID.
-     */
-    req(endpoint: "summonerV4", method: "getBySummonerId", region: Region, args: { encryptedSummonerId: string }): summonerV4.SummonerDTO;
-    /**
-     * Get the challenger league.
-     */
-    req(endpoint: "tftLeagueV1", method: "getChallengerLeague", region: Region): tftLeagueV1.LeagueListDTO;
-    /**
-     * Get league entries for a given summoner ID.
-     */
-    req(endpoint: "tftLeagueV1", method: "getLeagueEntriesForSummoner", region: Region, args: { encryptedSummonerId: string }): Array<tftLeagueV1.LeagueEntryDTO>;
-    /**
-     * Get all the league entries.
-     */
-    req(endpoint: "tftLeagueV1", method: "getLeagueEntries", region: Region, args: { tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }): Array<tftLeagueV1.LeagueEntryDTO>;
-    /**
-     * Get the grandmaster league.
-     */
-    req(endpoint: "tftLeagueV1", method: "getGrandmasterLeague", region: Region): tftLeagueV1.LeagueListDTO;
-    /**
-     * Get league with given ID, including inactive entries.
-     */
-    req(endpoint: "tftLeagueV1", method: "getLeagueById", region: Region, args: { leagueId: string }): tftLeagueV1.LeagueListDTO | null;
-    /**
-     * Get the master league.
-     */
-    req(endpoint: "tftLeagueV1", method: "getMasterLeague", region: Region): tftLeagueV1.LeagueListDTO;
-    /**
-     * Get a list of match ids by PUUID.
-     */
-    req(endpoint: "tftMatchV1", method: "getMatchIdsByPUUID", region: Region, args: { puuid: String, count?: int | null }): Array<string>;
-    /**
-     * Get a match by match id.
-     */
-    req(endpoint: "tftMatchV1", method: "getMatch", region: Region, args: { matchId: String }): tftMatchV1.MatchDto | null;
-    /**
-     * Get a summoner by account ID.
-     */
-    req(endpoint: "tftSummonerV1", method: "getByAccountId", region: Region, args: { encryptedAccountId: string }): tftSummonerV1.SummonerDTO;
-    /**
-     * Get a summoner by summoner name.
-     */
-    req(endpoint: "tftSummonerV1", method: "getBySummonerName", region: Region, args: { summonerName: string }): tftSummonerV1.SummonerDTO | null;
-    /**
-     * Get a summoner by PUUID.
-     */
-    req(endpoint: "tftSummonerV1", method: "getByPUUID", region: Region, args: { encryptedPUUID: string }): tftSummonerV1.SummonerDTO;
-    /**
-     * Get a summoner by summoner ID.
-     */
-    req(endpoint: "tftSummonerV1", method: "getBySummonerId", region: Region, args: { encryptedSummonerId: string }): tftSummonerV1.SummonerDTO;
-    /**
-     * Get third party code for a given summoner ID.
-     */
-    req(endpoint: "thirdPartyCodeV4", method: "getThirdPartyCodeBySummonerId", region: Region, args: { encryptedSummonerId: string }): String;
-    /**
-     * Create a mock tournament code for the given tournament.
-     */
-    req(endpoint: "tournamentStubV4", method: "createTournamentCode", region: Region, args: { count?: int | null, tournamentId: long }): Array<string>;
-    /**
-     * Gets a mock list of lobby events by tournament code.
-     */
-    req(endpoint: "tournamentStubV4", method: "getLobbyEventsByCode", region: Region, args: { tournamentCode: string }): tournamentStubV4.LobbyEventDTOWrapper;
-    /**
-     * Creates a mock tournament provider and returns its ID.
-     * ## Implementation Notes
-     * Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
-     */
-    req(endpoint: "tournamentStubV4", method: "registerProviderData", region: Region): int;
-    /**
-     * Creates a mock tournament and returns its ID.
-     */
-    req(endpoint: "tournamentStubV4", method: "registerTournament", region: Region): int;
-    /**
-     * Create a tournament code for the given tournament.
-     */
-    req(endpoint: "tournamentV4", method: "createTournamentCode", region: Region, args: { count?: int | null, tournamentId: long }): Array<string>;
-    /**
-     * Returns the tournament code DTO associated with a tournament code string.
-     */
-    req(endpoint: "tournamentV4", method: "getTournamentCode", region: Region, args: { tournamentCode: string }): tournamentV4.TournamentCodeDTO;
-    /**
-     * Update the pick type, map, spectator type, or allowed summoners for a code.
-     */
-    req(endpoint: "tournamentV4", method: "updateCode", region: Region, args: { tournamentCode: string }): void;
-    /**
-     * Gets a list of lobby events by tournament code.
-     */
-    req(endpoint: "tournamentV4", method: "getLobbyEventsByCode", region: Region, args: { tournamentCode: string }): tournamentV4.LobbyEventDTOWrapper;
-    /**
-     * Creates a tournament provider and returns its ID.
-     * ## Implementation Notes
-     * Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
-     */
-    req(endpoint: "tournamentV4", method: "registerProviderData", region: Region): int;
-    /**
-     * Creates a tournament and returns its ID.
-     */
-    req(endpoint: "tournamentV4", method: "registerTournament", region: Region): int;
-}
+const SpecRiotApi = {
+    championMasteryV4: {
+        getAllChampionMasteries: {
+            path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, championMasteryV4.ChampionMasteryDTO[]>,
+        getChampionMastery: {
+            path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}",
+        } as MethodSpec<{ championId: long, encryptedSummonerId: string }, championMasteryV4.ChampionMasteryDTO | null>,
+        getChampionMasteryScore: {
+            path: "/lol/champion-mastery/v4/scores/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, int>,
+    },
+    championV3: {
+        getChampionInfo: {
+            path: "/lol/platform/v3/champion-rotations",
+        } as MethodSpec<{}, championV3.ChampionInfo>,
+    },
+    clashV1: {
+        getPlayersBySummoner: {
+            path: "/lol/clash/v1/players/by-summoner/{summonerId}",
+        } as MethodSpec<{ summonerId: string }, clashV1.PlayerDto[]>,
+        getTeamById: {
+            path: "/lol/clash/v1/teams/{teamId}",
+        } as MethodSpec<{ teamId: string }, clashV1.TeamDto | null>,
+        getTournaments: {
+            path: "/lol/clash/v1/tournaments",
+        } as MethodSpec<{}, clashV1.TournamentDto[]>,
+        getTournamentByTeam: {
+            path: "/lol/clash/v1/tournaments/by-team/{teamId}",
+        } as MethodSpec<{ teamId: string }, clashV1.TournamentDto | null>,
+        getTournamentById: {
+            path: "/lol/clash/v1/tournaments/{tournamentId}",
+        } as MethodSpec<{ tournamentId: int }, clashV1.TournamentDto | null>,
+    },
+    leagueExpV4: {
+        getLeagueEntries: {
+            path: "/lol/league-exp/v4/entries/{queue}/{tier}/{division}",
+        } as MethodSpec<{ queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }, leagueExpV4.LeagueEntryDTO[]>,
+    },
+    leagueV4: {
+        getChallengerLeague: {
+            path: "/lol/league/v4/challengerleagues/by-queue/{queue}",
+        } as MethodSpec<{ queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }, leagueV4.LeagueListDTO>,
+        getLeagueEntriesForSummoner: {
+            path: "/lol/league/v4/entries/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, leagueV4.LeagueEntryDTO[]>,
+        getLeagueEntries: {
+            path: "/lol/league/v4/entries/{queue}/{tier}/{division}",
+        } as MethodSpec<{ division: "I" | "II" | "III" | "IV", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", page?: int | null }, leagueV4.LeagueEntryDTO[]>,
+        getGrandmasterLeague: {
+            path: "/lol/league/v4/grandmasterleagues/by-queue/{queue}",
+        } as MethodSpec<{ queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }, leagueV4.LeagueListDTO>,
+        getLeagueById: {
+            path: "/lol/league/v4/leagues/{leagueId}",
+        } as MethodSpec<{ leagueId: string }, leagueV4.LeagueListDTO | null>,
+        getMasterLeague: {
+            path: "/lol/league/v4/masterleagues/by-queue/{queue}",
+        } as MethodSpec<{ queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" }, leagueV4.LeagueListDTO>,
+    },
+    lolStatusV3: {
+        getShardData: {
+            path: "/lol/status/v3/shard-data",
+        } as MethodSpec<{}, lolStatusV3.ShardStatus>,
+    },
+    lorRankedV1: {
+        getLeaderboards: {
+            path: "/lor/ranked/v1/leaderboards",
+        } as MethodSpec<{}, lorRankedV1.LeaderboardDto>,
+    },
+    matchV4: {
+        getMatchIdsByTournamentCode: {
+            path: "/lol/match/v4/matches/by-tournament-code/{tournamentCode}/ids",
+        } as MethodSpec<{ tournamentCode: string }, long[]>,
+        getMatch: {
+            path: "/lol/match/v4/matches/{matchId}",
+        } as MethodSpec<{ matchId: long }, matchV4.MatchDto | null>,
+        getMatchByTournamentCode: {
+            path: "/lol/match/v4/matches/{matchId}/by-tournament-code/{tournamentCode}",
+        } as MethodSpec<{ tournamentCode: string, matchId: long }, matchV4.MatchDto>,
+        getMatchlist: {
+            path: "/lol/match/v4/matchlists/by-account/{encryptedAccountId}",
+        } as MethodSpec<{ encryptedAccountId: string, champion?: int[] | null, queue?: int[] | null, season?: int[] | null, endTime?: long | null, beginTime?: long | null, endIndex?: int | null, beginIndex?: int | null }, matchV4.MatchlistDto | null>,
+        getMatchTimeline: {
+            path: "/lol/match/v4/timelines/by-match/{matchId}",
+        } as MethodSpec<{ matchId: long }, matchV4.MatchTimelineDto | null>,
+    },
+    spectatorV4: {
+        getCurrentGameInfoBySummoner: {
+            path: "/lol/spectator/v4/active-games/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, spectatorV4.CurrentGameInfo | null>,
+        getFeaturedGames: {
+            path: "/lol/spectator/v4/featured-games",
+        } as MethodSpec<{}, spectatorV4.FeaturedGames>,
+    },
+    summonerV4: {
+        getByAccountId: {
+            path: "/lol/summoner/v4/summoners/by-account/{encryptedAccountId}",
+        } as MethodSpec<{ encryptedAccountId: string }, summonerV4.SummonerDTO>,
+        getBySummonerName: {
+            path: "/lol/summoner/v4/summoners/by-name/{summonerName}",
+        } as MethodSpec<{ summonerName: string }, summonerV4.SummonerDTO | null>,
+        getByPUUID: {
+            path: "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}",
+        } as MethodSpec<{ encryptedPUUID: string }, summonerV4.SummonerDTO>,
+        getBySummonerId: {
+            path: "/lol/summoner/v4/summoners/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, summonerV4.SummonerDTO>,
+    },
+    tftLeagueV1: {
+        getChallengerLeague: {
+            path: "/tft/league/v1/challenger",
+        } as MethodSpec<{}, tftLeagueV1.LeagueListDTO>,
+        getLeagueEntriesForSummoner: {
+            path: "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, tftLeagueV1.LeagueEntryDTO[]>,
+        getLeagueEntries: {
+            path: "/tft/league/v1/entries/{tier}/{division}",
+        } as MethodSpec<{ tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV", page?: int | null }, tftLeagueV1.LeagueEntryDTO[]>,
+        getGrandmasterLeague: {
+            path: "/tft/league/v1/grandmaster",
+        } as MethodSpec<{}, tftLeagueV1.LeagueListDTO>,
+        getLeagueById: {
+            path: "/tft/league/v1/leagues/{leagueId}",
+        } as MethodSpec<{ leagueId: string }, tftLeagueV1.LeagueListDTO | null>,
+        getMasterLeague: {
+            path: "/tft/league/v1/master",
+        } as MethodSpec<{}, tftLeagueV1.LeagueListDTO>,
+    },
+    tftMatchV1: {
+        getMatchIdsByPUUID: {
+            path: "/tft/match/v1/matches/by-puuid/{puuid}/ids",
+        } as MethodSpec<{ puuid: String, count?: int | null }, string[]>,
+        getMatch: {
+            path: "/tft/match/v1/matches/{matchId}",
+        } as MethodSpec<{ matchId: String }, tftMatchV1.MatchDto | null>,
+    },
+    tftSummonerV1: {
+        getByAccountId: {
+            path: "/tft/summoner/v1/summoners/by-account/{encryptedAccountId}",
+        } as MethodSpec<{ encryptedAccountId: string }, tftSummonerV1.SummonerDTO>,
+        getBySummonerName: {
+            path: "/tft/summoner/v1/summoners/by-name/{summonerName}",
+        } as MethodSpec<{ summonerName: string }, tftSummonerV1.SummonerDTO | null>,
+        getByPUUID: {
+            path: "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}",
+        } as MethodSpec<{ encryptedPUUID: string }, tftSummonerV1.SummonerDTO>,
+        getBySummonerId: {
+            path: "/tft/summoner/v1/summoners/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, tftSummonerV1.SummonerDTO>,
+    },
+    thirdPartyCodeV4: {
+        getThirdPartyCodeBySummonerId: {
+            path: "/lol/platform/v4/third-party-code/by-summoner/{encryptedSummonerId}",
+        } as MethodSpec<{ encryptedSummonerId: string }, String>,
+    },
+    tournamentStubV4: {
+        createTournamentCode: {
+            path: "/lol/tournament-stub/v4/codes",
+        } as MethodSpec<{ count?: int | null, tournamentId: long }, string[]>,
+        getLobbyEventsByCode: {
+            path: "/lol/tournament-stub/v4/lobby-events/by-code/{tournamentCode}",
+        } as MethodSpec<{ tournamentCode: string }, tournamentStubV4.LobbyEventDTOWrapper>,
+        registerProviderData: {
+            path: "/lol/tournament-stub/v4/providers",
+        } as MethodSpec<{}, int>,
+        registerTournament: {
+            path: "/lol/tournament-stub/v4/tournaments",
+        } as MethodSpec<{}, int>,
+    },
+    tournamentV4: {
+        createTournamentCode: {
+            path: "/lol/tournament/v4/codes",
+        } as MethodSpec<{ count?: int | null, tournamentId: long }, string[]>,
+        getTournamentCode: {
+            path: "/lol/tournament/v4/codes/{tournamentCode}",
+        } as MethodSpec<{ tournamentCode: string }, tournamentV4.TournamentCodeDTO>,
+        updateCode: {
+            path: "/lol/tournament/v4/codes/{tournamentCode}",
+        } as MethodSpec<{ tournamentCode: string }, void>,
+        getLobbyEventsByCode: {
+            path: "/lol/tournament/v4/lobby-events/by-code/{tournamentCode}",
+        } as MethodSpec<{ tournamentCode: string }, tournamentV4.LobbyEventDTOWrapper>,
+        registerProviderData: {
+            path: "/lol/tournament/v4/providers",
+        } as MethodSpec<{}, int>,
+        registerTournament: {
+            path: "/lol/tournament/v4/tournaments",
+        } as MethodSpec<{}, int>,
+    },
+};

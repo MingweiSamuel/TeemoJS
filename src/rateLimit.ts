@@ -8,7 +8,7 @@ class RateLimit {
      * Returns -1 if tokens were obtained and the request can proceed, otherwise a positive value in milliseconds to
      * delay.
      */
-    static getAllOrDelay(rateLimits: Array<RateLimit>) {
+    static getAllOrDelay(rateLimits: RateLimit[]) {
         const delay = rateLimits
             .map(r => r.retryDelay())
             .reduce((a, b, _idx, _arr) => Math.max(a, b), -1);
@@ -21,7 +21,7 @@ class RateLimit {
     private readonly _config: Config;
     private readonly _type: RateLimitType;
 
-    private _buckets: Array<TokenBucket>;
+    private _buckets: TokenBucket[];
     private _retryAfter: number;
     private _distFactor: number
 
@@ -69,11 +69,11 @@ class RateLimit {
         return limitHeader !== limits;
     }
 
-    private _getBucketsFromHeaders(limitHeader: string, countHeader: string, bucketsConfig: TokenBucketConfig = {}): Array<TokenBucket> {
+    private _getBucketsFromHeaders(limitHeader: string, countHeader: string, bucketsConfig: TokenBucketConfig = {}): TokenBucket[] {
         // Limits: "20000:10,1200000:600"
         // Counts: "7:10,58:600"
-        let limits: Array<string> = limitHeader.split(',');
-        let counts: Array<string> = countHeader.split(',');
+        let limits: string[] = limitHeader.split(',');
+        let counts: string[] = countHeader.split(',');
         if (limits.length !== counts.length)
             throw new Error(`Limit and count headers do not match: ${limitHeader}, ${countHeader}.`);
     

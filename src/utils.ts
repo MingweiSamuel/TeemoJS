@@ -28,7 +28,7 @@ const objFromEntries: (<T>(entries: Array<[ string, T ]>) => { [key: string]: T 
  * ARGOBJECT may be an object or Array.
  * @internal
  */
-function format(format: string, argObject: Array<any> | { [K in string | number]: any }): string {
+function format(format: string, argObject: any[] | { [K in string | number]: any }): string {
     let i = 0;
     const result = format.replace(/\{(\w*)\}/g, (_, key) => {
         const val = undefined !== argObject[key] ? argObject[key] : argObject[i];

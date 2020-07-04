@@ -21,7 +21,7 @@ class RegionalRequester {
 
     req(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): any {
         // Get rate limits to obey.
-        const rateLimits: Array<RateLimit> = [ this._appLimit ];
+        const rateLimits: RateLimit[] = [ this._appLimit ];
         if (this._config.rateLimitTypeMethod) // Also method limit if applicable.
             rateLimits.push(this._getMethodLimit(methodId));
     

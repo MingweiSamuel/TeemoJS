@@ -25,7 +25,7 @@ class TokenBucket {
      * Get one token from all the given token buckets or a delay to wait.
      * Returns -1 if tokens were obtained, otherwise a positive value in milliseconds to delay.
      */
-    static getAllOrDelay(tokenBuckets: Array<TokenBucket>): number {
+    static getAllOrDelay(tokenBuckets: TokenBucket[]): number {
         const delay = tokenBuckets
             .map(b => b.getDelay())
             .reduce((a, b) => Math.max(a, b), -1);
@@ -49,7 +49,7 @@ class TokenBucket {
     // Fields that track requests, (change frequently).
     private _total: number;
     private _time: number;
-    private readonly _buffer: Array<number>;
+    private readonly _buffer: number[];
 
     // Limits change when distFactor changes.
     private _limit!: number;

@@ -22,7 +22,7 @@ interface Config {
     retries: number,
     maxConcurrent: number,
     distFactor: number,
-    defaultBuckets: Array<InitialTokenBucketConfig>,
+    defaultBuckets: InitialTokenBucketConfig[],
     bucketsConfig: TokenBucketConfig,
     rateLimitTypeApplication: RateLimitType,
     rateLimitTypeMethod: RateLimitType,

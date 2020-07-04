@@ -7,9 +7,6 @@
 // Version {{= spec.info.version }}
 
 
-/** @internal */
-(RiotApi as { endpoints: RiotApiEndpoints }).endpoints = { "hello": { "world": {} } };
-
 {{
     const endpointGroups = {};
     const endpointMethodGroups = {};
@@ -38,41 +35,42 @@
 
             /* Build argument comment & string. */
             const argBuilder = [];
+            const argTypeBuilder = [];
             const params = operation.parameters;
             if (params && params.length) {
+                const allParamsOptional = params.every(p => !p.required);
                 argBuilder.push(', args');
-                if (params.every(p => !p.required))
+                if (allParamsOptional)
                     argBuilder.push('?');
                 argBuilder.push(': { ');
-                for (const { name, required, schema } of params)
-                    argBuilder.push(name, required ? '' : '?', ': ', dotUtils.formatPropType(schema, !required), ', ');
+                argTypeBuilder.push('{ ');
+                for (const { name, required, schema } of params) {
+                    tokens = [ name, required ? '' : '?', ': ', dotUtils.formatPropType(schema, !required), ', ' ];
+                    argBuilder.push(...tokens);
+                    argTypeBuilder.push(...tokens);
+                }
                 argBuilder.pop();
+                argTypeBuilder.pop();
                 argBuilder.push(' }');
+                argTypeBuilder.push(' }');
+            }
+            else {
+                argTypeBuilder.push('{}');
             }
             const args = argBuilder.join('');
+            const argType = argTypeBuilder.join('');
 
             endpointMethodGroups[ep].push({
+                route,
                 descArr,
                 method,
                 args,
+                argType,
                 returnType,
             });
         }
     }
 }}
-
-interface RiotApi {
-{{
-    for (const endpointName of Object.keys(endpointMethodGroups))
-    {
-        const endpoint = dotUtils.toUpperCamel(endpointName);
-}}
-    /** Handle for accessing {{= endpoint }} methods. */
-    readonly {{= dotUtils.toLowerCamel(endpointName) }}: {{= endpoint }};
-{{
-    }
-}}
-}
 
 {{
     for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
@@ -91,7 +89,7 @@ interface {{= endpoint }} {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { descArr, method, args, returnType } = endpointMethod;
+            const { route, descArr, method, args, argType, returnType } = endpointMethod;
 }}
     /**
 {{
@@ -112,28 +110,26 @@ interface {{= endpoint }} {
     }
 }}
 
-interface RiotApi {
+const SpecRiotApi = {
 {{
     for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
     {
+        const ep = dotUtils.toLowerCamel(endpointName);
+}}
+    {{= ep }}: {
+{{
         for (const endpointMethod of endpointMethods)
         {
-            const { descArr, method, args, returnType } = endpointMethod;
-            const ep = dotUtils.toLowerCamel(endpointName);
+            const { route, descArr, method, args, argType, returnType } = endpointMethod;
 }}
-    /**
-{{
-            for (const descLine of descArr)
-            {
-}}
-     * {{= descLine }}
-{{
-            }
-}}
-     */
-    req(endpoint: "{{= ep }}", method: "{{= method }}", region: Region{{= args }}): {{= returnType }};
+        {{= method }}: {
+            path: {{= JSON.stringify(route) }},
+        } as MethodSpec<{{= argType }}, {{= returnType }}>,
 {{
         }
+}}
+    },
+{{
     }
 }}
-}
+};

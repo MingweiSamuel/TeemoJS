@@ -27,7 +27,7 @@ function formatPropType(prop, optional = false) {
     if (optional)
         return `${formatPropType(prop)} | null`;
     if ('array' === prop.type)
-        return `Array<${formatPropType(prop.items)}>`;
+        return `${formatPropType(prop.items)}[]`;
     if ('object' === prop.type)
         return `{ [key: string]: ${formatPropType(prop.additionalProperties)} }`;
     if (prop.enum)
