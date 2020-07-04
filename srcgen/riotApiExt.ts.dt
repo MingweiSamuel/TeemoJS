@@ -6,6 +6,10 @@
 // http://www.mingweisamuel.com/riotapi-schema/tool/
 // Version {{= spec.info.version }}
 
+
+/** @internal */
+(RiotApi as { endpoints: RiotApiEndpoints }).endpoints = { "hello": { "world": {} } };
+
 {{
     const endpointGroups = {};
     const endpointMethodGroups = {};

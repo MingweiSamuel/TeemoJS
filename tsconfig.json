@@ -13,6 +13,7 @@
         // "sourceMap": true,
         "stripInternal": true,
 
+        "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         // "noUnusedLocals": true,

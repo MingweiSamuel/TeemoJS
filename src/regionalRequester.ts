@@ -19,7 +19,7 @@ class RegionalRequester {
         this._concurrentSema = new Semaphore(this._config.maxConcurrent);
     }
 
-    req<T>(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): Promise<T | null> {
+    req(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): any {
         // Get rate limits to obey.
         const rateLimits: Array<RateLimit> = [ this._appLimit ];
         if (this._config.rateLimitTypeMethod) // Also method limit if applicable.
@@ -50,7 +50,7 @@ class RegionalRequester {
                     if ([ 204, 404, 422 ].includes(response.status)) // Successful response, but no data found.
                         return null;
                     if (response.ok) // Successful response (presumably) with body.
-                        return response.json() as Promise<T>; // No `await` to release semaphore sooner.
+                        return response.json(); // No `await` to release semaphore sooner.
                     if (429 === response.status || response.status >= 500) // Retryable responses.
                         continue;
 

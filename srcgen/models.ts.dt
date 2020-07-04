@@ -36,7 +36,7 @@ namespace {{= dotUtils.toLowerCamel(endpoint) }} {
 {{
         for (let [ propName, prop ] of Object.entries(properties))
         {
-            const optional = required.includes(propName);
+            const optional = !required.includes(propName);
             let type = dotUtils.formatPropType(prop, optional);
             if (optional)
                 propName += '?';

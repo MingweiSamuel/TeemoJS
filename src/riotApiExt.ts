@@ -10,6 +10,10 @@
 // Version 909460d67267a0122544094d93120b50f8d0f5de
 
 
+/** @internal */
+(RiotApi as { endpoints: RiotApiEndpoints }).endpoints = { "hello": { "world": {} } };
+
+
 interface RiotApi {
     /** Handle for accessing ChampionMasteryV4 methods. */
     readonly championMasteryV4: ChampionMasteryV4;

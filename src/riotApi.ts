@@ -1,112 +1,92 @@
-/** @internal */
-interface RiotApiEndpoint {
-    base: RiotApi,
-    endpoint: string,
+type Args = { [argName: string]: any };
+type MethodSpec<ARGS, RETURNTYPE extends Args> = {
+    path: string,
+}
+type EndpointsSpec = {
+    [endpoint: string]: {
+        [method: string]: MethodSpec<any, any>
+    }
 }
 
-/** @internal */
-const RiotApiEndpointProxyHandler: ProxyHandler<RiotApiEndpoint> = {
-    get(target: RiotApiEndpoint, prop: string | number | symbol, receiver: any) {
-        if ('string' === typeof prop) // TODO
-            return (region: Region, args?: object | Array<any>): any =>
-                target.base.req(target.endpoint, prop, region, args);
-        return Reflect.get(target, prop, receiver);
-    },
-    set: () => false,
+type EndpointMethods<T extends EndpointsSpec> = {
+    [ENDPOINT in keyof T]: {
+        [METHOD in keyof T[ENDPOINT]]:
+            // NonNullable<T[ENDPOINT][METHOD]['fn']>;
+            T[ENDPOINT][METHOD] extends { fn: Function | null }
+                ? NonNullable<T[ENDPOINT][METHOD]['fn']>
+                : (region: Region | string, args?: object | Array<any>) => any;
+    };
 };
 
-/** @internal */
-const RiotApiProxyHandler: ProxyHandler<RiotApi> = {
-    get(target: RiotApi, prop: string | number | symbol, receiver: any) {
-        if ('string' === typeof prop) // TODO
-            return new Proxy({ base: target, endpoint: prop }, RiotApiEndpointProxyHandler);
-        return Reflect.get(target, prop, receiver);
-    },
-    set: () => false,
-};
 
-class RiotApi {
+class RiotApi<T extends EndpointsSpec> {
+    readonly endpoints: T;
+
     private readonly _config: Config;
-    private readonly _regions: { [methodId: string]: RegionalRequester };
+    private readonly _regions: { [key: string]: { [region: string]: RegionalRequester } };
 
-    constructor(config: Config) {
+    constructor(endpoints: T, config: Config) {
+        this.endpoints = endpoints;
+
         this._config = config;
         this._regions = {};
 
-        return new Proxy(this, RiotApiProxyHandler);
+        return new Proxy(this, getRiotApiProxyHandler());
     }
 
-    req(endpoint: string, method: string, region: Region | string, args?: object | Array<any>): any {
+    req<ENDPOINT extends keyof T, METHOD extends keyof T[ENDPOINT]>(
+        endpoint: ENDPOINT,
+        method: METHOD,
+        args: T[ENDPOINT][METHOD] extends MethodSpec<infer ARGS, any> ? ARGS extends Args ? ARGS : Args : Args,
+    ): T[ENDPOINT][METHOD] extends MethodSpec<any, infer RETURNTYPE> ? RETURNTYPE : any;
+    req(endpoint: string, method: string, args: Args): any
+    {
+        // TODO
         return null;
     }
 
     reqInternal(region: Region | string, methodId: string, urlStr: string, fetchConfig: import("node-fetch").RequestInit): any {
-        const x: import("url").URL = new URL('asdf', 'qwer');
-        return null;
-
-        // // Get region (first arg, or not).
-        // let region = this.config.regionPath ? args.shift() : null;
-        // let [ target, pathParams = {}, queryParams = {}, bodyParam = undefined ] = args;
-
-        // // Get reqConfigs.
-        // const reqConfigs = [];
-        // let endpointTree = this.config.endpoints;
-        // for (const segment of target.split('.')) {
-        //     if (endpointTree['*']) reqConfigs.push(endpointTree['*'])
-        //     if (!(endpointTree = endpointTree[segment])) throw new Error(`Missing path segment "${segment}" in "${target}".`);
-        // }
-        // reqConfigs.push(endpointTree);
-        // // Assemble reqConfig.
-        // const reqConfig = Object.assign({}, ...reqConfigs);
-        // if (typeof reqConfig.path !== 'string') throw new Error(`Failed to find path for target: "${target}".`);
-        // reqConfig.fetch = Object.assign({ keepalive: true, redirect: 'follow', headers: {} }, ...reqConfigs.map(rc => rc.fetch));
-        // reqConfig.fetch.headers = Object.assign({}, ...reqConfigs.map(rc => rc.fetch && rc.fetch.headers));
-        // reqConfig.pathParams = Object.assign({}, ...reqConfigs.map(rc => rc.pathParams), pathParams);
-        // reqConfig.queryParams = Object.assign({}, ...reqConfigs.map(rc => rc.queryParams), queryParams);
-        // reqConfig.bodyParam || (reqConfig.bodyParam = bodyParam);
-        // // Override key.
-        // const key = reqConfig.key || this.config.key || null;
-        // if (this.config.keyPath) assignPath(reqConfig, this.config.keyPath, key);
-        // // Lookup regions.
-        // if (this.config.regionPath) {
-        //     if (!reqConfig.regionTable[region]) throw new Error('Failed to determine platform for region: ' +
-        //     `"${region}", available regions (for this endpoint): ${Object.keys(reqConfig.regionTable).join(', ')}.`)
-        //     assignPath(reqConfig, this.config.regionPath, reqConfig.regionTable[region]);
-        // }
-
-        // // OriginParams. But first override origin.
-        // let origin = reqConfig.origin || this.config.origin;
-        // if (reqConfig.originParams) origin = format(origin, reqConfig.originParams);
-
-        // // PathParams. Interpolate path.
-        // if (Array.isArray(pathParams)) // Array.
-        //     pathParams = pathParams.map(encodeURIComponent);
-        // else if (typeof pathParams === 'object') // Object dict.
-        //     pathParams = objFromEntries(Object.entries(pathParams).map(([ key, val ]) => [ key, encodeURIComponent(val) ]));
-        // else // Single value.
-        //     pathParams = [ pathParams ];
-        // const path = format(reqConfig.path, pathParams);
-
-        // // QueryParams. First build URL.
-        // const urlBuilder = new URL(path, format(origin, [ region ]));
-        // // Then build URL query params.
-        // for (const [ key, vals ] of Object.entries(reqConfig.queryParams)) {
-        //     if (!Array.isArray(vals)) // Not array.
-        //     urlBuilder.searchParams.set(key, vals);
-        //     else if (this.config.collapseQueryArrays) // Array, collapse.
-        //     urlBuilder.searchParams.set(key, vals.join(','));
-        //     else // Array, do not collapse.
-        //     vals.forEach(val => urlBuilder.searchParams.append(key, val));
-        // }
-
-        // // BodyParam. Add body, if supplied, to reqConfig.fetch.
-        // if (undefined !== bodyParam) {
-        //     reqConfig.fetch.body = JSON.stringify(bodyParam);
-        //     reqConfig.fetch.headers['Content-Type'] = 'application/json';
-        // }
-
-        // return this._getRegion(region).req(target, urlBuilder.href, reqConfig.fetch);
+        return {};
     }
+
+    private _getRegion(key: string, region: Region | string): RegionalRequester {
+        const regionStr: string = ('string' === typeof region) ? region : Region[region];
+        const keyRegions = this._regions[key] || (this._regions[key] = {});
+        return keyRegions[regionStr] || (keyRegions[regionStr] = new RegionalRequester(this._config));
+    }
+}
+
+/** @internal */
+interface RiotApiEndpoint<T extends EndpointsSpec> {
+    base: RiotApi<T>,
+    endpoint: keyof T;
+}
+
+/** @internal */
+function getRiotApiProxyHandler<T extends EndpointsSpec>(): ProxyHandler<RiotApi<T>> {
+    return {
+        get(target: RiotApi<T>, prop: string | number | symbol, receiver: unknown) {
+            if ('string' === typeof prop && prop in target.endpoints) {
+                const ep: RiotApiEndpoint<T> = { base: target, endpoint: prop };
+                return new Proxy(ep, getRiotApiEndpointProxyHandler<T>());
+            }
+            return Reflect.get(target, prop, receiver);
+        },
+        set: () => false,
+    };
+}
+/** @internal */
+function getRiotApiEndpointProxyHandler<T extends EndpointsSpec>(): ProxyHandler<RiotApiEndpoint<T>> {
+    return {
+        get(target: RiotApiEndpoint<T>, prop: string | number | symbol, receiver: unknown) {
+            if ('string' === typeof prop && prop in target.base.endpoints[target.endpoint]) {
+                return (region: Region, args?: Args): any =>
+                    target.base.req(target.endpoint, prop, region, args);
+            }
+            return Reflect.get(target, prop, receiver);
+        },
+        set: () => false,
+    };
 }
 
 exports.RiotApi = RiotApi;

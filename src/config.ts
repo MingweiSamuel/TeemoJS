@@ -1,13 +1,16 @@
 interface EndpointConfig {
+    '*': void,
     path?: string,
+    key?: string,
     regionTable?: { [key: string]: string },
     pathParams?:  { [key: string]: string },
     queryParams?: { [key: string]: string },
+    bodyParam?: any,
     fetch?: import("node-fetch").RequestInit,
 }
 
 interface EndpointsConfig {
-    '*': undefined | EndpointConfig,
+    '*'?: EndpointConfig,
     [segment: string]: undefined | EndpointsConfig | EndpointConfig
 }
 
