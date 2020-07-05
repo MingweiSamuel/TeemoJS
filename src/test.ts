@@ -13,17 +13,35 @@ let b: Parameters<typeof doStuffB>;
 
 const w = RiotApi.createRiotApi();
 
-// w.req("lolStatusV3", "getShardData", Region.NA1);
-// w.req("tournamentV4", "createTournamentCode", Region.NA1, null, { tournamentId: 12314 });
-w.req("tournamentV4", "createTournamentCode", Region.NA1, null, { tournamentId: 123089 }, {} as tournamentV4.TournamentCodeParameters);
+// w.req("lolStatusV3", "getShardData", {}, {});
+w.req("lolStatusV3", "getShardData", Region.NA1, {
+});
+
+// w.req("lolStatusV3", "getShardData", Region.NA1, null, null);
+
+// // w.req("hello", "world", Region.NA1);
+// w.req("lolStatusV3", "getShardData", Region.NA1, null, null, undefined);
+
+w.req("matchV4", "getMatchlist", Region.NA1, {
+    path: [ 'summonerId:alksj3iwjafls' ],
+});
+
+// // w.req("lolStatusV3", "getShardData", Region.NA1);
+w.req("tournamentV4", "createTournamentCode", Region.NA1, {
+    query: { 'tournamentId': 12314 },
+    body: null as any,
+});
+w.req("tournamentV4", "createTournamentCode", Region.NA1, {
+    query: { tournamentId: 123089 },
+    body: {} as tournamentV4.TournamentCodeParameters,
+});
 
 const x = w.toFluent();
 
 x.summonerV4.getBySummonerName(Region.NA1, { summonerName: 'LugnutsK' });
 x.leagueV4.getMasterLeague(Region.EUROPE, { queue: "RANKED_FLEX_SR" });
-x.lolStatusV3.getShardData(Region.NA1);
+x.lolStatusV3.getShardData(Region.NA1, {});
 
-x.tournamentV4.registerProviderData(Region.NA1, null, null, {} as tournamentV4.ProviderRegistrationParameters);
 x.tournamentV4.registerProviderData(Region.NA1, null, null, {} as tournamentV4.ProviderRegistrationParameters);
 
 // x.tournamentV4.createTournamentCode(Region.NA1, { tournamentId: 512512 });
