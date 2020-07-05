@@ -5,8 +5,6 @@
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
 // Version {{= spec.info.version }}
-
-
 {{
     const endpointGroups = {};
     const endpointMethodGroups = {};
@@ -48,39 +46,11 @@
             const paramBody = operation.requestBody && operation.requestBody.content && operation.requestBody.content['application/json'];
             const paramBodyType = paramBody ? dotUtils.formatPropType(paramBody.schema) : 'undefined';
 
-            /* Build argument comment & string. */
-            const argBuilder = [];
-            const argTypeBuilder = [];
-            const params = operation.parameters;
-            if (params && params.length) {
-                const allParamsOptional = params.every(p => !p.required);
-                argBuilder.push(', args');
-                if (allParamsOptional)
-                    argBuilder.push('?');
-                argBuilder.push(': { ');
-                argTypeBuilder.push('{ ');
-                for (const { name, required, schema } of params) {
-                    tokens = [ name, required ? '' : '?', ': ', dotUtils.formatPropType(schema, !required), ', ' ];
-                    argBuilder.push(...tokens);
-                    argTypeBuilder.push(...tokens);
-                }
-                argBuilder.pop();
-                argTypeBuilder.pop();
-                argBuilder.push(' }');
-                argTypeBuilder.push(' }');
-            }
-            else {
-                argTypeBuilder.push('{}');
-            }
-            const args = argBuilder.join('');
-            const argType = argTypeBuilder.join('');
-
             endpointMethodGroups[ep].push({
                 path,
+                verb,
                 descArr,
                 method,
-                args,
-                argType,
                 returnType,
                 paramsPathType,
                 paramsQueryType,
@@ -90,26 +60,31 @@
     }
 }}
 
-const SpecRiotApi = {
+namespace spec {
+    export const RiotApi = {
 {{
     for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
     {
         const ep = dotUtils.toLowerCamel(endpointName);
 }}
-    {{= ep }}: {
+        {{= ep }}: {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { path, descArr, method, args, argType, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
+            const { path, verb, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
 }}
-        {{= method }}: {
-            path: {{= JSON.stringify(path) }},
-        } as MethodSpec<{{= returnType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
+            {{= method }}: {
+                path: {{= JSON.stringify(path) }},
+{{? 'get' !== verb }}
+                method: {{= JSON.stringify(verb) }},
+{{?}}
+            } as ReqSpec<{{= returnType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
 {{
         }
 }}
-    },
+        },
 {{
     }
 }}
-};
+    };
+}

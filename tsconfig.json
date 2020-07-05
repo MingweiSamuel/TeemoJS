@@ -10,14 +10,14 @@
         "esModuleInterop": true,
 
         "newLine": "lf",
-        // "sourceMap": true,
+        "sourceMap": true,
         "stripInternal": true,
 
         "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
-        // "noUnusedLocals": true,
-        // "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true
     },

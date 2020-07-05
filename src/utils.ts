@@ -24,18 +24,18 @@ const objFromEntries: (<T>(entries: Array<[ string, T ]>) => { [key: string]: T 
 };
 
 /**
- * Returns a formatted string, replacing "{}", "{name}", or "{0}" with supplied ARGOBJECT.
- * ARGOBJECT may be an object or Array.
+ * Returns a formatted string, replacing "{}", "{name}", or "{0}" with supplied ARG_OBJECT.
+ * ARG_OBJECT may be an object or Array.
  * @internal
  */
-function format(format: string, argObject: any[] | { [K in string | number]: any }): string {
+function format(format: string, argObject: spec.NamedParams | spec.OrderedParams): string {
     let i = 0;
-    const result = format.replace(/\{(\w*)\}/g, (_, key) => {
-        const val = undefined !== argObject[key] ? argObject[key] : argObject[i];
+    const result = format.replace(/\{(\w*)\}/g, (_, key: string) => {
+        const val: unknown = key in argObject ? (argObject as spec.NamedParams)[key] : (argObject as spec.OrderedParams)[i];
         if (undefined === val)
             throw new Error(`Argument provided for format "${format}" missing key "{${key}}" or index ${i}.`);
         i++;
-        return val;
+        return val as string; // Will be converted to string.
     });
     return result;
 }

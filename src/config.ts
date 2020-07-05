@@ -1,18 +1,18 @@
-interface EndpointConfig {
-    '*': void,
-    path?: string,
-    key?: string,
-    regionTable?: { [key: string]: string },
-    pathParams?:  { [key: string]: string },
-    queryParams?: { [key: string]: string },
-    bodyParam?: any,
-    fetch?: import("node-fetch").RequestInit,
-}
+// interface EndpointConfig {
+//     '*': void,
+//     path?: string,
+//     key?: string,
+//     regionTable?: { [key: string]: string },
+//     pathParams?:  { [key: string]: string },
+//     queryParams?: { [key: string]: string },
+//     bodyParam?: any,
+//     fetch?: import("node-fetch").RequestInit,
+// }
 
-interface EndpointsConfig {
-    '*'?: EndpointConfig,
-    [segment: string]: undefined | EndpointsConfig | EndpointConfig
-}
+// interface EndpointsConfig {
+//     '*'?: EndpointConfig,
+//     [segment: string]: undefined | EndpointsConfig | EndpointConfig
+// }
 
 interface Config {
     key?: string | undefined,
@@ -31,5 +31,5 @@ interface Config {
     headerLimitType?: string,
     defaultLimitType: string,
     collapseQueryArrays: boolean,
-    endpoints: EndpointsConfig,
+    endpoints: spec.EndpointsSpec,
 }
