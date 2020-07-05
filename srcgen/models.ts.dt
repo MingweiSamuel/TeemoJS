@@ -7,15 +7,6 @@
 // Version {{= spec.info.version }}
 
 
-/** 32-bit integer (signed). */
-type int = number;
-/** 64-bit integer (signed). */
-type long = number;
-/** 32-bit single-precision float. */
-type float = number;
-/** 64-bit double-precision float. */
-type double = number;
-
 {{
     for (const [ name, schema ] of Object.entries(spec.components.schemas))
     {

@@ -1,25 +1,102 @@
-type Args = { [argName: string]: any };
-type MethodSpec<TArgs extends Args, TReturn> = {
-    path: string,
-}
-type EndpointsSpec = {
-    [endpoint: string]: {
-        [method: string]: MethodSpec<any, any>
-    }
-}
+type GetParam<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint], TParamType extends 'path' | 'query' | 'body'> =
+    TSpec[TEndpoint][TMethod] extends MethodSpec<any, infer TPathParams, infer TQueryParams, infer TBodyParam>
+        ? TParamType extends 'path'
+            ? {} extends TPathParams
+                ? TPathParams | null
+            : TPathParams
+        : TParamType extends 'query'
+            ? {} extends TQueryParams
+                ? TQueryParams | null
+            : TQueryParams
+        : TParamType extends 'body'
+            ? TBodyParam
+        : never
+    : never;
 
-type MethodArgs<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
-    TSpec[TEndpoint][TMethod] extends MethodSpec<infer TArgs, any> ? TArgs extends Args ? TArgs : Args : Args;
+
+// type SpecEndpointMethod<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
+//     TSpec[TEndpoint][TMethod];
+
 
 type MethodReturn<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
-    TSpec[TEndpoint][TMethod] extends MethodSpec<any, infer TReturn> ? Promise<TReturn> : Promise<any>;
+    TSpec[TEndpoint][TMethod] extends MethodSpec<infer TReturn, any, any, any> ? Promise<TReturn> : Promise<any>;
+
+type RiotApiReqOverloads<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]> =
+    (undefined extends GetParam<TSpec, TEndpoint, TMethod, 'body'>
+        ? {} extends GetParam<TSpec, TEndpoint, TMethod, 'query'>
+            ? {} extends GetParam<TSpec, TEndpoint, TMethod, 'path'>
+                // All optional.
+                ? (
+                    endpoint: TEndpoint,
+                    method: TMethod,
+                    region: Region | string,
+                    pathParams?: GetParam<TSpec, TEndpoint, TMethod, 'path'> | null,
+                    queryParams?: GetParam<TSpec, TEndpoint, TMethod, 'query'> | null,
+                    bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+                ) => MethodReturn<TSpec, TEndpoint, TMethod>
+            // Body, query optional.
+            : (
+                endpoint: TEndpoint,
+                method: TMethod,
+                region: Region | string,
+                pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+                queryParams?: GetParam<TSpec, TEndpoint, TMethod, 'query'> | null,
+                bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+            ) => MethodReturn<TSpec, TEndpoint, TMethod>
+        // Body optional.
+        : (
+            endpoint: TEndpoint,
+            method: TMethod,
+            region: Region | string,
+            pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+            queryParams: GetParam<TSpec, TEndpoint, TMethod, 'query'>,
+            bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+        ) => MethodReturn<TSpec, TEndpoint, TMethod>
+    : never) |
+    // Nothing optional.
+    ((
+        endpoint: TEndpoint,
+        method: TMethod,
+        region: Region | string,
+        pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+        queryParams: GetParam<TSpec, TEndpoint, TMethod, 'query'>,
+        bodyParam: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+    ) => MethodReturn<TSpec, TEndpoint, TMethod>);
 
 type RiotApiFluent<TSpec extends EndpointsSpec> = {
     [TEndpoint in keyof TSpec]: {
         [TMethod in keyof TSpec[TEndpoint]]:
-            TSpec[TEndpoint][TMethod] extends { fn: Function | null }
-                ? NonNullable<TSpec[TEndpoint][TMethod]['fn']>
-                : (region: Region | string, args: MethodArgs<TSpec, TEndpoint, TMethod>) => MethodReturn<TSpec, TEndpoint, TMethod>;
+            undefined extends GetParam<TSpec, TEndpoint, TMethod, 'body'>
+                ? {} extends GetParam<TSpec, TEndpoint, TMethod, 'query'>
+                    ? {} extends GetParam<TSpec, TEndpoint, TMethod, 'path'>
+                        // All optional.
+                        ? (
+                            region: Region | string,
+                            pathParams?: GetParam<TSpec, TEndpoint, TMethod, 'path'> | null,
+                            queryParams?: GetParam<TSpec, TEndpoint, TMethod, 'query'> | null,
+                            bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+                        ) => MethodReturn<TSpec, TEndpoint, TMethod>
+                    // Body, query optional.
+                    : (
+                        region: Region | string,
+                        pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+                        queryParams?: GetParam<TSpec, TEndpoint, TMethod, 'query'> | null,
+                        bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+                    ) => MethodReturn<TSpec, TEndpoint, TMethod>
+                // Body optional.
+                : (
+                    region: Region | string,
+                    pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+                    queryParams: GetParam<TSpec, TEndpoint, TMethod, 'query'>,
+                    bodyParam?: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+                ) => MethodReturn<TSpec, TEndpoint, TMethod>
+            // Nothing optional.
+            : (
+                region: Region | string,
+                pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+                queryParams: GetParam<TSpec, TEndpoint, TMethod, 'query'>,
+                bodyParam: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+            ) => MethodReturn<TSpec, TEndpoint, TMethod>
     };
 };
 
@@ -44,16 +121,16 @@ class RiotApi<TSpec extends EndpointsSpec> {
         return new Proxy(this, getRiotApiProxyHandler()) as any;
     }
 
-    req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
-        endpoint: TEndpoint,
-        method: TMethod,
+    req: RiotApiReqOverloads<TSpec, any, any> = (
+        endpoint: string,
+        method: string,
         region: Region | string,
-        args: MethodArgs<TSpec, TEndpoint, TMethod>,
-    ): MethodReturn<TSpec, TEndpoint, TMethod>;
-    req(endpoint: string, method: string, region: Region | string, args: Args): any
-    {
+        pathParams?: OrderedParams | null,
+        queryParams?: NamedParams | null,
+        bodyParam?: any,
+    ): any => {
         // TODO
-        return null;
+        return null as any;
     }
 
     reqInternal(region: Region | string, methodId: string, urlStr: string, fetchConfig: import("node-fetch").RequestInit): any {
@@ -95,8 +172,12 @@ function getRiotApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint e
     return {
         get<TMethod extends keyof TSpec[TEndpoint]>(target: RiotApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, receiver: unknown) {
             if ('string' === typeof prop && prop in target.base.endpoints[target.endpoint]) {
-                return (region: Region, args: MethodArgs<TSpec, TEndpoint, TMethod>): any =>
-                    target.base.req(target.endpoint, prop as TMethod, region, args);
+                return (
+                    region: Region | string,
+                    pathParams: GetParam<TSpec, TEndpoint, TMethod, 'path'>,
+                    queryParams: GetParam<TSpec, TEndpoint, TMethod, 'query'>,
+                    bodyParam: GetParam<TSpec, TEndpoint, TMethod, 'body'>,
+                ): any => target.base.req(target.endpoint, prop as TMethod, region, pathParams, queryParams, bodyParam);
             }
             return Reflect.get(target, prop, receiver);
         },

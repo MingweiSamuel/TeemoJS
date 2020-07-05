@@ -10,15 +10,6 @@
 // Version 909460d67267a0122544094d93120b50f8d0f5de
 
 
-/** 32-bit integer (signed). */
-type int = number;
-/** 64-bit integer (signed). */
-type long = number;
-/** 32-bit single-precision float. */
-type float = number;
-/** 64-bit double-precision float. */
-type double = number;
-
 
 namespace championMasteryV4 {
     /**

@@ -12,12 +12,14 @@
     const endpointMethodGroups = {};
 
     for (const endpointPair of Object.entries(spec.paths)) {
-        const [ route, path ] = endpointPair;
-        const ep = path['x-endpoint'];
+        const [ path, pathInfo ] = endpointPair;
+        const ep = pathInfo['x-endpoint'];
         (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
         endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
 
-        for (const [ verb, operation ] of Object.entries(path)) {
+        const pathParamNames = Array.from(path.matchAll(/\{(\S+?)\}/g)).map(matches => matches[1]);
+
+        for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
             const [ endpoint, method ] = operation.operationId.split('.');
             /* const ep = dotUtils.toLowerCamel(endpoint); */
@@ -32,6 +34,19 @@
             }
 
             /* TODO: handle body params? */
+
+            /* Build params. */
+            const paramsAll = operation.parameters || [];
+
+            const paramsPath = paramsAll.filter(param => 'path' === param.in);
+            paramsPath.sort((paramA, paramB) => pathParamNames.indexOf(paramA) - pathParamNames.indexOf(paramB));
+            const paramsPathType = dotUtils.paramsToType(paramsPath, true);
+
+            const paramsQuery = paramsAll.filter(param => 'query' === param.in);
+            const paramsQueryType = dotUtils.paramsToType(paramsQuery);
+
+            const paramBody = operation.requestBody && operation.requestBody.content && operation.requestBody.content['application/json'];
+            const paramBodyType = paramBody ? dotUtils.formatPropType(paramBody.schema) : 'undefined';
 
             /* Build argument comment & string. */
             const argBuilder = [];
@@ -61,52 +76,17 @@
             const argType = argTypeBuilder.join('');
 
             endpointMethodGroups[ep].push({
-                route,
+                path,
                 descArr,
                 method,
                 args,
                 argType,
                 returnType,
+                paramsPathType,
+                paramsQueryType,
+                paramBodyType,
             });
         }
-    }
-}}
-
-{{
-    for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
-    {
-        const endpoint = dotUtils.toUpperCamel(endpointName);
-}}
-
-/**
- * {{= endpoint }} endpoints handle, accessed via `RiotApi.{{= dotUtils.toLowerCamel(endpointName) }}`.
- * # Riot Developer API Reference
- * <a href="https://developer.riotgames.com/apis#{{= endpointName }}" target="_blank">`{{= endpointName }}`</a>
- * 
- * Note: this is automatically generated.
- */
-interface {{= endpoint }} {
-{{
-        for (const endpointMethod of endpointMethods)
-        {
-            const { route, descArr, method, args, argType, returnType } = endpointMethod;
-}}
-    /**
-{{
-            for (const descLine of descArr)
-            {
-}}
-     * {{= descLine }}
-{{
-            }
-}}
-     */
-    {{= method }}(region: Region{{= args }}): {{= returnType }};
-{{
-        }
-}}
-}
-{{
     }
 }}
 
@@ -120,11 +100,11 @@ const SpecRiotApi = {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { route, descArr, method, args, argType, returnType } = endpointMethod;
+            const { path, descArr, method, args, argType, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
 }}
         {{= method }}: {
-            path: {{= JSON.stringify(route) }},
-        } as MethodSpec<{{= argType }}, {{= returnType }}>,
+            path: {{= JSON.stringify(path) }},
+        } as MethodSpec<{{= returnType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
 {{
         }
 }}

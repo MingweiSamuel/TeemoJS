@@ -39,6 +39,33 @@ function formatPropType(prop, optional = false) {
     return prop['x-type'];
 }
 
+function paramsToType(params, ordered = false) {
+    if (!params.length)
+        return ordered ? '{} | []' : '{}';
+
+    const namedType = [ '{ ' ];
+    const orderedType = [ '[ ' ];
+    for (const param of params) {
+        let paramType = formatPropType(param.schema);
+        namedType.push(param.name);
+        if (!param.required) {
+            namedType.push('?');
+            paramType += ' | null';
+        }
+        namedType.push(': ', paramType, ', ');
+        orderedType.push(paramType, ', ');
+    }
+    // Remove trailing comma.
+    namedType.pop();
+    orderedType.pop();
+    // Close types.
+    namedType.push(' }');
+    if (ordered)
+        namedType.push(' | ', ...orderedType, ' ]');
+
+    return namedType.join('');
+}
+
 module.exports = {
     PREAMBLE,
     capitalize,
@@ -46,4 +73,5 @@ module.exports = {
     toUpperCamel,
     toLowerCamel,
     formatPropType,
+    paramsToType,
 };
