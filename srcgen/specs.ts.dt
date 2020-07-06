@@ -37,7 +37,7 @@
             const paramsAll = operation.parameters || [];
 
             const paramsPath = paramsAll.filter(param => 'path' === param.in);
-            paramsPath.sort((paramA, paramB) => pathParamNames.indexOf(paramA) - pathParamNames.indexOf(paramB));
+            paramsPath.sortBy(param => pathParamNames.indexOf(param));
             const paramsPathType = dotUtils.paramsToType(paramsPath, true);
 
             const paramsQuery = paramsAll.filter(param => 'query' === param.in);

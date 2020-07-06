@@ -4,7 +4,7 @@ Array.prototype.flatMap = function(lambda) {
     return Array.prototype.concat.apply([], this.map(lambda));
 };
 
-Array.prototype.defined = function(lambda) {
+Array.prototype.defined = function() {
     return this.filter(x => undefined !== x);
 };
 
