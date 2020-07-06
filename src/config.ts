@@ -14,22 +14,28 @@
 //     [segment: string]: undefined | EndpointsConfig | EndpointConfig
 // }
 
-interface Config {
-    key?: string | undefined,
-    keyPath: string,
+const apiKeyDefault = 'default';
+
+interface Config<TSpec extends spec.EndpointsSpec> {
+    apiKeys: {
+        [K in typeof apiKeyDefault]: string
+    } & {
+        [K in string]: string | undefined
+    },
     origin: string,
-    regionPath: string,
-    retries: number,
-    maxConcurrent: number,
-    distFactor: number,
-    defaultBuckets: InitialTokenBucketConfig[],
-    bucketsConfig: TokenBucketConfig,
-    rateLimitTypeApplication: RateLimitType,
-    rateLimitTypeMethod: RateLimitType,
-    defaultRetryAfter?: number,
-    headerRetryAfter: string,
-    headerLimitType?: string,
-    defaultLimitType: string,
-    collapseQueryArrays: boolean,
-    endpoints: spec.EndpointsSpec,
+    // key?: string | undefined,
+    // keyPath: string,
+    // regionPath: string,
+    // retries: number,
+    // maxConcurrent: number,
+    // distFactor: number,
+    // defaultBuckets: InitialTokenBucketConfig[],
+    // bucketsConfig: TokenBucketConfig,
+    // rateLimitTypeApplication: RateLimitType,
+    // rateLimitTypeMethod: RateLimitType,
+    // defaultRetryAfter?: number,
+    // headerRetryAfter: string,
+    // headerLimitType?: string,
+    // defaultLimitType: string,
+    endpoints: TSpec,
 }

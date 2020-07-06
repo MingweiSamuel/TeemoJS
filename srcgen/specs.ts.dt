@@ -46,6 +46,8 @@
             const paramBody = operation.requestBody && operation.requestBody.content && operation.requestBody.content['application/json'];
             const paramBodyType = paramBody ? dotUtils.formatPropType(paramBody.schema) : 'undefined';
 
+            /* const apiKeyName = ep.includes('tft') ? 'tft' : ep.includes('tft') */
+
             endpointMethodGroups[ep].push({
                 path,
                 verb,
