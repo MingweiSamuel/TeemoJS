@@ -28,10 +28,10 @@ const objFromEntries: (<T>(entries: Array<[ string, T ]>) => { [key: string]: T 
  * ARG_OBJECT may be an object or Array.
  * @internal
  */
-function format(format: string, argObject: spec.NamedParams | spec.OrderedParams): string {
+function format(format: string, argObject: NamedParams | OrderedParams): string {
     let i = 0;
     const result = format.replace(/\{(\w*)\}/g, (_, key: string) => {
-        const val: unknown = key in argObject ? (argObject as spec.NamedParams)[key] : (argObject as spec.OrderedParams)[i];
+        const val: unknown = key in argObject ? (argObject as NamedParams)[key] : (argObject as OrderedParams)[i];
         if (undefined === val)
             throw new Error(`Argument provided for format "${format}" missing key "{${key}}" or index ${i}.`);
         i++;

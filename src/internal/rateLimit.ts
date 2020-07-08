@@ -18,14 +18,14 @@ class RateLimit {
         return TokenBucket.getAllOrDelay(allBuckets);
     }
 
-    private readonly _config: Config;
+    private readonly _config: Config<any>;
     private readonly _type: RateLimitType;
 
     private _buckets: TokenBucket[];
     private _retryAfter: number;
     private _distFactor: number
 
-    constructor(type: RateLimitType, distFactor: number, config: Config) {
+    constructor(type: RateLimitType, distFactor: number, config: Config<any>) {
         this._config = config;
         this._type = type;
         this._buckets = this._config.defaultBuckets.map(b => new TokenBucket(b.timespan, b.limit, b));
@@ -41,7 +41,8 @@ class RateLimit {
     onResponse(response: import("node-fetch").Response): void {
         // Handle 429 retry-after header (if exists).
         if (429 === response.status) {
-            const type = this._config.headerLimitType ? response.headers.get(this._config.headerLimitType) : this._config.defaultLimitType;
+            // const type = this._config.headerLimitType ? response.headers.get(this._config.headerLimitType) : this._config.defaultLimitType;
+            const type = response.headers.get(this._config.headerLimitType);
             if (!type)
                 throw new Error('Response missing type.');
             if (this._type.name === type.toLowerCase()) {

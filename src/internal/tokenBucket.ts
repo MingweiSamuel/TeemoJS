@@ -7,7 +7,7 @@ const TOKENBUCKETCONFIG_DEFAULT = {
     bins: 20,
     binFactor: 0.95,
     overhead: 20,
-}
+};
 
 /**
  * Token bucket. Represents a single "100:60", AKA a 100 tokens per 60 seconds pair.

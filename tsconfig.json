@@ -25,10 +25,23 @@
         "node"
     ],
     "include": [
-        "src/**/*"
+        // Files without exports.
+        "src/internal/global.d.ts",
+        "src/internal/utils.ts",
+        "src/internal/regionalRequester.ts",
+        "src/internal/rateLimit.ts",
+        "src/internal/tokenBucket.ts",
+        "src/internal/semaphore.ts",
+        // Files with exports.
+        "src/riotApi.ts",
+        "src/region.ts",
+        "src/config.ts",
+
+        // Generated files last.
+        "src/specs.ts",
+        "src/models.ts",
     ],
     "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
+        "node_modules"
     ]
 }

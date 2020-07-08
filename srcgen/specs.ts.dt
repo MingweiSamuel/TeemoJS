@@ -15,13 +15,19 @@
         (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
         endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
 
+        const platformsType = pathInfo['x-platforms-available']
+            .map(p => JSON.stringify(p.toUpperCase()))
+            .join(' | ');
+
         const pathParamNames = Array.from(path.matchAll(/\{(\S+?)\}/g)).map(matches => matches[1]);
 
         for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
             const [ endpoint, method ] = operation.operationId.split('.');
             /* const ep = dotUtils.toLowerCamel(endpoint); */
-            const descArr = operation.description ? operation.description.split('\n') : [];
+            const descArr = operation.description
+                ? [ '/**', ...operation.description.split('\n').map(line => ` * ${line}`), ' */' ]
+                : [];
 
             let returnType = 'void';
             const resp200 = operation.responses['200'];
@@ -50,6 +56,7 @@
 
             endpointMethodGroups[ep].push({
                 path,
+                platformsType,
                 verb,
                 descArr,
                 method,
@@ -62,8 +69,36 @@
     }
 }}
 
-namespace spec {
-    export const RiotApi = {
+const RiotApiConfig = {
+    apiKeys: {
+        default: "TODO",
+    },
+    origin: "https://{}.api.riotgames.com",
+    defaultBuckets: [
+        {
+            timespan: 1000,
+            limit: 1,
+            bins: 1,
+            binFactor: 1,
+            overhead: 0,
+        },
+    ],
+    rateLimitTypeApplication: {
+        name: "application",
+        headerLimit: "x-app-rate-limit",
+        headerCount: "x-app-rate-limit-count",
+    },
+    rateLimitTypeMethod: {
+        name: "method",
+        headerLimit: "x-method-rate-limit",
+        headerCount: "x-method-rate-limit-count",
+    },
+    maxConcurrent: 500,
+    distFactor: 1.0,
+    headerLimitType: "x-rate-limit-type",
+    headerRetryAfter: "retry-after",
+    bucketsConfig: {},
+    endpoints: {
 {{
     for (const [ endpointName, endpointMethods ] of Object.entries(endpointMethodGroups))
     {
@@ -73,14 +108,20 @@ namespace spec {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { path, verb, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
+            const { path, platformsType, verb, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
+            for (const descLine of descArr)
+            {
+}}
+            {{= descLine }}
+{{
+            }
 }}
             {{= method }}: {
                 path: {{= JSON.stringify(path) }},
 {{? 'get' !== verb }}
                 method: {{= JSON.stringify(verb) }},
 {{?}}
-            } as ReqSpec<{{= returnType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
+            } as ReqSpec<{{= returnType }}, {{= platformsType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
 {{
         }
 }}
@@ -88,5 +129,9 @@ namespace spec {
 {{
     }
 }}
-    };
-}
+    },
+};
+
+// TODO: other specs.
+
+Object.assign(module.exports, { RiotApiConfig });

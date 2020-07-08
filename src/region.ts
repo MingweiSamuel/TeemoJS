@@ -49,4 +49,4 @@ namespace Region {
     }
 }
 
-exports.Region = Region;
+module.exports.Region = Region;

@@ -5,8 +5,6 @@
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
 // Version {{= spec.info.version }}
-
-
 {{
     for (const [ name, schema ] of Object.entries(spec.components.schemas))
     {

@@ -4,14 +4,14 @@
  */
 class RegionalRequester {
 
-    private readonly _config: Config;
+    private readonly _config: Config<any>;
 
     private _appLimit: RateLimit;
     private readonly _methodLimits: { [methodId: string]: RateLimit };
     private readonly _concurrentSema: Semaphore;
 
 
-    constructor(config: Config) {
+    constructor(config: Config<any>) {
         this._config = config;
 
         this._appLimit = new RateLimit(this._config.rateLimitTypeApplication, 1, this._config);

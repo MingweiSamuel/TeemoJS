@@ -1,29 +1,28 @@
-type RiotApiFluent<TSpec extends spec.EndpointsSpec> = {
+type RiotApiFluent<TSpec extends EndpointsSpec> = {
     [TEndpoint in keyof TSpec]: {
         [TMethod in keyof TSpec[TEndpoint]]:
             (
-                region: Region | string,
-                ...kwargs: spec.ReqArgsTuple<TSpec[TEndpoint][TMethod]>
-            ) => spec.ReqReturn<TSpec[TEndpoint][TMethod]>;
+                region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+                ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
+            ) => ReqReturn<TSpec[TEndpoint][TMethod]>;
     };
 };
 
-class RiotApi<TSpec extends spec.EndpointsSpec> {
+class RiotApi<TSpec extends EndpointsSpec> {
     static readonly defaultApiKeyName: string = 'default';
-    // static readonly spec: typeof spec.RiotApi = spec.RiotApi;
 
     readonly config: Config<TSpec>;
 
     private readonly _requesters: { [rateLimitId: string]: RegionalRequester };
 
-    static createRiotApi(apiKey: string): RiotApi<typeof spec.RiotApi> {
-        return new RiotApi({
-            endpoints: spec.RiotApi,
+    static createRiotApi(apiKey: string): RiotApi<typeof RiotApiConfig.endpoints> {
+        const config = {
+            ...RiotApiConfig,
             apiKeys: {
-                [apiKeyDefault]: apiKey
+                default: apiKey,
             },
-            origin: "https://{}.api.riotgames.com",
-        }); // TODO.
+        };
+        return new RiotApi(config);
     }
 
     constructor(config: Config<TSpec>) {
@@ -38,21 +37,21 @@ class RiotApi<TSpec extends spec.EndpointsSpec> {
     req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
         endpoint: TEndpoint,
         method: TMethod,
-        region: Region | string,
-        ...[ kwargs, ..._ ]: spec.ReqArgsTuple<TSpec[TEndpoint][TMethod]>
-    ): spec.ReqReturn<TSpec[TEndpoint][TMethod]>;
+        region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+        ...[ kwargs, ..._ ]: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
+    ): ReqReturn<TSpec[TEndpoint][TMethod]>;
     req(
         endpoint: string | number,
         method: string | number,
         region: Region | string,
-        ...[ kwargs, ..._ ]: spec.ReqArgsTuple<any>
-    ): spec.ReqReturn<any>
+        ...[ kwargs, ..._ ]: ReqArgsTuple<any>
+    ): ReqReturn<any>
     {
         kwargs = kwargs || {};
 
         // Get spec.
-        let ep: { [method: string]: spec.ReqSpec<any, any, any, any> };
-        let sp: spec.ReqSpec<any, any, any, any>;
+        let ep: { [method: string]: ReqSpec<any, any, any, any, any> };
+        let sp: ReqSpec<any, any, any, any, any>;
         if ('object' !== typeof (ep = this.config.endpoints[endpoint]))
             throw Error(`Unknown endpoint "${endpoint}".\nAvailable endpoints: ${JSON.stringify(Object.keys(this.config.endpoints))}`);
         if ('string' !== typeof (sp = ep[method]).path)
@@ -63,9 +62,9 @@ class RiotApi<TSpec extends spec.EndpointsSpec> {
 
         // Get API Key.
         const apiKeyName: string = sp.apiKeyName || RiotApi.defaultApiKeyName;
-        const apiKey: string = this.config.apiKeys[apiKeyName] || this.config.apiKeys[apiKeyDefault];
+        const apiKey: string = this.config.apiKeys[apiKeyName] || this.config.apiKeys.default;
         if (!apiKey)
-            throw Error(`No valid API key found for name "${apiKeyName}" or "${apiKeyDefault}".`);
+            throw Error(`No valid API key found for name "${apiKeyName}" or "default".`);
 
         // Build URL.
         const path: string = kwargs.path ? format(sp.path, kwargs.path) : sp.path;
@@ -84,7 +83,7 @@ class RiotApi<TSpec extends spec.EndpointsSpec> {
 
         // Build fetch.
         const headerInit: import("node-fetch").HeaderInit = {
-            'X-Riot-Token': apiKey,
+            'x-riot-token': apiKey,
         };
         const fetchConfig: import("node-fetch").RequestInit = {
             method: sp.method,
@@ -110,37 +109,37 @@ class RiotApi<TSpec extends spec.EndpointsSpec> {
         return requester.req(methodId, url, fetchConfig);
     }
 }
-exports.RiotApi = RiotApi;
+module.exports.RiotApi = RiotApi;
 
 /** @internal */
-interface RiotApiEndpoint<TSpec extends spec.EndpointsSpec, TEndpoint extends keyof TSpec> {
+interface RiotApiEndpoint<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec> {
     base: RiotApi<TSpec>,
     endpoint: TEndpoint;
 }
 
 /** @internal */
-function getRiotApiProxyHandler<TSpec extends spec.EndpointsSpec>():
+function getRiotApiProxyHandler<TSpec extends EndpointsSpec>():
     ProxyHandler<RiotApi<TSpec>>
 {
     return {
         get<TEndpoint extends keyof TSpec>(target: RiotApi<TSpec>, prop: TEndpoint | string | number | symbol, receiver: unknown): any {
-            if ('string' === typeof prop && prop in target.config)
+            if ('string' === typeof prop && prop in target.config.endpoints)
                 return new Proxy({ base: target, endpoint: prop } as RiotApiEndpoint<TSpec, TEndpoint>, getRiotApiEndpointProxyHandler<TSpec, TEndpoint>());
             return Reflect.get(target, prop, receiver);
         }
     };
 }
 /** @internal */
-function getRiotApiEndpointProxyHandler<TSpec extends spec.EndpointsSpec, TEndpoint extends keyof TSpec>():
+function getRiotApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec>():
     ProxyHandler<RiotApiEndpoint<TSpec, TEndpoint>>
 {
     return {
         get<TMethod extends keyof TSpec[TEndpoint]>(target: RiotApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, receiver: unknown) {
             if ('string' === typeof prop && prop in target.base.config.endpoints[target.endpoint])
                 return (
-                    region: Region | string,
-                    ...kwargs: spec.ReqArgsTuple<TSpec[TEndpoint][TMethod]>
-                ): spec.ReqReturn<TSpec[TEndpoint][TMethod]> =>
+                    region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+                    ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
+                ): ReqReturn<TSpec[TEndpoint][TMethod]> =>
                     target.base.req(target.endpoint, prop as TMethod, region, ...kwargs);
             return Reflect.get(target, prop, receiver);
         }
