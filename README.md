@@ -144,6 +144,25 @@ const api = TeemoApi.createRiotApi({
 // Use as normal.
 ```
 
+#### TypeScript typings
+
+```typescript
+import { TeemoApi, Region, summonerV4, matchV4 } from "./dist/index";
+// ...
+const summoner: summonerV4.SummonerDTO = await api.summonerV4.getBySummonerName(Region.NA1, {
+  path: { summonerName: 'x blotter' },
+});
+const matchlist: matchV4.MatchlistDto = await api.matchV4.getMatchlist(Region.NA1, {
+  path: [ summoner.accountId ],
+  query: { champion: [ 17, 420 ] },
+});
+```
+```typescript
+let myResult: ReturnType<typeof api.championMasteryV4.getAllChampionMasteries>;
+// myResult: Promise<championMasteryV4.ChampionMasteryDTO[]>
+```
+
+
 <!--
 #### Riot API with separate key for TFT endpoints
 ```javascript
