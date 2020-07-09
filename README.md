@@ -63,7 +63,7 @@ main();
 
 There are two equivalent syntaxes:
 - `req` syntax, all API calls are done via the `.req(endpoint, method, ...)` method.
-- `proxy` syntax, endpoints and methods can be called as fields.
+- `proxy` syntax, endpoints and methods can be called as fields: `api.endpoint.method(...)`.
 
 The later uses [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
 to call the former.
