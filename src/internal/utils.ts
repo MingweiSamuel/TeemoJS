@@ -11,19 +11,6 @@ const URL: typeof import("url").URL = (global as any).URL || require("url").URL;
 const fetch: fetch = (global as any).fetch || require("node-fetch");
 
 /**
- * Object.fromEntries
- * @internal
- */
-const objFromEntries: (<T>(entries: Array<[ string, T ]>) => { [key: string]: T })
-    = (Object as any).fromEntries
-    || function<T>(entries: Array<[ string, T ]>): { [key: string]: T }
-{
-    const obj: { [key: string]: T } = {};
-    entries.forEach(([ key, val ]) => obj[key] = val);
-    return obj;
-};
-
-/**
  * Returns a formatted string, replacing "{}", "{name}", or "{0}" with supplied ARG_OBJECT.
  * ARG_OBJECT may be an object or Array.
  * @internal
@@ -41,14 +28,17 @@ function format(format: string, argObject: NamedParams | OrderedParams): string 
 }
 
 /**
- * Assigns VALUE into OBJECT at location PATH, where PATH is a period-dilimited set of segments. For example,
- * `"foo.bar"` would run `object.foo.bar = value`. But also fills in undefined values with new objects.
+ * Non-cryptographic string hash, implemented as Java's String.hashCode().
+ * https://stackoverflow.com/a/8831937/2398020
+ * @param str String to hash.
  * @internal
  */
-function assignPath(object: any, path: string, value: any): void {
-    const segments = path.split('.');
-    const final = segments.pop() as string; // Split always gives at least one item (barring invalid input).
-    for (const segment of segments)
-        object = undefined !== object[segment] ? object[segment] : (object[segment] = {});
-    object[final] = value;
+function strHash(str: string): int {
+    let hash: int = 0;
+    if (!str.length) return hash;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash &= hash; // Convert to 32 bit integer.
+    }
+    return hash;
 }

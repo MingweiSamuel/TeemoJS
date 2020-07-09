@@ -9,10 +9,10 @@ type RiotApiFluent<TSpec extends EndpointsSpec> = {
 } & Pick<RiotApi<TSpec>, 'setDistFactor'>;
 
 class RiotApi<TSpec extends EndpointsSpec> {
-    static readonly defaultApiKeyName: string = 'default';
-
+    /** The config for this RiotApi. */
     readonly config: Config<TSpec>;
 
+    /** The requesters created by this RiotApi, keyed uniquely per api key and region. */
     private readonly _requesters: { [rateLimitId: string]: RegionalRequester };
 
     static createRiotApi(apiKey: string): RiotApi<typeof RiotApiConfig.endpoints> {
@@ -61,9 +61,8 @@ class RiotApi<TSpec extends EndpointsSpec> {
         const regionStr: string = 'number' === typeof region ? Region[region] : region;
 
         // Get API Key.
-        const apiKeyName: keyof Config<TSpec>['apiKeys'] = (sp.apiKeyName && sp.apiKeyName in this.config.apiKeys) ? sp.apiKeyName : RiotApi.defaultApiKeyName;
-        const apiKey: string | undefined = this.config.apiKeys[apiKeyName];
-        if (!apiKey) throw Error(`No valid API key found for name "${apiKeyName}" or "${RiotApi.defaultApiKeyName}".`);
+        const apiKey: string = sp.apiKeyName && this.config.apiKeys[sp.apiKeyName] || this.config.apiKeys.default;
+        if (!apiKey) throw Error(`No valid API key found for name ${JSON.stringify(sp.apiKeyName)} or "default".`);
 
         // Build URL.
         const path: string = kwargs.path ? format(sp.path, kwargs.path) : sp.path;
@@ -94,7 +93,7 @@ class RiotApi<TSpec extends EndpointsSpec> {
         }
 
         // Build rateLimitId.
-        const rateLimitId: string = `${apiKeyName}:${regionStr}`;
+        const rateLimitId: string = `${strHash(apiKey)}:${regionStr}`;
         // Build methodId.
         const methodId: string = `${endpoint}:${method}`;
 
