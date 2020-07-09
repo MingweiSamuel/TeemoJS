@@ -89,10 +89,11 @@ aPromise = api.endpoint.method(region, {
 
 #### Parameters
 - `endpoint` - An API endpoint in lower camel case, such as `summonerV4` or
-  `matchV4`. See [`specs.ts`](https://github.com/MingweiSamuel/TeemoJS/blob/master/src/specs.ts)
-  for a full list.
+  `matchV4`.
 - `method` - An method in `endpoint`, such as `getBySummonerName` or
   `getMatchlist` (respectively).
+  - See [`configs.ts`](https://github.com/MingweiSamuel/TeemoJS/blob/master/src/configs.ts)
+  for a full list of endpoints and methods.
 - `region` - The region to request to, from the `Region` enum (`Region.NA1`) or
   a string.
 - The parameters object. This can be omitted if no parameters are needed, e.g.

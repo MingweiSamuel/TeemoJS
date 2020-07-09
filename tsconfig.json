@@ -38,8 +38,8 @@
         "src/config.ts",
 
         // Generated files last.
-        "src/specs.ts",
-        "src/models.ts",
+        "src/configs.ts",
+        "src/models.ts"
     ],
     "exclude": [
         "node_modules"
