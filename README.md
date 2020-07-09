@@ -2,6 +2,9 @@
   Teemo(J)S
 </h1>
 <p align="center">
+  <em>Now in TypeScript</em>
+</p>
+<p align="center">
   <a href="https://github.com/MingweiSamuel/TeemoJS/"><img src="https://cdn.communitydragon.org/latest/champion/Teemo/square" width="20" height="20" alt="Github"></a>
   <a href="https://www.npmjs.com/package/teemojs"><img src="https://img.shields.io/npm/v/teemojs.svg?style=flat-square&logo=npm" alt="NPM"></a>
   <a href="https://packagephobia.now.sh/result?p=teemojs%40next"><img src="https://flat.badgen.net/packagephobia/install/teemojs@next" alt="Install Size"></a>
@@ -60,8 +63,7 @@ main();
 
 There are two equivalent syntaxes:
 - `req` syntax, all API calls are done via the `.req(endpoint, method, ...)` method.
-- `proxy` syntax, endpoints and methods can be called as fields and methods
-  respectively.
+- `proxy` syntax, endpoints and methods can be called as fields.
 
 The later uses [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
 to call the former.
@@ -149,7 +151,7 @@ const api = TeemoApi.createRiotApi({
 #### TypeScript typings
 
 ```typescript
-import { TeemoApi, Region, summonerV4, matchV4 } from "./dist/index";
+import { TeemoApi, Region, summonerV4, matchV4 } from "TeemoJS";
 // ...
 const summoner: summonerV4.SummonerDTO = await api.summonerV4.getBySummonerName(Region.NA1, {
   path: { summonerName: 'x blotter' },
