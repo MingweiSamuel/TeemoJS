@@ -15,53 +15,53 @@ type double = number;
 
 /** Header information for an application or method rate limit. */
 interface RateLimitType {
-    name: string,
-    headerLimit: string,
-    headerCount: string,
+    readonly name: string,
+    readonly headerLimit: string,
+    readonly headerCount: string,
 }
 
 /** Token bucket configuration parameters. */
 interface TokenBucketConfig {
-    distFactor?: number,
-    bins?: number,
-    binFactor?: number,
-    overhead?: number,
+    readonly distFactor?: number,
+    readonly bins?: number,
+    readonly binFactor?: number,
+    readonly overhead?: number,
 }
 
 /** Default token bucket initialization parameters before rate limits are known. */
 interface InitialTokenBucketConfig extends TokenBucketConfig {
-    timespan: number,
-    limit: number,
+    readonly timespan: number,
+    readonly limit: number,
 }
 
 /** A configuration needed to instantiate a RiotApi. */
 interface Config<TSpec extends EndpointsSpec> {
-    apiKeys: {
+    distFactor: number,
+    readonly apiKeys: {
         default: string,
         [apiKeyName: string]: string | undefined
     },
-    origin: string,
+    readonly origin: string,
     // key?: string | undefined,
     // keyPath: string,
     // regionPath: string,
     // retries: number,
-    maxConcurrent: number,
-    distFactor: number,
-    defaultBuckets: InitialTokenBucketConfig[],
-    bucketsConfig: TokenBucketConfig,
-    rateLimitTypeApplication: RateLimitType,
-    rateLimitTypeMethod: RateLimitType,
+    readonly maxConcurrent: number,
+    readonly defaultBuckets: InitialTokenBucketConfig[],
+    readonly bucketsConfig: TokenBucketConfig,
+    readonly rateLimitTypeApplication: RateLimitType,
+    readonly rateLimitTypeMethod: RateLimitType,
     // defaultRetryAfter?: number,
-    headerRetryAfter: string,
-    headerLimitType: string, // TODO optional?
+    readonly headerRetryAfter: string,
+    readonly headerLimitType: string, // TODO optional?
     // defaultLimitType: string,
-    endpoints: TSpec,
+    readonly endpoints: TSpec,
 }
 
 /** Listing of endpoints. */
 type EndpointsSpec = {
-    [endpoint: string]: {
-        [method: string]: ReqSpec<any, any, any, any, any>
+    readonly [endpoint: string]: {
+        readonly [method: string]: ReqSpec<any, any, any, any, any>
     }
 };
 
@@ -73,16 +73,16 @@ type OrderedParams = { [argIdx: number]: unknown };
 
 /** ReqSpec with optional type parameters for annotating the input parameters and return type. */
 type ReqSpec<_TReturn, _TPlatforms extends string | Region, _TPath extends OrderedParams | NamedParams, _TQuery extends NamedParams, _TBody> = {
-    path: string,
-    method?: import("node-fetch").RequestInit['method'],
-    apiKeyName?: string,
+    readonly path: string,
+    readonly method?: import("node-fetch").RequestInit['method'],
+    readonly apiKeyName?: string,
 };
 
 /** Utility type which extracts Promise<TReturn> from a ReqSpec. */
 type ReqReturn<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     TReqSpec extends ReqSpec<infer TReturn, any, any, any, any>
         ? Promise<TReturn>
-    : never;
+    : Promise<unknown>;
 
 /** Utility type which extracts a Region type union from a ReqSpec. */
 type ReqPlatforms<TReqSpec extends ReqSpec<any, any, any, any, any>> =
@@ -90,7 +90,7 @@ type ReqPlatforms<TReqSpec extends ReqSpec<any, any, any, any, any>> =
         ? TPlatforms extends keyof typeof Region
             ? (typeof Region)[TPlatforms]
         : TPlatforms
-    : never;
+    : Region | string;
 
 /**
  * Utility type which creates a { path, query, body } kwargs type from a ReqSpec.

@@ -33,19 +33,11 @@ function format(format: string, argObject: NamedParams | OrderedParams): string 
     const result = format.replace(/\{(\w*)\}/g, (_, key: string) => {
         const val: unknown = key in argObject ? (argObject as NamedParams)[key] : (argObject as OrderedParams)[i];
         if (undefined === val)
-            throw new Error(`Argument provided for format "${format}" missing key "{${key}}" or index ${i}.`);
+            throw new Error(`argObject provided for format "${format}" missing key ["${key}"] or index [${i}].`);
         i++;
         return val as string; // Will be converted to string.
     });
     return result;
-}
-
-/**
- * Returns a promise that resolves after the supplied delay.
- * @internal
- */
-function delayPromise(millis: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, millis));
 }
 
 /**

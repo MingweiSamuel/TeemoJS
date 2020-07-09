@@ -10,9 +10,7 @@
 // Version 909460d67267a0122544094d93120b50f8d0f5de
 
 const RiotApiConfig = {
-    apiKeys: {
-        default: "TODO",
-    },
+    apiKeys: undefined,
     origin: "https://{}.api.riotgames.com",
     defaultBuckets: [
         {
@@ -51,7 +49,7 @@ const RiotApiConfig = {
              */
             getChampionMastery: {
                 path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDTO | null, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { championId: long, encryptedSummonerId: string } | [ long, string ], {}, undefined>,
+            } as ReqSpec<championMasteryV4.ChampionMasteryDTO | null, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { encryptedSummonerId: string, championId: long } | [ string, long ], {}, undefined>,
             /**
              * Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
              */
@@ -127,7 +125,7 @@ const RiotApiConfig = {
              */
             getLeagueEntries: {
                 path: "/lol/league/v4/entries/{queue}/{tier}/{division}",
-            } as ReqSpec<leagueV4.LeagueEntryDTO[], "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { division: "I" | "II" | "III" | "IV", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" } | [ "I" | "II" | "III" | "IV", "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" ], { page?: int | null }, undefined>,
+            } as ReqSpec<leagueV4.LeagueEntryDTO[], "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
             /**
              * Get the grandmaster league of a specific queue.
              */
@@ -163,6 +161,7 @@ const RiotApiConfig = {
              */
             getLeaderboards: {
                 path: "/lor/ranked/v1/leaderboards",
+                apiKeyName: "lor",
             } as ReqSpec<lorRankedV1.LeaderboardDto, "AMERICAS" | "ASIA" | "EUROPE" | "SEA", {} | [], {}, undefined>,
         },
         matchV4: {
@@ -183,7 +182,7 @@ const RiotApiConfig = {
              */
             getMatchByTournamentCode: {
                 path: "/lol/match/v4/matches/{matchId}/by-tournament-code/{tournamentCode}",
-            } as ReqSpec<matchV4.MatchDto, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { tournamentCode: string, matchId: long } | [ string, long ], {}, undefined>,
+            } as ReqSpec<matchV4.MatchDto, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { matchId: long, tournamentCode: string } | [ long, string ], {}, undefined>,
             /**
              * Get matchlist for games played on given account ID and platform ID and filtered using given filter parameters, if any.
              * ## Implementation Notes
@@ -251,36 +250,42 @@ const RiotApiConfig = {
              */
             getChallengerLeague: {
                 path: "/tft/league/v1/challenger",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueListDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", {} | [], {}, undefined>,
             /**
              * Get league entries for a given summoner ID.
              */
             getLeagueEntriesForSummoner: {
                 path: "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { encryptedSummonerId: string } | [ string ], {}, undefined>,
             /**
              * Get all the league entries.
              */
             getLeagueEntries: {
                 path: "/tft/league/v1/entries/{tier}/{division}",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
             /**
              * Get the grandmaster league.
              */
             getGrandmasterLeague: {
                 path: "/tft/league/v1/grandmaster",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueListDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", {} | [], {}, undefined>,
             /**
              * Get league with given ID, including inactive entries.
              */
             getLeagueById: {
                 path: "/tft/league/v1/leagues/{leagueId}",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueListDTO | null, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { leagueId: string } | [ string ], {}, undefined>,
             /**
              * Get the master league.
              */
             getMasterLeague: {
                 path: "/tft/league/v1/master",
+                apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueListDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", {} | [], {}, undefined>,
         },
         tftMatchV1: {
@@ -289,12 +294,14 @@ const RiotApiConfig = {
              */
             getMatchIdsByPUUID: {
                 path: "/tft/match/v1/matches/by-puuid/{puuid}/ids",
+                apiKeyName: "tft",
             } as ReqSpec<string[], "AMERICAS" | "ASIA" | "EUROPE", { puuid: String } | [ String ], { count?: int | null }, undefined>,
             /**
              * Get a match by match id.
              */
             getMatch: {
                 path: "/tft/match/v1/matches/{matchId}",
+                apiKeyName: "tft",
             } as ReqSpec<tftMatchV1.MatchDto | null, "AMERICAS" | "ASIA" | "EUROPE", { matchId: String } | [ String ], {}, undefined>,
         },
         tftSummonerV1: {
@@ -303,24 +310,28 @@ const RiotApiConfig = {
              */
             getByAccountId: {
                 path: "/tft/summoner/v1/summoners/by-account/{encryptedAccountId}",
+                apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { encryptedAccountId: string } | [ string ], {}, undefined>,
             /**
              * Get a summoner by summoner name.
              */
             getBySummonerName: {
                 path: "/tft/summoner/v1/summoners/by-name/{summonerName}",
+                apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO | null, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { summonerName: string } | [ string ], {}, undefined>,
             /**
              * Get a summoner by PUUID.
              */
             getByPUUID: {
                 path: "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}",
+                apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { encryptedPUUID: string } | [ string ], {}, undefined>,
             /**
              * Get a summoner by summoner ID.
              */
             getBySummonerId: {
                 path: "/tft/summoner/v1/summoners/{encryptedSummonerId}",
+                apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, "BR1" | "EUN1" | "EUW1" | "JP1" | "KR" | "LA1" | "LA2" | "NA1" | "OC1" | "RU" | "TR1", { encryptedSummonerId: string } | [ string ], {}, undefined>,
         },
         thirdPartyCodeV4: {
@@ -338,12 +349,14 @@ const RiotApiConfig = {
             createTournamentCode: {
                 path: "/lol/tournament-stub/v4/codes",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<string[], "AMERICAS", {} | [], { count?: int | null, tournamentId: long }, tournamentStubV4.TournamentCodeParameters>,
             /**
              * Gets a mock list of lobby events by tournament code.
              */
             getLobbyEventsByCode: {
                 path: "/lol/tournament-stub/v4/lobby-events/by-code/{tournamentCode}",
+                apiKeyName: "tournament",
             } as ReqSpec<tournamentStubV4.LobbyEventDTOWrapper, "AMERICAS", { tournamentCode: string } | [ string ], {}, undefined>,
             /**
              * Creates a mock tournament provider and returns its ID.
@@ -353,6 +366,7 @@ const RiotApiConfig = {
             registerProviderData: {
                 path: "/lol/tournament-stub/v4/providers",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<int, "AMERICAS", {} | [], {}, tournamentStubV4.ProviderRegistrationParameters>,
             /**
              * Creates a mock tournament and returns its ID.
@@ -360,6 +374,7 @@ const RiotApiConfig = {
             registerTournament: {
                 path: "/lol/tournament-stub/v4/tournaments",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<int, "AMERICAS", {} | [], {}, tournamentStubV4.TournamentRegistrationParameters>,
         },
         tournamentV4: {
@@ -369,12 +384,14 @@ const RiotApiConfig = {
             createTournamentCode: {
                 path: "/lol/tournament/v4/codes",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<string[], "AMERICAS", {} | [], { count?: int | null, tournamentId: long }, tournamentV4.TournamentCodeParameters>,
             /**
              * Returns the tournament code DTO associated with a tournament code string.
              */
             getTournamentCode: {
                 path: "/lol/tournament/v4/codes/{tournamentCode}",
+                apiKeyName: "tournament",
             } as ReqSpec<tournamentV4.TournamentCodeDTO, "AMERICAS", { tournamentCode: string } | [ string ], {}, undefined>,
             /**
              * Update the pick type, map, spectator type, or allowed summoners for a code.
@@ -382,12 +399,14 @@ const RiotApiConfig = {
             updateCode: {
                 path: "/lol/tournament/v4/codes/{tournamentCode}",
                 method: "put",
+                apiKeyName: "tournament",
             } as ReqSpec<void, "AMERICAS", { tournamentCode: string } | [ string ], {}, tournamentV4.TournamentCodeUpdateParameters>,
             /**
              * Gets a list of lobby events by tournament code.
              */
             getLobbyEventsByCode: {
                 path: "/lol/tournament/v4/lobby-events/by-code/{tournamentCode}",
+                apiKeyName: "tournament",
             } as ReqSpec<tournamentV4.LobbyEventDTOWrapper, "AMERICAS", { tournamentCode: string } | [ string ], {}, undefined>,
             /**
              * Creates a tournament provider and returns its ID.
@@ -397,6 +416,7 @@ const RiotApiConfig = {
             registerProviderData: {
                 path: "/lol/tournament/v4/providers",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<int, "AMERICAS", {} | [], {}, tournamentV4.ProviderRegistrationParameters>,
             /**
              * Creates a tournament and returns its ID.
@@ -404,6 +424,7 @@ const RiotApiConfig = {
             registerTournament: {
                 path: "/lol/tournament/v4/tournaments",
                 method: "post",
+                apiKeyName: "tournament",
             } as ReqSpec<int, "AMERICAS", {} | [], {}, tournamentV4.TournamentRegistrationParameters>,
         },
     },

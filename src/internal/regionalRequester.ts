@@ -39,7 +39,7 @@ class RegionalRequester {
                     // Wait for rate limits.
                     let delay: number;
                     while (0 <= (delay = RateLimit.getAllOrDelay(rateLimits)))
-                        await delayPromise(delay);
+                        await new Promise(resolve => setTimeout(resolve, delay));
                     // Send request, get response.
                     response = await fetch(url, fetchConfig);
 

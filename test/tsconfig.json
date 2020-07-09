@@ -1,0 +1,48 @@
+{
+    "compilerOptions": {
+        // "outFile": "dist/index.js",
+        "module": "none",
+        "target": "es2015",
+        "lib": [],
+        "types": [],
+        "declaration": true,
+
+        "esModuleInterop": true,
+
+        "newLine": "lf",
+        "sourceMap": true,
+        "stripInternal": true,
+
+        "alwaysStrict": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true
+    },
+    "types": [
+        "node",
+        "assert",
+    ],
+    "include": [
+        // Files without exports.
+        "src/internal/global.d.ts",
+        "src/internal/utils.ts",
+        "src/internal/regionalRequester.ts",
+        "src/internal/rateLimit.ts",
+        "src/internal/tokenBucket.ts",
+        "src/internal/semaphore.ts",
+        // Files with exports.
+        "src/riotApi.ts",
+        "src/region.ts",
+        "src/config.ts",
+
+        // Generated files last.
+        "src/specs.ts",
+        "src/models.ts",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

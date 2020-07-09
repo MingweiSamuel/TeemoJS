@@ -6,7 +6,7 @@ type RiotApiFluent<TSpec extends EndpointsSpec> = {
                 ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
             ) => ReqReturn<TSpec[TEndpoint][TMethod]>;
     };
-};
+} & Pick<RiotApi<TSpec>, 'setDistFactor'>;
 
 class RiotApi<TSpec extends EndpointsSpec> {
     static readonly defaultApiKeyName: string = 'default';
@@ -20,7 +20,7 @@ class RiotApi<TSpec extends EndpointsSpec> {
             ...RiotApiConfig,
             apiKeys: {
                 default: apiKey,
-            },
+            } as const,
         };
         return new RiotApi(config);
     }
@@ -61,10 +61,9 @@ class RiotApi<TSpec extends EndpointsSpec> {
         const regionStr: string = 'number' === typeof region ? Region[region] : region;
 
         // Get API Key.
-        const apiKeyName: string = sp.apiKeyName || RiotApi.defaultApiKeyName;
-        const apiKey: string = this.config.apiKeys[apiKeyName] || this.config.apiKeys.default;
-        if (!apiKey)
-            throw Error(`No valid API key found for name "${apiKeyName}" or "default".`);
+        const apiKeyName: keyof Config<TSpec>['apiKeys'] = (sp.apiKeyName && sp.apiKeyName in this.config.apiKeys) ? sp.apiKeyName : RiotApi.defaultApiKeyName;
+        const apiKey: string | undefined = this.config.apiKeys[apiKeyName];
+        if (!apiKey) throw Error(`No valid API key found for name "${apiKeyName}" or "${RiotApi.defaultApiKeyName}".`);
 
         // Build URL.
         const path: string = kwargs.path ? format(sp.path, kwargs.path) : sp.path;
@@ -95,7 +94,7 @@ class RiotApi<TSpec extends EndpointsSpec> {
         }
 
         // Build rateLimitId.
-        const rateLimitId: string = `${regionStr}:${"TODO RATE LIMIT KEY"}`;
+        const rateLimitId: string = `${apiKeyName}:${regionStr}`;
         // Build methodId.
         const methodId: string = `${endpoint}:${method}`;
 
@@ -107,6 +106,13 @@ class RiotApi<TSpec extends EndpointsSpec> {
             this._requesters[rateLimitId] || (this._requesters[rateLimitId] = new RegionalRequester(this.config));
 
         return requester.req(methodId, url, fetchConfig);
+    }
+
+    setDistFactor(factor: number): void {
+        if (factor <= 0 || 1 < factor) throw new Error("Factor must be greater than zero and non-greater than one.");
+        if (this.config.distFactor === factor) return;
+        this.config.distFactor = factor;
+        Object.values(this._requesters).forEach(r => r.updateDistFactor());
     }
 }
 module.exports.RiotApi = RiotApi;

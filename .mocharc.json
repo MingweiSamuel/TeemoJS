@@ -1,0 +1,9 @@
+{
+    "require": [
+        "ts-node/register",
+        "source-map-support/register"
+    ],
+    "spec": "test/*.ts",
+    "parallel": true,
+    "timeout": 120000
+}

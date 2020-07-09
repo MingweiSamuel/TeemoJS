@@ -1,10 +1,20 @@
 #!/bin/bash
 set -xe
 
+# Fix dependency import issue in node-fetch.
 sed -i "s/'form-data'/'form-data\/index'/g" node_modules/\@types/node-fetch/index.d.ts
+
+# Generate spec and model source.
 node srcgen/dot.js
+
+# Compile typescript.
 node node_modules/typescript/bin/tsc
+
+# Post-processing.
 sed -i "s/^declare /export declare /g" dist/index.d.ts
+sed -i "s/\.\.\.\[kwargs,\s*\.\.\._\]/kwargs/g" dist/index.js
+sed -i "s/\.\.\.\kwargs/kwargs/g" dist/index.js
+
+# Browserify.
 node node_modules/browserify/bin/cmd.js dist/index.js -s TeemoJS --no-bf --no-bundle-external -o dist/browser.js
 node node_modules/browserify/bin/cmd.js dist/index.js -s TeemoJS --no-bf --no-bundle-external -p tinyify -o dist/browser.min.js
-

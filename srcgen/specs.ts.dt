@@ -19,8 +19,6 @@
             .map(p => JSON.stringify(p.toUpperCase()))
             .join(' | ');
 
-        const pathParamNames = Array.from(path.matchAll(/\{(\S+?)\}/g)).map(matches => matches[1]);
-
         for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
             const [ endpoint, method ] = operation.operationId.split('.');
@@ -43,7 +41,7 @@
             const paramsAll = operation.parameters || [];
 
             const paramsPath = paramsAll.filter(param => 'path' === param.in);
-            paramsPath.sortBy(param => pathParamNames.indexOf(param));
+            paramsPath.sortBy(param => path.indexOf('{' + param.name + '}'));
             const paramsPathType = dotUtils.paramsToType(paramsPath, true);
 
             const paramsQuery = paramsAll.filter(param => 'query' === param.in);
@@ -52,12 +50,16 @@
             const paramBody = operation.requestBody && operation.requestBody.content && operation.requestBody.content['application/json'];
             const paramBodyType = paramBody ? dotUtils.formatPropType(paramBody.schema) : 'undefined';
 
-            /* const apiKeyName = ep.includes('tft') ? 'tft' : ep.includes('tft') */
+            const apiKeyName = ep.includes('tft') ? 'tft'
+                : ep.includes('lor') ? 'lor'
+                : ep.includes('tournament') ? 'tournament'
+                : undefined;
 
             endpointMethodGroups[ep].push({
                 path,
                 platformsType,
                 verb,
+                apiKeyName,
                 descArr,
                 method,
                 returnType,
@@ -70,9 +72,7 @@
 }}
 
 const RiotApiConfig = {
-    apiKeys: {
-        default: "TODO",
-    },
+    apiKeys: undefined,
     origin: "https://{}.api.riotgames.com",
     defaultBuckets: [
         {
@@ -108,7 +108,7 @@ const RiotApiConfig = {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { path, platformsType, verb, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
+            const { path, platformsType, verb, apiKeyName, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
             for (const descLine of descArr)
             {
 }}
@@ -120,6 +120,9 @@ const RiotApiConfig = {
                 path: {{= JSON.stringify(path) }},
 {{? 'get' !== verb }}
                 method: {{= JSON.stringify(verb) }},
+{{?}}
+{{? apiKeyName }}
+                apiKeyName: {{= JSON.stringify(apiKeyName) }},
 {{?}}
             } as ReqSpec<{{= returnType }}, {{= platformsType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
 {{
