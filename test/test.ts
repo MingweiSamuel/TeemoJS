@@ -1,12 +1,12 @@
 import * as assert from "assert";
 
-import { RiotApi, Region } from '../dist';
+import { TeemoApi, Region } from '../dist';
 
 import { promisify } from "util";
 import { readFile } from "fs";
 
 describe('TeemoJS LoL', function() {
-  let api: ReturnType<typeof RiotApi.createRiotApi>;
+  let api: ReturnType<typeof TeemoApi.createRiotApi>;
   let apf: ReturnType<typeof api.proxy>;
 
   before(async function() {
@@ -20,7 +20,7 @@ describe('TeemoJS LoL', function() {
         throw new Error('Must set RIOT_API_KEY envvar or have apikey.txt in repository root.');
       }
     }
-    api = RiotApi.createRiotApi(apiKey); // TODO: maxConcurrent: 50.
+    api = TeemoApi.createRiotApi(apiKey); // TODO: maxConcurrent: 50.
     apf = api.proxy();
   });
 
@@ -86,8 +86,7 @@ describe('TeemoJS LoL', function() {
       });
       const data = await apf.matchV4.getMatchlist(Region.NA1, {
         path: { encryptedAccountId: summoner.accountId },
-        // TODO: optional lists.
-        query: { champion: [ 429 ], queue: [ 420 ] },
+        query: { champion: 429, queue: 420 },
       });
       assert.ok(data);
       assert.ok(data.matches);

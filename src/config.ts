@@ -3,7 +3,8 @@ type int = number;
 
 /**
  * 64-bit integer (signed).
- * NOTE: Precision loss for numbers over Number.MAX_SAFE_INTEGER (~9 quadrilion).
+ * NOTE: Precision loss for numbers over Number.MAX_SAFE_INTEGER (~9
+ * quadrilion).
  */
 type long = number;
 
@@ -28,7 +29,9 @@ interface TokenBucketConfig {
     readonly overhead?: number,
 }
 
-/** Default token bucket initialization parameters before rate limits are known. */
+/**
+ * Default token bucket initialization parameters before rate limits are known.
+ */
 interface InitialTokenBucketConfig extends TokenBucketConfig {
     readonly timespan: number,
     readonly limit: number,
@@ -74,8 +77,16 @@ type NamedParams = { [argName: string]: unknown };
 /** Ordered path parameters. */
 type OrderedParams = { [argIdx: number]: unknown };
 
-/** ReqSpec with optional type parameters for annotating the input parameters and return type. */
-type ReqSpec<_TReturn, _TPlatforms extends string | Region, _TPath extends OrderedParams | NamedParams, _TQuery extends NamedParams, _TBody> = {
+/**
+ * ReqSpec with optional type parameters for annotating the input parameters
+ * and return type.
+ */
+type ReqSpec<
+    _TReturn,
+    _TPlatforms extends string | Region,
+    _TPath extends OrderedParams | NamedParams,
+    _TQuery extends NamedParams, _TBody
+> = {
     readonly path: string,
     readonly method?: import("node-fetch").RequestInit['method'],
     readonly apiKeyName?: string,
@@ -97,8 +108,16 @@ type ReqRegion<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     | string;
 
 /**
- * Utility type which creates a { path, query, body } kwargs type from a ReqSpec.
- * Fields are made optional if they are not required.
+ * Utility type which allows top-level list fields to be replaced by single
+ * non-list values of the corresponding type.
+ */
+type AllowSingleItemLists<T> = {
+    [K in keyof T]: T[K] extends Array<infer TItem> ? T[K] | TItem : T[K]
+};
+
+/**
+ * Utility type which creates a { path, query, body } kwargs type from a
+ * ReqSpec. Fields are made optional if they are not required.
  */
 type ReqArgs<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     TReqSpec extends ReqSpec<any, any, infer TPath, infer TQuery, infer TBody>
@@ -108,8 +127,8 @@ type ReqArgs<TReqSpec extends ReqSpec<any, any, any, any, any>> =
             : { path: TPath })
             &
             ({} extends TQuery
-                ? { query?: TQuery | null }
-            : { query: TQuery })
+                ? { query?: AllowSingleItemLists<TQuery> | null }
+            : { query: AllowSingleItemLists<TQuery> })
             &
             (undefined extends TBody
                 ? { body?: TBody }
@@ -126,4 +145,6 @@ type ReqArgs<TReqSpec extends ReqSpec<any, any, any, any, any>> =
  * HACK: see https://github.com/microsoft/TypeScript/issues/29131
  */
 type ReqArgsTuple<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    {} extends ReqArgs<TReqSpec> ? [ ReqArgs<TReqSpec>? ] : [ ReqArgs<TReqSpec> ];
+    {} extends ReqArgs<TReqSpec>
+        ? [ ReqArgs<TReqSpec>? ]
+    : [ ReqArgs<TReqSpec> ];

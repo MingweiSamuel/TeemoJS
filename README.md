@@ -99,7 +99,8 @@ aPromise = api.endpoint.method(region, {
   for `lolStatusV3` `getShardData`.
   - `path` - If needed, an array or object dictionary of parameters. For the
     dictionary, key names must match the `{pathParam}` names (no curly braces).
-  - `query` - If needed, an object dictionary of query parameters.
+  - `query` - If needed, an object dictionary of query parameter names mapping
+    to values or arrays of values.
   - `body` - If needed, a JSON value, to be serialized.
 
 #### Return Value & Error Handling
