@@ -430,6 +430,15 @@ const RiotApiConfig = {
     },
 };
 
+/** API key dictionary for RiotApi endpoints. "default" corresponds to League of Legends endpoints. */
+interface RiotApiKeys {
+    default: string,
+    tft?: string,
+    lor?: string,
+    tournament?: string,
+    [apiKeyName: string]: string | undefined,
+}
+
 // TODO: other specs.
 
 Object.assign(module.exports, { RiotApiConfig });

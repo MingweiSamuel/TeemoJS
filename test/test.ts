@@ -7,7 +7,7 @@ import { readFile } from "fs";
 
 describe('TeemoJS LoL', function() {
   let api: ReturnType<typeof RiotApi.createRiotApi>;
-  let apf: ReturnType<typeof api.toFluent>;
+  let apf: ReturnType<typeof api.proxy>;
 
   before(async function() {
     let apiKey = process.env.RIOT_API_KEY;
@@ -21,13 +21,13 @@ describe('TeemoJS LoL', function() {
       }
     }
     api = RiotApi.createRiotApi(apiKey); // TODO: maxConcurrent: 50.
-    apf = api.toFluent();
+    apf = api.proxy();
   });
 
   describe('bad args', function() {
     it('handles bad dist factor', function() {
       assert.throws(() => api.setDistFactor(0));
-      assert.throws(() => apf.setDistFactor(0));
+      assert.throws(() => apf.base.setDistFactor(100));
     });
     it ('handles bad region', async function() {
       // Should be a region, not a platform.

@@ -33,7 +33,7 @@
         "src/internal/tokenBucket.ts",
         "src/internal/semaphore.ts",
         // Files with exports.
-        "src/riotApi.ts",
+        "src/teemoApi.ts",
         "src/region.ts",
         "src/config.ts",
 

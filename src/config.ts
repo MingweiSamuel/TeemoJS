@@ -34,13 +34,16 @@ interface InitialTokenBucketConfig extends TokenBucketConfig {
     readonly limit: number,
 }
 
+/** Dictionary of API keys including a 'default' key. */
+interface ApiKeys {
+    default: string,
+    [apiKeyName: string]: string | undefined,
+}
+
 /** A configuration needed to instantiate a RiotApi. */
 interface Config<TSpec extends EndpointsSpec> {
     distFactor: number,
-    readonly apiKeys: {
-        default: string,
-        [apiKeyName: string]: string | undefined
-    },
+    readonly apiKeys: ApiKeys,
     readonly origin: string,
     // key?: string | undefined,
     // keyPath: string,
@@ -85,12 +88,13 @@ type ReqReturn<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     : Promise<unknown>;
 
 /** Utility type which extracts a Region type union from a ReqSpec. */
-type ReqPlatforms<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    TReqSpec extends ReqSpec<any, infer TPlatforms, any, any, any>
+type ReqRegion<TReqSpec extends ReqSpec<any, any, any, any, any>> =
+    (TReqSpec extends ReqSpec<any, infer TPlatforms, any, any, any>
         ? TPlatforms extends keyof typeof Region
             ? (typeof Region)[TPlatforms]
         : TPlatforms
-    : Region | string;
+    : Region)
+    | string;
 
 /**
  * Utility type which creates a { path, query, body } kwargs type from a ReqSpec.

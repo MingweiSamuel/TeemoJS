@@ -1,5 +1,5 @@
 <h1 align="center">
-  TeemoJS
+  Teemo(J)S
 </h1>
 <p align="center">
   <a href="https://github.com/MingweiSamuel/TeemoJS/"><img src="https://cdn.communitydragon.org/latest/champion/Teemo/square" width="20" height="20" alt="Github"></a>
@@ -8,19 +8,21 @@
   <a href="https://bundlephobia.com/result?p=teemojs%40next"><img src="https://flat.badgen.net/bundlephobia/min/teemojs%40next" alt="Minified Size"></a>
 </p>
 
-TeemoJS is a fast and lightweight Riot API wrapper written in Javascript,
-with additional support for DDragon, CDragon, and
-[meraki-analytics/kernel](https://github.com/meraki-analytics/kernel).
-Contained in about 400 lines, it has a minimalist design to make it flexible and easy to maintain.
+Teemo(J)S is a fast, lightweight, and fully-typed Riot API wrapper written in
+TypeScript,
+<!-- with additional support for DDragon, CDragon, and
+[meraki-analytics/kernel](https://github.com/meraki-analytics/kernel). -->
+Contained in about 500 lines, it has a minimalist design to make it flexible
+and easy to maintain.
 
 Features:
 
-- Fast & Efficient Rate Limiting
-- Automatic Retries
-
-It is up to the developer to do the rest.
-
-TeemoJS supports the new TFT APIs.
+- Fast, efficient, correct rate limiting.
+- Automatic retries.
+- TypeScript typings:
+  - Argument & region type checking on API calls.
+  - Fully-typed response DTOs, supporting `strictNullChecks`.
+- Up-to-date (or if not, [make an issue!](https://github.com/MingweiSamuel/TeemoJS/issues/new?title=Update+needed&body=%3CSOMETHING%3E+is+missing.)).
 
 ## Installation
 
@@ -32,15 +34,20 @@ npm install --save teemojs
 
 ### Example
 ```javascript
-const TeemoJS = require('teemojs');
-const api = TeemoJS('RGAPI-KEY-HERE');
+const { TeemoApi, Region } = require('teemojs');
+const api = TeemoApi.createRiotApi('RGAPI-KEY-HERE').proxy();
 
 async function main() {
-  const summoner = await api.req('na', 'lol.summonerV4.getBySummonerName', 'x blotter')
+  const summoner = await api.summonerV4.getBySummonerName(Region.NA1, {
+    path: { summonerName: 'x blotter' },
+  });
   console.log(`${summoner.name}'s account id is ${summoner.accountId}.`);
 
   // Get summoner's games on Teemo and Illaoi for a particular season.
-  const matchlist = await api.req('na', 'lol.matchV4.getMatchlist', summoner.accountId, { champion: [ 17, 420 ] });
+  const matchlist = await api.matchV4.getMatchlist(Region.NA1, {
+    path: [ summoner.accountId ],
+    query: { champion: [ 17, 420 ] },
+  });
   console.log(`Fetched ${matchlist.matches.length} games.`);
 
   // ...
@@ -51,66 +58,93 @@ main();
 
 ### Syntax
 
-Requests are done via `.req(...)`, which returns a promise.
+There are two equivalent syntaxes:
+- `req` syntax, all API calls are done via the `.req(endpoint, method, ...)` method.
+- `proxy` syntax, endpoints and methods can be called as fields and methods
+  respectively.
+
+The later uses [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+to call the former.
+
+
+**`req` syntax:**
 ```javascript
-dataPromsie = api.req(platform, endpointPath[, pathParams[, queryParams[, bodyParam]]]);
+const api = TeemoApi.createRiotApi('RGAPI-KEY-HERE');
+aPromise = api.req(endpoint, method, region, {
+  path: pathParams,
+  query: queryParams,
+  body: bodyParam,
+});
+```
+**`proxy` syntax:**
+```javascript
+const api = TeemoApi.createRiotApi('RGAPI-KEY-HERE')
+    .proxy(); // Convert to proxy.
+aPromise = api.endpoint.method(region, {
+  path: pathParams,
+  query: queryParams,
+  body: bodyParam,
+});
 ```
 
 #### Parameters
-- `platform`*  
-  The region to request to. This is:
-  - A region `string` such as `'na'`, `'euw'`, (on some endpoints) `'americas'`, etc.
+- `endpoint` - An API endpoint in lower camel case, such as `summonerV4` or
+  `matchV4`. See [`specs.ts`](https://github.com/MingweiSamuel/TeemoJS/blob/master/src/specs.ts)
+  for a full list.
+- `method` - An method in `endpoint`, such as `getBySummonerName` or
+  `getMatchlist` (respectively).
+- `region` - The region to request to, from the `Region` enum (`Region.NA1`) or
+  a string.
+- The parameters object. This can be omitted if no parameters are needed, e.g.
+  for `lolStatusV3` `getShardData`.
+  - `path` - If needed, an array or object dictionary of parameters. For the
+    dictionary, key names must match the `{pathParam}` names (no curly braces).
+  - `query` - If needed, an object dictionary of query parameters.
+  - `body` - If needed, a JSON value, to be serialized.
 
-- `endpointPath`  
-  The endpoint path, such as `'lol.matchV4.getMatch'`. These can by found in the
-  [config file](https://github.com/MingweiSamuel/TeemoJS/blob/master/defaultConfig.json)
-  or by looking at the hash (`#`) in the API reference URL, such
-  as in [/apis#match-v4/GET_getMatch](https://developer.riotgames.com/apis#match-v4/GET_getMatch).
-  This is:
-  - A `string`, such as `'lol.matchV4.getMatch'` or `'tft.matchV1.getMatchIdsByPUUID'`.
+#### Return Value & Error Handling
+Returns `dataPromise`, the data returned by the Riot API. This is the
+`JSON.parse`d body of the response. This is:
+- A `Promise` resolving to the JSON value parsed from the response body on
+  success.
+- A `Promise` resolving to `null` if the response had no body (status code 204,
+  404, 422).
+- A `Promise` rejecting with an `Error`. If a response was received, the
+  `Error` will have a `.response` field containing the failed repsonse.
 
-- `pathParams` (optional for some endpoints)  
-  Path parameters for the request. This must match the path params. This is:
-  - An `Array` with values corresponding to each path param. Values will be interpolated in order.
-  - An `object` with keys corresponding to each path param. Values will be interpolated by name (object key).
-  - A single value for endpoints needing exactly one path param. Non-`string` values will be converted to `string`.
-  - `[]`, `{}`, or `undefined` for endpoints needing no path params.
-
-- `queryParams` (optional for some endpoints)  
-  Query parameters (AKA GET or search parameters) for the request. This is:
-  - An `object` with entries specifying query parameters. The value for a key may be a single value, or a list of values.
-  - `{}` or `undefined` for no query params.
-
-- `bodyParam` (optional for most endpoints)  
-  Body parameter for POST, PUT requests in the tournament APIs. This is:
-  - A JSON value (`object`, `Array`, `string`, etc.) which will be `JSON.stringify`ed into the request body.
-  - `undefined` for no body param.
-
-<sup>*Note: platform should be omitted if using a non-Riot API that doesn't use platforms/regions.</sup>
-
-#### Return Value
-- `dataPromise`  
-  The data returned by the Riot API. This is the `JSON.parse`d body of the response. This is:
-  - A `Promise` resolving to a JSON value (`object`, `Array`, `string`, etc.) parsed from the response body.
-  - A `Promise` resolving to `null` if the response had no body (status code 204, 404, 422).
-  - A `Promise` rejecting with an `Error`. The `Error` may have a `.response` field containing the failed repsonse.
-
-#### Throws
-Throws an `Error` if the request could not be made. This happens when the `endpointPath` and/or `*params` were
-missing or invalid.
+Throws an `Error` immediately (synchronously) if the request could not be made.
+This happens if the `endpoint`, `method` pair were invalid, or path parameters
+were missing.
 
 ### In-Browser
-After `npm install`ing, `node_modules/teemojs/dist/browser.js` contains a browserified version of TeemoJS.
+After `npm install`ing, `node_modules/teemojs/dist/browser.js` contains a
+browser-ready version of TeemoJS. However, the Riot Games API does not support
+cross-origin requests (CORS), so you will need to configure a proxy such as
+[meraki-analytics/kernel](https://github.com/meraki-analytics/kernel). There is
+currently no out-of-the-box config for this, but it is planned.
 
-Usable with `TeemoJS.ddragonConfig`, `TeemoJS.cdragonConfig`, and `TeemoJS.kernelConfig`
+<!--Usable with `TeemoJS.ddragonConfig`, `TeemoJS.cdragonConfig`, and `TeemoJS.kernelConfig`
 ([meraki-analytics/kernel](https://github.com/meraki-analytics/kernel)). (`defaultConfig` will not work due to CORS).
 
 This is mainly intended for development, and it uses ES6 features.
 For production, you should include `src/index.js` and your needed config(s)
-(`config/<config>.json`) in your webpack or other bundle.
+(`config/<config>.json`) in your webpack or other bundle.-->
 
-### Other useful APIs/configurations
+### Other features
 
+#### Riot API with separate keys for TFT/LOR/Tournament APIs
+
+```javascript
+const api = TeemoApi.createRiotApi({
+  default: 'RGAPI-LOL-KEY-HERE',
+  tft: 'RGAPI-OPTIONAL-TFT-KEY-HERE',
+  lor: 'RGAPI-OPTIONAL-LOR-KEY-HERE',
+  tournament: 'RGAPI-OPTIONAL-TOURNAMENT-KEY-HERE',
+});
+// Use as normal.
+```
+
+<!--
 #### Riot API with separate key for TFT endpoints
 ```javascript
 // Makes a deep copy to not modify the original (optional).
@@ -227,3 +261,4 @@ A lot of their exact behaviors are "self-documented" in the code :).
   - `pathParams` \[OPTIONAL object or array\]: should probably be unset, as will be partially overriden by `req` arguments.
   - `queryParams` \[OPTIONAL object\].
   - (Other fields?)
+-->

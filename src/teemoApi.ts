@@ -1,28 +1,26 @@
-type RiotApiFluent<TSpec extends EndpointsSpec> = {
-    [TEndpoint in keyof TSpec]: {
+type TeemoApiProxy<TSpec extends EndpointsSpec> = {
+    [TEndpoint in Exclude<keyof TSpec, "base">]: {
         [TMethod in keyof TSpec[TEndpoint]]:
             (
-                region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+                region: ReqRegion<TSpec[TEndpoint][TMethod]>,
                 ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
             ) => ReqReturn<TSpec[TEndpoint][TMethod]>;
-    };
-} & Pick<RiotApi<TSpec>, 'setDistFactor'>;
+    }
+} & {
+    base: TeemoApi<TSpec>,
+};
 
-class RiotApi<TSpec extends EndpointsSpec> {
-    /** The config for this RiotApi. */
+class TeemoApi<TSpec extends EndpointsSpec> {
+    /** The config for this TeemoApi. */
     readonly config: Config<TSpec>;
 
-    /** The requesters created by this RiotApi, keyed uniquely per api key and region. */
+    /** The requesters created by this TeemoApi, keyed uniquely per api key and region. */
     private readonly _requesters: { [rateLimitId: string]: RegionalRequester };
 
-    static createRiotApi(apiKey: string): RiotApi<typeof RiotApiConfig.endpoints> {
-        const config = {
-            ...RiotApiConfig,
-            apiKeys: {
-                default: apiKey,
-            } as const,
-        };
-        return new RiotApi(config);
+    static createRiotApi(apiKey: string | RiotApiKeys): TeemoApi<typeof RiotApiConfig.endpoints> {
+        const apiKeys: ApiKeys = 'string' === typeof apiKey ? { default: apiKey } : apiKey;
+        if (!apiKeys.default) throw Error('apiKey argument to createRiotApi missing "default" key.');
+        return new TeemoApi({ ...RiotApiConfig, apiKeys });
     }
 
     constructor(config: Config<TSpec>) {
@@ -30,14 +28,14 @@ class RiotApi<TSpec extends EndpointsSpec> {
         this._requesters = {};
     }
 
-    toFluent(): RiotApiFluent<TSpec> {
-        return new Proxy(this, getRiotApiProxyHandler()) as any;
+    proxy(): TeemoApiProxy<TSpec> {
+        return new Proxy(this, getApiProxyHandler()) as any;
     }
 
     req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
         endpoint: TEndpoint,
         method: TMethod,
-        region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+        region: ReqRegion<TSpec[TEndpoint][TMethod]>,
         ...[ kwargs, ..._ ]: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
     ): ReqReturn<TSpec[TEndpoint][TMethod]>;
     req(
@@ -114,39 +112,41 @@ class RiotApi<TSpec extends EndpointsSpec> {
         Object.values(this._requesters).forEach(r => r.updateDistFactor());
     }
 }
-module.exports.RiotApi = RiotApi;
+module.exports.TeemoApi = TeemoApi;
 
 /** @internal */
-interface RiotApiEndpoint<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec> {
-    base: RiotApi<TSpec>,
+interface TeemoApiEndpoint<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec> {
+    base: TeemoApi<TSpec>,
     endpoint: TEndpoint;
 }
 
 /** @internal */
-function getRiotApiProxyHandler<TSpec extends EndpointsSpec>():
-    ProxyHandler<RiotApi<TSpec>>
+function getApiProxyHandler<TSpec extends EndpointsSpec>():
+    ProxyHandler<TeemoApi<TSpec>>
 {
     return {
-        get<TEndpoint extends keyof TSpec>(target: RiotApi<TSpec>, prop: TEndpoint | string | number | symbol, receiver: unknown): any {
-            if ('string' === typeof prop && prop in target.config.endpoints)
-                return new Proxy({ base: target, endpoint: prop } as RiotApiEndpoint<TSpec, TEndpoint>, getRiotApiEndpointProxyHandler<TSpec, TEndpoint>());
-            return Reflect.get(target, prop, receiver);
+        get<TEndpoint extends keyof TSpec>(target: TeemoApi<TSpec>, prop: TEndpoint | string | number | symbol, _receiver: unknown): any {
+            if (prop in target.config.endpoints)
+                return new Proxy({ base: target, endpoint: prop }, getApiEndpointProxyHandler<TSpec, TEndpoint>());
+            if ('base' === prop)
+                return target;
+            return undefined;
         }
     };
 }
 /** @internal */
-function getRiotApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec>():
-    ProxyHandler<RiotApiEndpoint<TSpec, TEndpoint>>
+function getApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec>():
+    ProxyHandler<TeemoApiEndpoint<TSpec, TEndpoint>>
 {
     return {
-        get<TMethod extends keyof TSpec[TEndpoint]>(target: RiotApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, receiver: unknown) {
-            if ('string' === typeof prop && prop in target.base.config.endpoints[target.endpoint])
+        get<TMethod extends keyof TSpec[TEndpoint]>(target: TeemoApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, _receiver: unknown) {
+            if (prop in target.base.config.endpoints[target.endpoint])
                 return (
-                    region: ReqPlatforms<TSpec[TEndpoint][TMethod]>,
+                    region: ReqRegion<TSpec[TEndpoint][TMethod]>,
                     ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
                 ): ReqReturn<TSpec[TEndpoint][TMethod]> =>
                     target.base.req(target.endpoint, prop as TMethod, region, ...kwargs);
-            return Reflect.get(target, prop, receiver);
+            return undefined;
         }
     };
 }

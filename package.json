@@ -1,14 +1,13 @@
 {
   "name": "teemojs",
-  "version": "2.0.0-alpha.7",
-  "description": "A Fast & Lightweight Riot API Wrapper",
+  "version": "3.0.0-rc.1",
+  "description": "A fast, lightweight, fully-typed Riot API wrapper",
   "files": [
-    "src/*",
     "dist/*",
-    "config/*",
     "*.md"
   ],
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "browser": "dist/browser.js",
   "scripts": {
     "prepare": "bash build.bash",
