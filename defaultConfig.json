@@ -98,6 +98,13 @@
     },
     "thirdPartyCode": {
       "getThirdPartyCodeBySummonerId": "/lol/platform/v4/third-party-code/by-summoner/%s"
+    },
+    "valContent": {
+      "getContent": "/val/content/v1/contents"
+    },
+    "valMatch": {
+      "getMatch": "/val/match/v1/matches/%s",
+      "getMatchlist": "/val/match/v1/matchlists/by-puuid/%s"
     }
   }
 }
