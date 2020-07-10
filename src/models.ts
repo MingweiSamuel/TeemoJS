@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version 909460d67267a0122544094d93120b50f8d0f5de
+// Version af29e140a03aabbd77664b926746eecaae877d2b
 
 namespace championMasteryV4 {
     /**
@@ -296,6 +296,8 @@ namespace lorRankedV1 {
     export interface PlayerDto {
         name: string;
         rank: int;
+        /** League points. */
+        lp: int;
     }
 }
 
@@ -305,7 +307,7 @@ namespace matchV4 {
      */
     export interface MatchDto {
         gameId: long;
-        /** Participant identity information. */
+        /** Participant identity information. Participant identity information is purposefully excluded for custom games. */
         participantIdentities: matchV4.ParticipantIdentityDto[];
         /** Please refer to the Game Constants documentation. */
         queueId: int;
@@ -349,16 +351,17 @@ namespace matchV4 {
      */
     export interface PlayerDto {
         profileIcon: int;
-        /** Player's original accountId (Encrypted) */
+        /** Player's original accountId. */
         accountId: string;
         matchHistoryUri: string;
-        /** Player's current accountId (Encrypted) */
+        /** Player's current accountId when the match was played. */
         currentAccountId: string;
+        /** Player's current platformId when the match was played. */
         currentPlatformId: string;
         summonerName: string;
         /** Player's summonerId (Encrypted) */
         summonerId: string;
-        /** Original platformId. */
+        /** Player's original platformId. */
         platformId: string;
     }
 }
@@ -640,6 +643,7 @@ namespace matchV4 {
      */
     export interface MatchlistDto {
         startIndex: int;
+        /** There is a known issue that this field doesn't correctly return the total number of games that match the parameters of the request. Please paginate using beginIndex until you reach the end of a player's matchlist. */
         totalGames: int;
         endIndex: int;
         matches: matchV4.MatchReferenceDto[];
@@ -928,7 +932,7 @@ namespace summonerV4 {
         accountId: string;
         /** ID of the summoner icon associated with the summoner. */
         profileIconId: int;
-        /** Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change */
+        /** Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change. */
         revisionDate: long;
         /** Summoner name. */
         name: string;
@@ -1048,7 +1052,7 @@ namespace tftMatchV1 {
         game_datetime: long;
         /** Game length in seconds. */
         game_length: float;
-        /** Game variation enum, i.e. "TFT3_GameVariation_BigLittleLegends", missing from official Riot API docs. */
+        /** Game variation key. Game variations documented in TFT static data. */
         game_variation?: string | null;
         /** Game client version. */
         game_version: string;
@@ -1143,20 +1147,20 @@ namespace tftSummonerV1 {
      * represents a summoner
      */
     export interface SummonerDTO {
+        /** Encrypted account ID. Max length 56 characters. */
+        accountId: string;
         /** ID of the summoner icon associated with the summoner. */
         profileIconId: int;
+        /** Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change. */
+        revisionDate: long;
         /** Summoner name. */
         name: string;
+        /** Encrypted summoner ID. Max length 63 characters. */
+        id: string;
         /** Encrypted PUUID. Exact length of 78 characters. */
         puuid: string;
         /** Summoner level associated with the summoner. */
         summonerLevel: long;
-        /** Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change */
-        revisionDate: long;
-        /** Encrypted summoner ID. Max length 63 characters. */
-        id: string;
-        /** Encrypted account ID. Max length 56 characters. */
-        accountId: string;
     }
 }
 
@@ -1353,5 +1357,275 @@ namespace tournamentV4 {
         providerId: int;
         /** The optional name of the tournament. */
         name?: string | null;
+    }
+}
+
+namespace valContentV1 {
+    /**
+     * ContentDto data object, automatically generated.
+     */
+    export interface ContentDto {
+        version: string;
+        characters: valContentV1.ContentItemDto[];
+        maps: valContentV1.ContentItemDto[];
+        chromas: valContentV1.ContentItemDto[];
+        skins: valContentV1.ContentItemDto[];
+        skinLevels: valContentV1.ContentItemDto[];
+        equips: valContentV1.ContentItemDto[];
+        gameModes: valContentV1.ContentItemDto[];
+        sprays: valContentV1.ContentItemDto[];
+        sprayLevels: valContentV1.ContentItemDto[];
+        charms: valContentV1.ContentItemDto[];
+        charmLevels: valContentV1.ContentItemDto[];
+        playerCards: valContentV1.ContentItemDto[];
+        playerTitles: valContentV1.ContentItemDto[];
+    }
+}
+
+namespace valContentV1 {
+    /**
+     * ContentItemDto data object, automatically generated.
+     */
+    export interface ContentItemDto {
+        name: string;
+        /** This field is excluded from the response when a locale is set */
+        localizedNames?: valContentV1.LocalizedNamesDto | null;
+        assetName: string;
+    }
+}
+
+namespace valContentV1 {
+    /**
+     * LocalizedNamesDto data object, automatically generated.
+     */
+    export interface LocalizedNamesDto {
+        "ar-AE": string;
+        "de-DE": string;
+        "en-GB": string;
+        "en-US": string;
+        "es-ES": string;
+        "es-MX": string;
+        "fr-FR": string;
+        "id-ID": string;
+        "it-IT": string;
+        "ja-JP": string;
+        "ko-KR": string;
+        "pl-PL": string;
+        "pt-BR": string;
+        "ru-RU": string;
+        "th-TH": string;
+        "tr-TR": string;
+        "vi-VN": string;
+        "zh-CN": string;
+        "zh-TW": string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * MatchDto data object, automatically generated.
+     */
+    export interface MatchDto {
+        matchInfo: valMatchV1.MatchInfoDto[];
+        players: valMatchV1.PlayerDto[];
+        teams: valMatchV1.TeamDto[];
+        roundResults: valMatchV1.RoundResultDto[];
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * MatchInfoDto data object, automatically generated.
+     */
+    export interface MatchInfoDto {
+        matchId: string;
+        mapId: string;
+        gameLengthMillis: int;
+        gameStartMillis: long;
+        provisioningFlowId: string;
+        isCompleted: boolean;
+        customGameName: string;
+        queueId: string;
+        gameMode: string;
+        isRanked: boolean;
+        seasonId: string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * PlayerDto data object, automatically generated.
+     */
+    export interface PlayerDto {
+        puuid: string;
+        teamId: string;
+        partyId: string;
+        characterId: string;
+        stats: valMatchV1.PlayerStatsDto;
+        competitiveTier: int;
+        playerCard: string;
+        playerTitle: string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * PlayerStatsDto data object, automatically generated.
+     */
+    export interface PlayerStatsDto {
+        puuid: string;
+        kills: valMatchV1.KillDto[];
+        damage: valMatchV1.DamageDto[];
+        score: int;
+        economy: valMatchV1.EconomyDto;
+        ability: valMatchV1.AbilityDto;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * KillDto data object, automatically generated.
+     */
+    export interface KillDto {
+        gameTime: int;
+        roundTime: int;
+        /** PUUID */
+        killer: string;
+        /** PUUID */
+        victim: string;
+        victimLocation: valMatchV1.LocationDto;
+        /** List of PUUIDs */
+        assistants: string[];
+        playerLocations: valMatchV1.PlayerLocationsDto[];
+        finishingDamage: valMatchV1.FinishingDamageDto;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * LocationDto data object, automatically generated.
+     */
+    export interface LocationDto {
+        x: int;
+        y: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * PlayerLocationsDto data object, automatically generated.
+     */
+    export interface PlayerLocationsDto {
+        puuid: string;
+        viewRadians: float;
+        location: valMatchV1.LocationDto;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * FinishingDamageDto data object, automatically generated.
+     */
+    export interface FinishingDamageDto {
+        damageType: string;
+        damageItem: string;
+        isSecondaryFireMode: boolean;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * DamageDto data object, automatically generated.
+     */
+    export interface DamageDto {
+        /** PUUID */
+        receiver: string;
+        damage: int;
+        legshots: int;
+        bodyshots: int;
+        headshots: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * EconomyDto data object, automatically generated.
+     */
+    export interface EconomyDto {
+        loadoutValue: int;
+        weapon: string;
+        armor: string;
+        remaining: int;
+        spent: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * AbilityDto data object, automatically generated.
+     */
+    export interface AbilityDto {
+        grenadeEffects: string;
+        ability1Effects: string;
+        ability2Effects: string;
+        ultimateEffects: string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * TeamDto data object, automatically generated.
+     */
+    export interface TeamDto {
+        teamId: string;
+        won: boolean;
+        roundsPlayed: int;
+        roundsWon: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * RoundResultDto data object, automatically generated.
+     */
+    export interface RoundResultDto {
+        roundNum: int;
+        roundResult: string;
+        roundCeremony: string;
+        winningTeam: string;
+        /** PUUID of player */
+        bombPlanter: string;
+        /** PUUID of player */
+        bombDefuser: string;
+        plantRoundTime: int;
+        plantPlayerLocations: valMatchV1.PlayerLocationsDto[];
+        plantLocation: valMatchV1.LocationDto;
+        plantSite: string;
+        defuseRoundTime: int;
+        defusePlayerLocations: valMatchV1.PlayerLocationsDto[];
+        defuseLocation: valMatchV1.LocationDto;
+        playerStats: valMatchV1.PlayerStatsDto[];
+        roundResultCode: string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * MatchlistDto data object, automatically generated.
+     */
+    export interface MatchlistDto {
+        puuid: string;
+        history: valMatchV1.MatchReferenceDto[];
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * MatchReferenceDto data object, automatically generated.
+     */
+    export interface MatchReferenceDto {
+        matchId: string;
+        gameStartTime: long;
+        teamId: string;
     }
 }

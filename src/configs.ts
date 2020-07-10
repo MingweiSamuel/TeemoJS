@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version 909460d67267a0122544094d93120b50f8d0f5de
+// Version af29e140a03aabbd77664b926746eecaae877d2b
 
 const RiotApiConfig = {
     apiKeys: undefined,
@@ -426,6 +426,28 @@ const RiotApiConfig = {
                 method: "post",
                 apiKeyName: "tournament",
             } as ReqSpec<int, "AMERICAS", {} | [], {}, tournamentV4.TournamentRegistrationParameters>,
+        },
+        valContentV1: {
+            /**
+             * Get content optionally filtered by locale
+             */
+            getContent: {
+                path: "/val/content/v1/contents",
+            } as ReqSpec<valContentV1.ContentDto, "APAC" | "BR" | "EU" | "KR" | "LATAM" | "NA" | "PBE1", {} | [], { locale?: String | null }, undefined>,
+        },
+        valMatchV1: {
+            /**
+             * Get match by id
+             */
+            getMatch: {
+                path: "/val/match/v1/matches/{matchId}",
+            } as ReqSpec<valMatchV1.MatchDto, "APAC" | "BR" | "EU" | "KR" | "LATAM" | "NA" | "PBE1", { matchId: String } | [ String ], {}, undefined>,
+            /**
+             * Get matchlist for games played by puuid
+             */
+            getMatchlist: {
+                path: "/val/match/v1/matchlists/by-puuid/{puuid}",
+            } as ReqSpec<valMatchV1.MatchlistDto, "APAC" | "BR" | "EU" | "KR" | "LATAM" | "NA" | "PBE1", { puuid: String } | [ String ], {}, undefined>,
         },
     },
 };

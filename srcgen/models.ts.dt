@@ -33,7 +33,7 @@ namespace {{= dotUtils.toLowerCamel(endpoint) }} {
 {{? prop.description }}
         /** {{= prop.description }} */
 {{?}}
-        {{= propName }}: {{= type }};
+        {{= /[-]/.test(propName) ? JSON.stringify(propName) : propName }}: {{= type }};
 {{
         }
 }}

@@ -1,9 +1,10 @@
 enum Region {
-    // Platforms
+    /** Platforms for LoL, LoR, TFT. */
     BR1  = 1,
     EUN1 = 2,
     EUW1 = 3,
     JP1  = 4,
+    /** KR also works with Valorant. */
     KR   = 5,
     LA1  = 6,
     LA2  = 7,
@@ -11,12 +12,24 @@ enum Region {
     OC1  = 9,
     TR1  = 10,
     RU   = 11,
-    // Routes
-    AMERICAS = 16,
-    ASIA     = 17,
-    EUROPE   = 18,
-    SEA      = 19,
+    /** PBE1 also works with Valorant. */
+    PBE1 = 12,
+
+    /** Valorant Platforms (besides PBE1 and KR). */
+    APAC  = 16,
+    BR    = 17,
+    EU    = 18,
+    LATAM = 19,
+    NA    = 20,
+
+    /** Routes */
+    AMERICAS = 32,
+    ASIA     = 33,
+    EUROPE   = 34,
+    SEA      = 35,
 }
+
+type ValorantPlatform = Region.APAC | Region.BR | Region.EU | Region.KR | Region.LATAM | Region.NA | Region.PBE1;
 
 type RegionRoute = Region.AMERICAS | Region.EUROPE | Region.ASIA | Region.SEA;
 
@@ -43,9 +56,22 @@ namespace Region {
 
         return R;
     })([]);
-
     export function getRoute(region: Region): RegionRoute {
+        if (!ROUTES[region]) throw Error(`${Region[region]} (${region}) cannot be converted to route. (Is this a Valorant platform?)`);
         return ROUTES[region];
+    }
+
+    const ISVALORANTPLATFORM: { [K in ValorantPlatform]: true } = {
+        [Region.APAC]:  true,
+        [Region.BR]:    true,
+        [Region.EU]:    true,
+        [Region.KR]:    true,
+        [Region.LATAM]: true,
+        [Region.NA]:    true,
+        [Region.PBE1]:  true,
+    };
+    export function isValorantPlatform(region: Region): region is ValorantPlatform {
+        return region in ISVALORANTPLATFORM;
     }
 }
 
