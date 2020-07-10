@@ -1,6 +1,6 @@
 {
   "name": "teemojs",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0-rc.2",
   "description": "A fast, lightweight, fully-typed Riot API wrapper",
   "files": [
     "dist/*",
