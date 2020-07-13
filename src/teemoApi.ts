@@ -2,7 +2,7 @@ type TeemoApiProxy<TSpec extends EndpointsSpec> = {
     [TEndpoint in Exclude<keyof TSpec, "base">]: {
         [TMethod in keyof TSpec[TEndpoint]]:
             (
-                region: ReqRegion<TSpec[TEndpoint][TMethod]>,
+                region: ReqRoutes<TSpec[TEndpoint][TMethod]>,
                 ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
             ) => ReqReturn<TSpec[TEndpoint][TMethod]>;
     }
@@ -20,7 +20,10 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     static createRiotApi(apiKey: string | RiotApiKeys): TeemoApi<typeof RiotApiConfig.endpoints> {
         const apiKeys: ApiKeys = 'string' === typeof apiKey ? { default: apiKey } : apiKey;
         if (!apiKeys.default) throw Error('apiKey argument to createRiotApi missing "default" key.');
-        return new TeemoApi({ ...RiotApiConfig, apiKeys });
+        return new TeemoApi({
+            ...RiotApiConfig,
+            apiKeys
+        });
     }
 
     constructor(config: Config<TSpec>) {
@@ -35,7 +38,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
         endpoint: TEndpoint,
         method: TMethod,
-        region: ReqRegion<TSpec[TEndpoint][TMethod]>,
+        region: ReqRoutes<TSpec[TEndpoint][TMethod]>,
         ...[ kwargs, ..._ ]: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
     ): ReqReturn<TSpec[TEndpoint][TMethod]>;
     req(
@@ -142,7 +145,7 @@ function getApiEndpointProxyHandler<TSpec extends EndpointsSpec, TEndpoint exten
         get<TMethod extends keyof TSpec[TEndpoint]>(target: TeemoApiEndpoint<TSpec, TEndpoint>, prop: TMethod | string | number | symbol, _receiver: unknown) {
             if (prop in target.base.config.endpoints[target.endpoint])
                 return (
-                    region: ReqRegion<TSpec[TEndpoint][TMethod]>,
+                    region: ReqRoutes<TSpec[TEndpoint][TMethod]>,
                     ...kwargs: ReqArgsTuple<TSpec[TEndpoint][TMethod]>
                 ): ReqReturn<TSpec[TEndpoint][TMethod]> =>
                     target.base.req(target.endpoint, prop as TMethod, region, ...kwargs);

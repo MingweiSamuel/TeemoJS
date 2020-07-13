@@ -53,7 +53,7 @@ interface Config<TSpec extends EndpointsSpec> {
     // regionPath: string,
     // retries: number,
     readonly maxConcurrent: number,
-    readonly defaultBuckets: InitialTokenBucketConfig[],
+    readonly defaultBuckets: readonly InitialTokenBucketConfig[],
     readonly bucketsConfig: TokenBucketConfig,
     readonly rateLimitTypeApplication: RateLimitType,
     readonly rateLimitTypeMethod: RateLimitType,
@@ -83,7 +83,7 @@ type OrderedParams = { [argIdx: number]: unknown };
  */
 type ReqSpec<
     _TReturn,
-    _TPlatforms extends AnyRoute,
+    _TRoutes extends AnyRoute,
     _TPath extends OrderedParams | NamedParams,
     _TQuery extends NamedParams, _TBody
 > = {
@@ -99,9 +99,9 @@ type ReqReturn<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     : Promise<unknown>;
 
 /** Utility type which extracts a Region type union from a ReqSpec. */
-type ReqRegion<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    (TReqSpec extends ReqSpec<any, infer TPlatforms, any, any, any>
-        ? TPlatforms
+type ReqRoutes<TReqSpec extends ReqSpec<any, any, any, any, any>> =
+    (TReqSpec extends ReqSpec<any, infer TRoutes, any, any, any>
+        ? TRoutes
     : AnyRoute)
     | string;
 

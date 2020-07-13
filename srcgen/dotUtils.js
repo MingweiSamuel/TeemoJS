@@ -66,12 +66,16 @@ function paramsToType(params, ordered = false) {
     return namedType.join('');
 }
 
-const routesTable = Object.fromEntries(Object.entries(require("./routes"))
-    .map(([ routeType, routeValues ]) => [ routeType, new Set(routeValues) ]));
+const routesTable =require("./routes");
 function getRouteUnionType(routes) {
     for (const [ routeType, routeValues ] of Object.entries(routesTable)) {
-        if (routes.every(r => routeValues.has(r.toUpperCase())))
-            return routes.map(r => `${routeType}.${r.toUpperCase()}`).join(' | ');
+        if (routes.every(r => routeValues.includes(r))) {
+            if (routes.length === routeValues.length)
+                return routeType;
+            if (routes.length >= 0.75 * routeValues.length)
+                return `Exclude<${routeType}, ${routeValues.filter(r => !routes.includes(r)).map(r => `"${r}"`).join(' | ')}>`;
+            return routes.map(r => `${routeType}.${r}`).join(' | ');
+        }
     }
     return 'AnyRoute';
 }

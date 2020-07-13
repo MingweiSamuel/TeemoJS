@@ -15,7 +15,7 @@
         (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
         endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
 
-        const routesType = dotUtils.getRouteUnionType(pathInfo['x-platforms-available']);
+        const routesType = dotUtils.getRouteUnionType(pathInfo['x-platforms-available'].map(r => r.toUpperCase()));
 
         for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
@@ -70,7 +70,10 @@
 }}
 
 const RiotApiConfig = {
-    apiKeys: undefined,
+    apiKeys: {
+        default: null,
+    },
+    distFactor: 1.0,
     origin: "https://{}.api.riotgames.com",
     defaultBuckets: [
         {
@@ -92,7 +95,6 @@ const RiotApiConfig = {
         headerCount: "x-method-rate-limit-count",
     },
     maxConcurrent: 500,
-    distFactor: 1.0,
     headerLimitType: "x-rate-limit-type",
     headerRetryAfter: "retry-after",
     bucketsConfig: {},
@@ -131,7 +133,7 @@ const RiotApiConfig = {
     }
 }}
     },
-};
+} as const;
 
 /** API key dictionary for RiotApi endpoints. "default" corresponds to League of Legends endpoints. */
 interface RiotApiKeys {
