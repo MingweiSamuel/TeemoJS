@@ -29,16 +29,9 @@ function format(format: string, argObject: NamedParams | OrderedParams): string 
 
 /**
  * Non-cryptographic string hash, implemented as Java's String.hashCode().
- * https://stackoverflow.com/a/8831937/2398020
  * @param str String to hash.
  * @internal
  */
 function strHash(str: string): int {
-    let hash: int = 0;
-    if (!str.length) return hash;
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i);
-        hash &= hash; // Convert to 32 bit integer.
-    }
-    return hash;
+    return Array.from(str).reduce((hash, char) => 0 | (31 * hash + char.charCodeAt(0)), 0);
 }

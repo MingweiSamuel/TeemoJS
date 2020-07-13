@@ -37,17 +37,17 @@ npm install --save teemojs
 
 ### Example
 ```javascript
-const { TeemoApi, Region } = require('teemojs');
+const { TeemoApi, PlatformRoute } = require('teemojs');
 const api = TeemoApi.createRiotApi('RGAPI-KEY-HERE').proxy();
 
 async function main() {
-  const summoner = await api.summonerV4.getBySummonerName(Region.NA1, {
+  const summoner = await api.summonerV4.getBySummonerName(PlatformRoute.NA1, {
     path: { summonerName: 'x blotter' },
   });
   console.log(`${summoner.name}'s account id is ${summoner.accountId}.`);
 
   // Get summoner's games on Teemo and Illaoi for a particular season.
-  const matchlist = await api.matchV4.getMatchlist(Region.NA1, {
+  const matchlist = await api.matchV4.getMatchlist(PlatformRoute.NA1, {
     path: [ summoner.accountId ],
     query: { champion: [ 17, 420 ] },
   });
@@ -151,12 +151,12 @@ const api = TeemoApi.createRiotApi({
 #### TypeScript typings
 
 ```typescript
-import { TeemoApi, Region, summonerV4, matchV4 } from "TeemoJS";
+import { TeemoApi, PlatformRoute, summonerV4, matchV4 } from "TeemoJS";
 // ...
-const summoner: summonerV4.SummonerDTO = await api.summonerV4.getBySummonerName(Region.NA1, {
+const summoner: summonerV4.SummonerDTO = await api.summonerV4.getBySummonerName(PlatformRoute.NA1, {
   path: { summonerName: 'x blotter' },
 });
-const matchlist: matchV4.MatchlistDto = await api.matchV4.getMatchlist(Region.NA1, {
+const matchlist: matchV4.MatchlistDto = await api.matchV4.getMatchlist(PlatformRoute.NA1, {
   path: [ summoner.accountId ],
   query: { champion: [ 17, 420 ] },
 });
