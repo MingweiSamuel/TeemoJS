@@ -83,7 +83,7 @@ type OrderedParams = { [argIdx: number]: unknown };
  */
 type ReqSpec<
     _TReturn,
-    _TPlatforms extends string | Region,
+    _TPlatforms extends AnyRoute,
     _TPath extends OrderedParams | NamedParams,
     _TQuery extends NamedParams, _TBody
 > = {
@@ -101,10 +101,8 @@ type ReqReturn<TReqSpec extends ReqSpec<any, any, any, any, any>> =
 /** Utility type which extracts a Region type union from a ReqSpec. */
 type ReqRegion<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     (TReqSpec extends ReqSpec<any, infer TPlatforms, any, any, any>
-        ? TPlatforms extends keyof typeof Region
-            ? (typeof Region)[TPlatforms]
-        : TPlatforms
-    : Region)
+        ? TPlatforms
+    : AnyRoute)
     | string;
 
 /**

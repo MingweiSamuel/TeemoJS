@@ -66,6 +66,16 @@ function paramsToType(params, ordered = false) {
     return namedType.join('');
 }
 
+const routesTable = Object.fromEntries(Object.entries(require("./routes"))
+    .map(([ routeType, routeValues ]) => [ routeType, new Set(routeValues) ]));
+function getRouteUnionType(routes) {
+    for (const [ routeType, routeValues ] of Object.entries(routesTable)) {
+        if (routes.every(r => routeValues.has(r.toUpperCase())))
+            return routes.map(r => `${routeType}.${r.toUpperCase()}`).join(' | ');
+    }
+    return 'AnyRoute';
+}
+
 module.exports = {
     PREAMBLE,
     capitalize,
@@ -74,4 +84,5 @@ module.exports = {
     toLowerCamel,
     formatPropType,
     paramsToType,
+    getRouteUnionType,
 };

@@ -15,9 +15,7 @@
         (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
         endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
 
-        const platformsType = pathInfo['x-platforms-available']
-            .map(p => JSON.stringify(p.toUpperCase()))
-            .join(' | ');
+        const routesType = dotUtils.getRouteUnionType(pathInfo['x-platforms-available']);
 
         for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
@@ -57,7 +55,7 @@
 
             endpointMethodGroups[ep].push({
                 path,
-                platformsType,
+                routesType,
                 verb,
                 apiKeyName,
                 descArr,
@@ -108,7 +106,7 @@ const RiotApiConfig = {
 {{
         for (const endpointMethod of endpointMethods)
         {
-            const { path, platformsType, verb, apiKeyName, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
+            const { path, routesType, verb, apiKeyName, descArr, method, returnType, paramsPathType, paramsQueryType, paramBodyType } = endpointMethod;
             for (const descLine of descArr)
             {
 }}
@@ -124,7 +122,7 @@ const RiotApiConfig = {
 {{? apiKeyName }}
                 apiKeyName: {{= JSON.stringify(apiKeyName) }},
 {{?}}
-            } as ReqSpec<{{= returnType }}, {{= platformsType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
+            } as ReqSpec<{{= returnType }}, {{= routesType }}, {{= paramsPathType }}, {{= paramsQueryType }}, {{= paramBodyType }}>,
 {{
         }
 }}

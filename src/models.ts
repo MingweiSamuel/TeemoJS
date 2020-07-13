@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version af29e140a03aabbd77664b926746eecaae877d2b
+// Version a5b01fc25c1ca5adff831c8331955f33ba0fdcf3
 
 namespace championMasteryV4 {
     /**

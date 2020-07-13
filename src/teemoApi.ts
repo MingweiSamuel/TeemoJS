@@ -41,7 +41,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     req(
         endpoint: string | number,
         method: string | number,
-        region: Region | string,
+        region: AnyRoute | string,
         ...[ kwargs, ..._ ]: ReqArgsTuple<any>
     ): ReqReturn<any>
     {
@@ -56,7 +56,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
             throw Error(`Unknown method "${method}" in endpoint "${endpoint}".\nAvailable methods: ${JSON.stringify(Object.keys(ep))}`);
 
         // Region string.
-        const regionStr: string = 'number' === typeof region ? Region[region] : region;
+        const regionStr: string = 'number' === typeof region ? AnyRoute[region] : region;
 
         // Get API Key.
         const apiKey: string = sp.apiKeyName && this.config.apiKeys[sp.apiKeyName] || this.config.apiKeys.default;

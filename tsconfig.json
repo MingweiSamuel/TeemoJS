@@ -34,7 +34,7 @@
         "src/internal/semaphore.ts",
         // Files with exports.
         "src/teemoApi.ts",
-        "src/region.ts",
+        "src/route.ts",
         "src/config.ts",
 
         // Generated files last.
