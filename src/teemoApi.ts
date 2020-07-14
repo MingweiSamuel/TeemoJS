@@ -17,11 +17,13 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     /** The requesters created by this TeemoApi, keyed uniquely per api key and region. */
     private readonly _requesters: { [rateLimitId: string]: RegionalRequester };
 
-    static createRiotApi(apiKey: string | RiotApiKeys): TeemoApi<typeof RiotApiConfig.endpoints> {
+    static createRiotApi(apiKey: string | RiotApiKeys, distFactor: number = 1.0): TeemoApi<typeof RiotApiConfig.endpoints> {
         const apiKeys: ApiKeys = 'string' === typeof apiKey ? { default: apiKey } : apiKey;
         if (!apiKeys.default) throw Error('apiKey argument to createRiotApi missing "default" key.');
+        if (distFactor <= 0 || 1 < distFactor) throw Error(`Invalid distFactor: ${distFactor}, must be in range (0, 1].`);
         return new TeemoApi({
             ...RiotApiConfig,
+            distFactor,
             apiKeys
         });
     }
