@@ -1,4 +1,48 @@
-# 2.0.0
+# 3.0.0 (Prerelease)
+
+## Non-API changes
+* Teemo(J)S is now written in TypeScript and is fully-typed.
+* Teemo(J)S is now `MIT`-licensed (switched from `LGPL-3.0`).
+
+<!--
+<table>
+<tr><th>Before (1.x.x)</th><th>After (3.x.x)</th></tr>
+<tr></tr>
+<tr><td><pre lang="javascript">
+summonerFuture = api.get(
+  'na1', 'summoner.getBySummonerName',
+  'xBlotter');
+</pre></td>
+<td><pre lang="javascript">
+summonerFuture = api.req(
+  'na', 'lol.summonerV4.getBySummonerName', 'xBlotter');
+</pre></td></tr>
+<tr></tr>
+<tr><td><pre lang="javascript">
+future = api.get(
+  'euw1', 'league.getLeagueEntries',
+  'RANKED_SOLO_5x5', 'GOLD', 'IV',
+  { page: 12 });
+</pre></td>
+<td><pre lang="javascript">
+future = api.req(
+  'euw', 'lol.leagueV4.getLeagueEntries',
+  [ 'RANKED_SOLO_5x5', 'GOLD', 'IV' ],
+  { page: 12 });
+</pre>Or, using an object for path params:
+<pre lang="javascript">
+future = api.req(
+  'euw', 'lol.leagueV4.getLeagueEntries',
+  { queue: 'RANKED_SOLO_5x5',
+    tier: 'GOLD', division: 'IV' },
+  { page: 12 });
+</pre></td></tr>
+</table>
+-->
+
+# 2.0.0 (prerelease)
+
+2.0 was never released and skipped for version 3.0.
 
 Changes made for TeemoJS 2.0.0
 
@@ -36,6 +80,7 @@ future = api.req(
 </pre></td></tr>
 </table>
 
+<!--
 ## Main Changes
 * `get` renamed to `req` (as `POST`, `PUT`, etc. endpoints now exist).
   * First param is a region (not a platform), automatically converted per `lol.*`, `tft.matchV1.*`, `tournament.*`.
@@ -96,6 +141,7 @@ future = api.req(
 * Requests delayed due to the max concurrent requests limit no longer count towards rate limits.
 * Retry logic simplified using `async`/`await`.
 * Code is now ~400 lines instead of ~300, but much of that is comments, making the code more readable.
+-->
 
 # 1.3.4
 
