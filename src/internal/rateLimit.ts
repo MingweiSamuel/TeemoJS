@@ -14,18 +14,18 @@ class RateLimit {
             .reduce((a, b, _idx, _arr) => Math.max(a, b), -1);
         if (0 <= delay)
             return delay; // Techincally the delay could be more but whatever.
-        const allBuckets = [].concat.apply([], rateLimits.map(rl => rl._buckets));
+        const allBuckets: TokenBucket[] = ([] as TokenBucket[]).concat(...rateLimits.map(rl => rl._buckets));
         return TokenBucket.getAllOrDelay(allBuckets);
     }
 
-    private readonly _config: Config<any>;
+    private readonly _config: Config;
     private readonly _type: RateLimitType;
 
     private _buckets: TokenBucket[];
     private _retryAfter: number;
     private _distFactor: number
 
-    constructor(type: RateLimitType, distFactor: number, config: Config<any>) {
+    constructor(type: RateLimitType, distFactor: number, config: Config) {
         this._config = config;
         this._type = type;
         this._buckets = this._config.defaultBuckets.map(b => new TokenBucket(b.timespan, b.limit, b));
@@ -46,9 +46,9 @@ class RateLimit {
             if (!type)
                 throw new Error('Response missing type.');
             if (this._type.name === type.toLowerCase()) {
-                let retryAfter = Number(response.headers.get(this._config.headerRetryAfter));
+                const retryAfter = Number(response.headers.get(this._config.headerRetryAfter));
                 if (Number.isNaN(retryAfter))
-                    throw new Error('Response 429 missing retry-after header.');
+                    throw new Error('Response 429 missing retry-after header.'); // TODO?
                 this._retryAfter = Date.now() + retryAfter * 1000 + 500;
             }
         }
@@ -73,8 +73,8 @@ class RateLimit {
     private _getBucketsFromHeaders(limitHeader: string, countHeader: string, bucketsConfig: TokenBucketConfig = {}): TokenBucket[] {
         // Limits: "20000:10,1200000:600"
         // Counts: "7:10,58:600"
-        let limits: string[] = limitHeader.split(',');
-        let counts: string[] = countHeader.split(',');
+        const limits: string[] = limitHeader.split(',');
+        const counts: string[] = countHeader.split(',');
         if (limits.length !== counts.length)
             throw new Error(`Limit and count headers do not match: ${limitHeader}, ${countHeader}.`);
     

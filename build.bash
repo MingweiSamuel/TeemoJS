@@ -8,6 +8,9 @@ sed -i "s/'form-data'/'form-data\/index'/g" node_modules/\@types/node-fetch/inde
 curl -o srcgen/.spec.json http://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.json
 node srcgen/dot.js
 
+# Rune ESLint.
+node ./node_modules/eslint/bin/eslint.js src/** || echo "LINTING FAILED"
+
 # Compile typescript.
 node node_modules/typescript/bin/tsc
 

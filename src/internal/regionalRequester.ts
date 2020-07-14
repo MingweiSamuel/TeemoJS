@@ -4,14 +4,14 @@
  */
 class RegionalRequester {
 
-    private readonly _config: Config<any>;
+    private readonly _config: Config;
 
     private _appLimit: RateLimit;
     private readonly _methodLimits: { [methodId: string]: RateLimit };
     private readonly _concurrentSema: Semaphore;
 
 
-    constructor(config: Config<any>) {
+    constructor(config: Config) {
         this._config = config;
 
         this._appLimit = new RateLimit(this._config.rateLimitTypeApplication, 1, this._config);
@@ -19,21 +19,21 @@ class RegionalRequester {
         this._concurrentSema = new Semaphore(this._config.maxConcurrent);
     }
 
-    req(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): any {
+    req(methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): unknown {
         // Get rate limits to obey.
         const rateLimits: RateLimit[] = [ this._appLimit ];
         if (this._config.rateLimitTypeMethod) // Also method limit if applicable.
             rateLimits.push(this._getMethodLimit(methodId));
     
         return (async () => {
-            let response: import("node-fetch").Response;
-            let retries: number = 0;
+            let response: import("node-fetch").Response | undefined;
+            let retries = 0;
 
             // Fetch retry loop.
-            while (true) {
+            for (; retries < this._config.retries; retries++) {
                 // Acquire concurrent request permit.
                 // Note: This includes the time spent waiting for rate limits. To obey the rate limit we need to send the request
-                //             immediately after delaying, otherwise the request could be delayed into a different bucket.
+                //       immediately after delaying, otherwise the request could be delayed into a different bucket.
                 await this._concurrentSema.acquire();
                 try {
                     // Wait for rate limits.
@@ -44,7 +44,7 @@ class RegionalRequester {
                     response = await fetch(url, fetchConfig);
 
                     // Update if rate limits changed or 429 returned.
-                    rateLimits.forEach(rl => rl.onResponse(response));
+                    rateLimits.forEach(rl => rl.onResponse(response as NonNullable<typeof response>));
         
                     // Handle status codes.
                     if ([ 204, 404, 422 ].includes(response.status)) // Successful response, but no data found.
@@ -53,12 +53,6 @@ class RegionalRequester {
                         return response.json(); // No `await` to release semaphore sooner.
                     if (429 === response.status || response.status >= 500) // Retryable responses.
                         continue;
-
-                    // Request failed.
-                    const err = new Error(`Request failed after ${retries} retries with code ${response && response.status}. ` +
-                        "The 'response' field of this Error contains the failed Response for debugging or error handling.");
-                    (err as any).response = response;
-                    throw err;
                 }
                 finally {
                     // Release concurrent request permit.
@@ -66,6 +60,11 @@ class RegionalRequester {
                     this._concurrentSema.release();
                 }
             }
+            // Request failed.
+            const err: ErrorWithResponse = new Error(`Request failed after ${retries} retries with code ${response && response.status}. ` +
+            "The 'response' field of this Error contains the failed Response for debugging or error handling.");
+            err.response = response;
+            throw err;
         })();
     }
 

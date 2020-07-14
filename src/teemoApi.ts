@@ -1,3 +1,5 @@
+type ErrorWithResponse = Error & { response?: import("node-fetch").Response };
+
 type TeemoApiProxy<TSpec extends EndpointsSpec> = {
     [TEndpoint in Exclude<keyof TSpec, "base">]: {
         [TMethod in keyof TSpec[TEndpoint]]:
@@ -17,7 +19,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     /** The requesters created by this TeemoApi, keyed uniquely per api key and region. */
     private readonly _requesters: { [rateLimitId: string]: RegionalRequester };
 
-    static createRiotApi(apiKey: string | RiotApiKeys, distFactor: number = 1.0): TeemoApi<typeof RiotApiConfig.endpoints> {
+    static createRiotApi(apiKey: string | RiotApiKeys, distFactor = 1.0): TeemoApi<typeof RiotApiConfig.endpoints> {
         const apiKeys: ApiKeys = 'string' === typeof apiKey ? { default: apiKey } : apiKey;
         if (!apiKeys.default) throw Error('apiKey argument to createRiotApi missing "default" key.');
         if (distFactor <= 0 || 1 < distFactor) throw Error(`Invalid distFactor: ${distFactor}, must be in range (0, 1].`);
@@ -34,7 +36,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
     }
 
     proxy(): TeemoApiProxy<TSpec> {
-        return new Proxy(this, getApiProxyHandler()) as any;
+        return new Proxy(this, getApiProxyHandler()) as unknown as TeemoApiProxy<TSpec>;
     }
 
     req<TEndpoint extends keyof TSpec, TMethod extends keyof TSpec[TEndpoint]>(
@@ -47,14 +49,14 @@ class TeemoApi<TSpec extends EndpointsSpec> {
         endpoint: string | number,
         method: string | number,
         region: AnyRoute | string,
-        ...[ kwargs, ..._ ]: ReqArgsTuple<any>
-    ): ReqReturn<any>
+        ...[ kwargs, ..._ ]: ReqArgsTuple<ReqSpec>
+    ): ReqReturn
     {
         kwargs = kwargs || {};
 
         // Get spec.
-        let ep: { [method: string]: ReqSpec<any, any, any, any, any> };
-        let sp: ReqSpec<any, any, any, any, any>;
+        let ep: { [method: string]: ReqSpec };
+        let sp: ReqSpec;
         if ('object' !== typeof (ep = this.config.endpoints[endpoint]))
             throw Error(`Unknown endpoint "${endpoint}".\nAvailable endpoints: ${JSON.stringify(Object.keys(this.config.endpoints))}`);
         if ('string' !== typeof (sp = ep[method]).path)
@@ -96,14 +98,14 @@ class TeemoApi<TSpec extends EndpointsSpec> {
         }
 
         // Build rateLimitId.
-        const rateLimitId: string = `${strHash(apiKey)}:${regionStr}`;
+        const rateLimitId = `${strHash(apiKey)}:${regionStr}`;
         // Build methodId.
-        const methodId: string = `${endpoint}:${method}`;
+        const methodId = `${endpoint}:${method}`;
 
-        return this.reqInternal(rateLimitId, methodId, url.href, fetchConfig);
+        return this.reqInternal(rateLimitId, methodId, url.href, fetchConfig) as ReqReturn;
     }
 
-    reqInternal(rateLimitId: string, methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): any {
+    reqInternal(rateLimitId: string, methodId: string, url: string, fetchConfig: import("node-fetch").RequestInit): unknown {
         const requester: RegionalRequester =
             this._requesters[rateLimitId] || (this._requesters[rateLimitId] = new RegionalRequester(this.config));
 
@@ -117,7 +119,7 @@ class TeemoApi<TSpec extends EndpointsSpec> {
         Object.values(this._requesters).forEach(r => r.updateDistFactor());
     }
 }
-module.exports.TeemoApi = TeemoApi;
+(module.exports as { TeemoApi: typeof TeemoApi }).TeemoApi = TeemoApi;
 
 /** @internal */
 interface TeemoApiEndpoint<TSpec extends EndpointsSpec, TEndpoint extends keyof TSpec> {
@@ -130,9 +132,9 @@ function getApiProxyHandler<TSpec extends EndpointsSpec>():
     ProxyHandler<TeemoApi<TSpec>>
 {
     return {
-        get<TEndpoint extends keyof TSpec>(target: TeemoApi<TSpec>, prop: TEndpoint | string | number | symbol, _receiver: unknown): any {
+        get<TEndpoint extends keyof TSpec>(target: TeemoApi<TSpec>, prop: TEndpoint | string | number | symbol, _receiver: unknown) {
             if (prop in target.config.endpoints)
-                return new Proxy({ base: target, endpoint: prop }, getApiEndpointProxyHandler<TSpec, TEndpoint>());
+                return new Proxy({ base: target, endpoint: prop as TEndpoint }, getApiEndpointProxyHandler<TSpec, TEndpoint>());
             if ('base' === prop)
                 return target;
             return undefined;

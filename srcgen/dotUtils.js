@@ -36,6 +36,8 @@ function formatPropType(prop, optional = false) {
         const [ endpoint, model ] = prop.$ref.split('/').pop().split('.');
         return `${toLowerCamel(endpoint)}.${model}`;
     }
+    if ('STRING' === prop['x-type'].toUpperCase())
+        return 'string';
     return prop['x-type'];
 }
 

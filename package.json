@@ -43,8 +43,11 @@
   "devDependencies": {
     "@types/mocha": "^7.0.2",
     "@types/rewire": "^2.5.28",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
     "browserify": "^16.5.0",
     "dot": "^1.1.3",
+    "eslint": "^7.4.0",
     "glob": "^7.1.2",
     "glob-promise": "^3.3.0",
     "mocha": "^8.0.1",

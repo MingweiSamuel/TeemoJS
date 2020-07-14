@@ -72,7 +72,7 @@ namespace RegionalRoute {
      */
     export function parse(str: string, excludeSea?: false): RegionalRoute;
     export function parse(str: string, excludeSea: true): Exclude<RegionalRoute, RegionalRoute.SEA>;
-    export function parse(str: string, excludeSea: boolean = false): RegionalRoute {
+    export function parse(str: string, excludeSea = false): RegionalRoute {
         switch (str.slice(0, 2).toUpperCase()) {
             case "AM": return RegionalRoute.AMERICAS;
             case "AS": return RegionalRoute.ASIA;

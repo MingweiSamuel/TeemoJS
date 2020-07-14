@@ -74,6 +74,7 @@ const RiotApiConfig = {
         default: null,
     },
     distFactor: 1.0,
+    retries: 3,
     origin: "https://{}.api.riotgames.com",
     defaultBuckets: [
         {

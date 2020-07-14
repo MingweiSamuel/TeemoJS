@@ -73,7 +73,7 @@ class TokenBucket {
         // Fields that track requests, (change frequently).
         this._total = 0;
         this._time = -1;
-        this._buffer = new Array(bins + 1).fill(0);
+        this._buffer = new Array<0>(bins + 1).fill(0);
 
         this.setDistFactor(distFactor);
     }
@@ -93,7 +93,7 @@ class TokenBucket {
         }
     
         // Check how soon into the future old buckets will be zeroed, making requests available.
-        let i: number = 1;
+        let i = 1;
         for (; this._buffer.length > i; i++) {
             if (0 < this._buffer[(index + i) % this._buffer.length])
                 break;

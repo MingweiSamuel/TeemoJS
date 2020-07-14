@@ -14,6 +14,7 @@ const RiotApiConfig = {
         default: null,
     },
     distFactor: 1.0,
+    retries: 3,
     origin: "https://{}.api.riotgames.com",
     defaultBuckets: [
         {
@@ -51,7 +52,7 @@ const RiotApiConfig = {
              */
             getByRiotId: {
                 path: "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}",
-            } as ReqSpec<String, Exclude<RegionalRoute, RegionalRoute.SEA>, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
+            } as ReqSpec<string, Exclude<RegionalRoute, RegionalRoute.SEA>, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
             /**
              * Get active shard for a player
              */
@@ -317,14 +318,14 @@ const RiotApiConfig = {
             getMatchIdsByPUUID: {
                 path: "/tft/match/v1/matches/by-puuid/{puuid}/ids",
                 apiKeyName: "tft",
-            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: String } | [ String ], { count?: int | null }, undefined>,
+            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], { count?: int | null }, undefined>,
             /**
              * Get a match by match id.
              */
             getMatch: {
                 path: "/tft/match/v1/matches/{matchId}",
                 apiKeyName: "tft",
-            } as ReqSpec<tftMatchV1.MatchDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: String } | [ String ], {}, undefined>,
+            } as ReqSpec<tftMatchV1.MatchDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
         },
         tftSummonerV1: {
             /**
@@ -362,7 +363,7 @@ const RiotApiConfig = {
              */
             getThirdPartyCodeBySummonerId: {
                 path: "/lol/platform/v4/third-party-code/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<String, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<string, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
         },
         tournamentStubV4: {
             /**
@@ -455,7 +456,7 @@ const RiotApiConfig = {
              */
             getContent: {
                 path: "/val/content/v1/contents",
-            } as ReqSpec<valContentV1.ContentDto, ValPlatformRoute, {} | [], { locale?: String | null }, undefined>,
+            } as ReqSpec<valContentV1.ContentDto, ValPlatformRoute, {} | [], { locale?: string | null }, undefined>,
         },
         valMatchV1: {
             /**
@@ -463,13 +464,13 @@ const RiotApiConfig = {
              */
             getMatch: {
                 path: "/val/match/v1/matches/{matchId}",
-            } as ReqSpec<valMatchV1.MatchDto, ValPlatformRoute, { matchId: String } | [ String ], {}, undefined>,
+            } as ReqSpec<valMatchV1.MatchDto, ValPlatformRoute, { matchId: string } | [ string ], {}, undefined>,
             /**
              * Get matchlist for games played by puuid
              */
             getMatchlist: {
                 path: "/val/match/v1/matchlists/by-puuid/{puuid}",
-            } as ReqSpec<valMatchV1.MatchlistDto, ValPlatformRoute, { puuid: String } | [ String ], {}, undefined>,
+            } as ReqSpec<valMatchV1.MatchlistDto, ValPlatformRoute, { puuid: string } | [ string ], {}, undefined>,
         },
     },
 } as const;

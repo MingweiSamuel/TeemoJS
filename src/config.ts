@@ -44,14 +44,15 @@ interface ApiKeys {
 }
 
 /** A configuration needed to instantiate a RiotApi. */
-interface Config<TSpec extends EndpointsSpec> {
+interface Config<TSpec extends EndpointsSpec = EndpointsSpec> {
     distFactor: number,
+    retries: number,
+
     readonly apiKeys: ApiKeys,
     readonly origin: string,
     // key?: string | undefined,
     // keyPath: string,
     // regionPath: string,
-    // retries: number,
     readonly maxConcurrent: number,
     readonly defaultBuckets: readonly InitialTokenBucketConfig[],
     readonly bucketsConfig: TokenBucketConfig,
@@ -67,7 +68,7 @@ interface Config<TSpec extends EndpointsSpec> {
 /** Listing of endpoints. */
 type EndpointsSpec = {
     readonly [endpoint: string]: {
-        readonly [method: string]: ReqSpec<any, any, any, any, any>
+        readonly [method: string]: ReqSpec
     }
 };
 
@@ -82,10 +83,13 @@ type OrderedParams = { [argIdx: number]: unknown };
  * and return type.
  */
 type ReqSpec<
-    _TReturn,
-    _TRoutes extends AnyRoute,
-    _TPath extends OrderedParams | NamedParams,
-    _TQuery extends NamedParams, _TBody
+/* eslint-disable @typescript-eslint/no-explicit-any */
+    _TReturn = any,
+    _TRoutes extends AnyRoute | string = any,
+    _TPath extends OrderedParams | NamedParams = any,
+    _TQuery extends NamedParams = any,
+    _TBody = any,
+/* eslint-enable @typescript-eslint/no-explicit-any */
 > = {
     readonly path: string,
     readonly method?: import("node-fetch").RequestInit['method'],
@@ -93,14 +97,14 @@ type ReqSpec<
 };
 
 /** Utility type which extracts Promise<TReturn> from a ReqSpec. */
-type ReqReturn<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    TReqSpec extends ReqSpec<infer TReturn, any, any, any, any>
+type ReqReturn<TReqSpec extends ReqSpec = ReqSpec> =
+    TReqSpec extends ReqSpec<infer TReturn>
         ? Promise<TReturn>
     : Promise<unknown>;
 
 /** Utility type which extracts a Region type union from a ReqSpec. */
-type ReqRoutes<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    (TReqSpec extends ReqSpec<any, infer TRoutes, any, any, any>
+type ReqRoutes<TReqSpec extends ReqSpec = ReqSpec> =
+    (TReqSpec extends ReqSpec<unknown, infer TRoutes>
         ? TRoutes
     : AnyRoute)
     | string;
@@ -117,8 +121,8 @@ type AllowSingleItemLists<T> = {
  * Utility type which creates a { path, query, body } kwargs type from a
  * ReqSpec. Fields are made optional if they are not required.
  */
-type ReqArgs<TReqSpec extends ReqSpec<any, any, any, any, any>> =
-    TReqSpec extends ReqSpec<any, any, infer TPath, infer TQuery, infer TBody>
+type ReqArgs<TReqSpec extends ReqSpec> =
+    TReqSpec extends ReqSpec<unknown, AnyRoute | string, infer TPath, infer TQuery, infer TBody>
         ? (
             ({} extends TPath
                 ? { path?: TPath | null }
@@ -135,14 +139,14 @@ type ReqArgs<TReqSpec extends ReqSpec<any, any, any, any, any>> =
     : {
         path?: OrderedParams | NamedParams | null,
         query?: NamedParams | null,
-        body?: any,
+        body?: unknown | null,
     };
 
 /**
  * ReqArgs but as a tuple so optional paramters can be spread.
  * HACK: see https://github.com/microsoft/TypeScript/issues/29131
  */
-type ReqArgsTuple<TReqSpec extends ReqSpec<any, any, any, any, any>> =
+type ReqArgsTuple<TReqSpec extends ReqSpec = ReqSpec> =
     {} extends ReqArgs<TReqSpec>
         ? [ ReqArgs<TReqSpec>? ]
     : [ ReqArgs<TReqSpec> ];

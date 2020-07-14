@@ -2,17 +2,18 @@
  * URL class.
  * @internal
  */
-const URL: typeof import("url").URL = (global as any).URL || require("url").URL;
+const URL: typeof import("url").URL = (global as unknown as { URL: typeof import("url").URL }).URL
+    || (require("url") as unknown as { URL: typeof import("url").URL }).URL;
 
 /**
  * Fetch api.
  * @internal
  */
-const fetch: fetch = (global as any).fetch || require("node-fetch");
+const fetch: fetch = (global as unknown as { fetch: fetch }).fetch || require("node-fetch");
 
 /**
- * Returns a formatted string, replacing "{}", "{name}", or "{0}" with supplied ARG_OBJECT.
- * ARG_OBJECT may be an object or Array.
+ * Returns a formatted string, replacing "{}", "{name}", or "{0}" with values
+ * from the supplied `argObject`. `argObject` may be an object or Array.
  * @internal
  */
 function format(format: string, argObject: NamedParams | OrderedParams): string {
