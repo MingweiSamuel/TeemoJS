@@ -7,7 +7,29 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version a5b01fc25c1ca5adff831c8331955f33ba0fdcf3
+// Version ce249d47e5205e2141923e8dade20ac0ac4fc33c
+
+namespace accountV1 {
+    /**
+     * AccountDto data object, automatically generated.
+     */
+    export interface AccountDto {
+        puuid: string;
+        gameName: string;
+        tagLine: string;
+    }
+}
+
+namespace accountV1 {
+    /**
+     * ActiveShardDto data object, automatically generated.
+     */
+    export interface ActiveShardDto {
+        puuid: string;
+        game: string;
+        activeShard: string;
+    }
+}
 
 namespace championMasteryV4 {
     /**

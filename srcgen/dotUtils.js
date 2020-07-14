@@ -73,10 +73,11 @@ function getRouteUnionType(routes) {
             if (routes.length === routeValues.length)
                 return routeType;
             if (routes.length >= 0.75 * routeValues.length)
-                return `Exclude<${routeType}, ${routeValues.filter(r => !routes.includes(r)).map(r => `"${r}"`).join(' | ')}>`;
+                return `Exclude<${routeType}, ${routeValues.filter(r => !routes.includes(r)).map(r => `${routeType}.${r}`).join(' | ')}>`;
             return routes.map(r => `${routeType}.${r}`).join(' | ');
         }
     }
+    console.warn(`Failed to find route enum for routes: ${JSON.stringify(routes)}.`);
     return 'AnyRoute';
 }
 

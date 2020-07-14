@@ -41,7 +41,7 @@ enum PlatformRoute {
 /** Valorant platform routing values. */
 enum ValPlatformRoute {
     /** Asia Pacific. */
-    APAC  = 64,
+    AP    = 64,
     /** Brazil. */
     BR    = 65,
     /** Europe. */
@@ -59,7 +59,31 @@ const AnyRoute = { ...RegionalRoute, ...PlatformRoute, ...ValPlatformRoute };
 /** Combined routing type. */
 type AnyRoute = RegionalRoute | PlatformRoute | ValPlatformRoute;
 
+/** RegionalRoute static utility functions. */
+namespace RegionalRoute {
+    /**
+     * Parse a RegionalRoute from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning two-letter prefix to
+     * determine the PlatformRoute.
+     * @param str String to parse.
+     * @param excludeSea (optional) if parsing SEA should result in an error.
+     * @returns The parsed RegionalRoute.
+     * @throws Error if `str` could not be parsed.
+     */
+    export function parse(str: string, excludeSea?: false): RegionalRoute;
+    export function parse(str: string, excludeSea: true): Exclude<RegionalRoute, RegionalRoute.SEA>;
+    export function parse(str: string, excludeSea: boolean = false): RegionalRoute {
+        switch (str.slice(0, 2).toUpperCase()) {
+            case "AM": return RegionalRoute.AMERICAS;
+            case "AS": return RegionalRoute.ASIA;
+            case "EU": return RegionalRoute.EUROPE;
+            case "SE": if (!excludeSea) return RegionalRoute.SEA;
+        }
+        throw new Error(`Failed to parse string as RegionalRoute: "${str}" (exclude SEA: ${excludeSea}).`);
+    }
+}
 
+/** PlatformRoute static utility functions. */
 namespace PlatformRoute {
     const PLATFORM_TO_REGIONAL = {
         [PlatformRoute.BR1]:  RegionalRoute.AMERICAS,
@@ -74,11 +98,27 @@ namespace PlatformRoute {
         [PlatformRoute.TR1]:  RegionalRoute.EUROPE,
         [PlatformRoute.RU]:   RegionalRoute.EUROPE,
         [PlatformRoute.PBE1]: RegionalRoute.AMERICAS,
-    };
-    export function toRegional(route: PlatformRoute): Exclude<RegionalRoute, "SEA"> {
+    } as const;
+    /**
+     * Converts a PlatformRoute to the corresponding RegionalRoute.
+     * Useful for `tftMatchV1` endpoints which require a RegionalRoute, while
+     * other TFT endpoints require a PlatformRoute.
+     * @param route PlatformRoute to be converted.
+     * @returns A RegionalRoute: `AMERICAS`, `ASIA`, or `EUROPE`. Will not
+     * return `SEA`, which is only used by `lorRankedV1`.
+     */
+    export function toRegional(route: PlatformRoute): Exclude<RegionalRoute, RegionalRoute.SEA> {
         return PLATFORM_TO_REGIONAL[route];
     }
 
+    /**
+     * Parse a PlatformRoute from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning two or three-letter
+     * prefix to determine the PlatformRoute.
+     * @param str String to parse.
+     * @returns The parsed PlatformRoute.
+     * @throws Error if `str` could not be parsed.
+     */
     export function parse(str: string): PlatformRoute {
         switch (str.slice(0, 2).toUpperCase()) {
             case "BR": return PlatformRoute.BR1;
@@ -98,6 +138,29 @@ namespace PlatformRoute {
             case "LA2": return PlatformRoute.LA2;
         }
         throw new Error(`Failed to parse string as PlatformRoute: "${str}".`);
+    }
+}
+
+/** ValPlatformRoute static utility functions. */
+namespace ValPlatformRoute {
+    /**
+     * Parse a ValPlatformRoute from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning two-letter prefix to
+     * determine the PlatformRoute.
+     * @param str String to parse.
+     * @returns The parsed ValPlatformRoute.
+     * @throws Error if `str` could not be parsed.
+     */
+    export function parse(str: string): ValPlatformRoute {
+        switch (str.slice(0, 2).toUpperCase()) {
+            case "AP": return ValPlatformRoute.AP;
+            case "BR": return ValPlatformRoute.BR;
+            case "EU": return ValPlatformRoute.EU;
+            case "KR": return ValPlatformRoute.KR;
+            case "LA": return ValPlatformRoute.LATAM;
+            case "NA": return ValPlatformRoute.NA;
+        }
+        throw new Error(`Failed to parse string as ValPlatformRoute: "${str}".`);
     }
 }
 
