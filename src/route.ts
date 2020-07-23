@@ -30,12 +30,13 @@ enum PlatformRoute {
     NA1  = 23,
     /** Oceana. */
     OC1  = 24,
-    /** Turkey. */
-    TR1  = 25,
     /** Rusia. */
-    RU   = 26,
+    RU   = 25,
+    /** Turkey. */
+    TR1  = 26,
+
     /** Public Bet Environment. Only usable with `lolStatusV3`. */
-    PBE1 = 27,
+    PBE1 = 31,
 }
 
 /** Valorant platform routing values. */
