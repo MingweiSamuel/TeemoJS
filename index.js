@@ -99,7 +99,7 @@ Region.prototype.get = function() {
       qs[this.config.keyQueryParam] = this.config.key;
     return req(reqConfig).catch(err => {
       this.liveRequests--;
-      if ('ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
+      if (err.error && 'ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
         retries++;
         return fn();
       }
