@@ -111,6 +111,13 @@ Region.prototype.get = function() {
         return fn();
       }
       return JSON.parse(res.body);
+    }).catch(err => {
+      this.liveRequests--;
+      if ('ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
+        retries++;
+        return fn();
+      }
+      throw new Error('Failed after ' + retries + ' retries due to: ' + err.message);
     });
   };
   return Promise.resolve(fn());
