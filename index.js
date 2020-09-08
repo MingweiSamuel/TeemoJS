@@ -97,7 +97,14 @@ Region.prototype.get = function() {
       reqConfig.headers = { [this.config.keyHeader]: this.config.key };
     else
       qs[this.config.keyQueryParam] = this.config.key;
-    return req(reqConfig).then(res => {
+    return req(reqConfig).catch(err => {
+      this.liveRequests--;
+      if ('ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
+        retries++;
+        return fn();
+      }
+      throw new Error('Failed after ' + retries + ' retries due to: ' + err.message);
+    }).then(res => {
       this.liveRequests--;
       rateLimits.forEach(rl => rl.onResponse(res));
       if (400 === res.statusCode)
@@ -111,13 +118,6 @@ Region.prototype.get = function() {
         return fn();
       }
       return JSON.parse(res.body);
-    }).catch(err => {
-      this.liveRequests--;
-      if ('ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
-        retries++;
-        return fn();
-      }
-      throw new Error('Failed after ' + retries + ' retries due to: ' + err.message);
     });
   };
   return Promise.resolve(fn());
