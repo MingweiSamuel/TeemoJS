@@ -1,6 +1,6 @@
 {
   "name": "teemojs",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A Fast & Lightweight Riot API Wrapper",
   "main": "index.js",
   "scripts": {
