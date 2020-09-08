@@ -29,6 +29,11 @@
   "keyQueryParam": null,
   "collapseQueryArrays": false,
   "endpoints": {
+    "account": {
+      "getByPuuid": "/riot/account/v1/accounts/by-puuid/%s",
+      "getByRiotId": "/riot/account/v1/accounts/by-riot-id/%s/%s",
+      "getActiveShard": "/riot/account/v1/active-shards/by-game/%s/by-puuid/%s"
+    },
     "championMastery": {
       "getAllChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s",
       "getChampionMastery": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s",
