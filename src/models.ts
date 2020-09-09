@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version ce249d47e5205e2141923e8dade20ac0ac4fc33c
+// Version e9fad555098e217edc088cc4b1ecc6fe095ba6cb
 
 namespace accountV1 {
     /**
@@ -15,8 +15,10 @@ namespace accountV1 {
      */
     export interface AccountDto {
         puuid: string;
-        gameName: string;
-        tagLine: string;
+        /** This field may be excluded if the account doesn't have a gameName */
+        gameName?: string | null;
+        /** This field may be excluded if the account doesn't have a tagLine */
+        tagLine?: string | null;
     }
 }
 
@@ -382,7 +384,7 @@ namespace matchV4 {
         currentPlatformId: string;
         summonerName: string;
         /** Player's summonerId (Encrypted) */
-        summonerId: string;
+        summonerId?: string | null;
         /** Player's original platformId. */
         platformId: string;
     }
@@ -425,7 +427,7 @@ namespace matchV4 {
         teamId: int;
         /** String indicating whether or not the team won. There are only two values visibile in public match history.
              (Legal values:  Fail,  Win) */
-        win: "Fail" | "Win";
+        win?: "Fail" | "Win" | null;
     }
 }
 
@@ -617,6 +619,12 @@ namespace matchV4 {
         perkPrimaryStyle?: int | null;
         /** Secondary rune path */
         perkSubStyle?: int | null;
+        /** First stat rune. */
+        statPerk0?: int | null;
+        /** Second stat rune. */
+        statPerk1?: int | null;
+        /** Third stat rune. */
+        statPerk2?: int | null;
     }
 }
 
@@ -1126,6 +1134,8 @@ namespace tftMatchV1 {
         name: string;
         /** Number of units with this trait. */
         num_units: int;
+        /** Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic) */
+        style?: int | null;
         /** Current active tier for the trait. */
         tier_current: int;
         /** Total tiers for the trait. */
@@ -1448,7 +1458,7 @@ namespace valMatchV1 {
      * MatchDto data object, automatically generated.
      */
     export interface MatchDto {
-        matchInfo: valMatchV1.MatchInfoDto[];
+        matchInfo: valMatchV1.MatchInfoDto;
         players: valMatchV1.PlayerDto[];
         teams: valMatchV1.TeamDto[];
         roundResults: valMatchV1.RoundResultDto[];
@@ -1495,31 +1505,76 @@ namespace valMatchV1 {
      * PlayerStatsDto data object, automatically generated.
      */
     export interface PlayerStatsDto {
-        puuid: string;
-        kills: valMatchV1.KillDto[];
-        damage: valMatchV1.DamageDto[];
         score: int;
-        economy: valMatchV1.EconomyDto;
-        ability: valMatchV1.AbilityDto;
+        roundsPlayed: int;
+        kills: int;
+        deaths: int;
+        assists: int;
+        playtimeMillis: int;
+        abilityCasts: valMatchV1.AbilityCastsDto;
     }
 }
 
 namespace valMatchV1 {
     /**
-     * KillDto data object, automatically generated.
+     * AbilityCastsDto data object, automatically generated.
      */
-    export interface KillDto {
-        gameTime: int;
-        roundTime: int;
-        /** PUUID */
-        killer: string;
-        /** PUUID */
-        victim: string;
-        victimLocation: valMatchV1.LocationDto;
-        /** List of PUUIDs */
-        assistants: string[];
-        playerLocations: valMatchV1.PlayerLocationsDto[];
-        finishingDamage: valMatchV1.FinishingDamageDto;
+    export interface AbilityCastsDto {
+        grenadeCasts: int;
+        ability1Casts: int;
+        ability2Casts: int;
+        ultimateCasts: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * TeamDto data object, automatically generated.
+     */
+    export interface TeamDto {
+        /** This is an arbitrary string. Red and Blue in bomb modes. The puuid of the player in deathmatch. */
+        teamId: string;
+        won: boolean;
+        roundsPlayed: int;
+        roundsWon: int;
+        /** Team points scored. Number of kills in deathmatch. */
+        numPoints: int;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * RoundResultDto data object, automatically generated.
+     */
+    export interface RoundResultDto {
+        roundNum: int;
+        roundResult: string;
+        roundCeremony: string;
+        winningTeam: string;
+        /** PUUID of player */
+        bombPlanter: string;
+        /** PUUID of player */
+        bombDefuser: string;
+        plantRoundTime: int;
+        plantPlayerLocations: valMatchV1.PlayerLocationsDto[];
+        plantLocation: valMatchV1.LocationDto;
+        plantSite: string;
+        defuseRoundTime: int;
+        defusePlayerLocations: valMatchV1.PlayerLocationsDto[];
+        defuseLocation: valMatchV1.LocationDto;
+        playerStats: valMatchV1.PlayerRoundStatsDto[];
+        roundResultCode: string;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * PlayerLocationsDto data object, automatically generated.
+     */
+    export interface PlayerLocationsDto {
+        puuid: string;
+        viewRadians: float;
+        location: valMatchV1.LocationDto;
     }
 }
 
@@ -1535,12 +1590,36 @@ namespace valMatchV1 {
 
 namespace valMatchV1 {
     /**
-     * PlayerLocationsDto data object, automatically generated.
+     * PlayerRoundStatsDto data object, automatically generated.
      */
-    export interface PlayerLocationsDto {
+    export interface PlayerRoundStatsDto {
         puuid: string;
-        viewRadians: float;
-        location: valMatchV1.LocationDto;
+        kills: valMatchV1.KillDto[];
+        damage: valMatchV1.DamageDto[];
+        score: int;
+        economy: valMatchV1.EconomyDto;
+        ability: valMatchV1.AbilityDto;
+    }
+}
+
+namespace valMatchV1 {
+    /**
+     * KillDto data object, automatically generated.
+     */
+    export interface KillDto {
+        gameTime?: int | null;
+        roundTime?: int | null;
+        timeSinceGameStartMillis?: int | null;
+        timeSinceRoundStartMillis?: int | null;
+        /** PUUID */
+        killer: string;
+        /** PUUID */
+        victim: string;
+        victimLocation: valMatchV1.LocationDto;
+        /** List of PUUIDs */
+        assistants: string[];
+        playerLocations: valMatchV1.PlayerLocationsDto[];
+        finishingDamage: valMatchV1.FinishingDamageDto;
     }
 }
 
@@ -1596,58 +1675,21 @@ namespace valMatchV1 {
 
 namespace valMatchV1 {
     /**
-     * TeamDto data object, automatically generated.
-     */
-    export interface TeamDto {
-        teamId: string;
-        won: boolean;
-        roundsPlayed: int;
-        roundsWon: int;
-    }
-}
-
-namespace valMatchV1 {
-    /**
-     * RoundResultDto data object, automatically generated.
-     */
-    export interface RoundResultDto {
-        roundNum: int;
-        roundResult: string;
-        roundCeremony: string;
-        winningTeam: string;
-        /** PUUID of player */
-        bombPlanter: string;
-        /** PUUID of player */
-        bombDefuser: string;
-        plantRoundTime: int;
-        plantPlayerLocations: valMatchV1.PlayerLocationsDto[];
-        plantLocation: valMatchV1.LocationDto;
-        plantSite: string;
-        defuseRoundTime: int;
-        defusePlayerLocations: valMatchV1.PlayerLocationsDto[];
-        defuseLocation: valMatchV1.LocationDto;
-        playerStats: valMatchV1.PlayerStatsDto[];
-        roundResultCode: string;
-    }
-}
-
-namespace valMatchV1 {
-    /**
      * MatchlistDto data object, automatically generated.
      */
     export interface MatchlistDto {
         puuid: string;
-        history: valMatchV1.MatchReferenceDto[];
+        history: valMatchV1.MatchlistEntryDto[];
     }
 }
 
 namespace valMatchV1 {
     /**
-     * MatchReferenceDto data object, automatically generated.
+     * MatchlistEntryDto data object, automatically generated.
      */
-    export interface MatchReferenceDto {
+    export interface MatchlistEntryDto {
         matchId: string;
-        gameStartTime: long;
+        gameStartTimeMillis: long;
         teamId: string;
     }
 }

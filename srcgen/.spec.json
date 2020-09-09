@@ -2,9 +2,9 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Riot API",
-    "description": "\nOpenAPI/Swagger version of the [Riot API](https://developer.riotgames.com/). Automatically generated daily.\n## Download OpenAPI Spec File\nThe following versions of the Riot API spec file are available:\n- `openapi-3.0.0.json` ([view file](../openapi-3.0.0.json), [ui select](?url=../openapi-3.0.0.json))\n- `openapi-3.0.0.min.json` ([view file](../openapi-3.0.0.min.json), [ui select](?url=../openapi-3.0.0.min.json))\n- `openapi-3.0.0.yml` ([view file](../openapi-3.0.0.yml), [ui select](?url=../openapi-3.0.0.yml))\n- `openapi-3.0.0.min.yml` ([view file](../openapi-3.0.0.min.yml), [ui select](?url=../openapi-3.0.0.min.yml))\n- `swaggerspec-2.0.json` ([view file](../swaggerspec-2.0.json), [ui select](?url=../swaggerspec-2.0.json))\n- `swaggerspec-2.0.min.json` ([view file](../swaggerspec-2.0.min.json), [ui select](?url=../swaggerspec-2.0.min.json))\n- `swaggerspec-2.0.yml` ([view file](../swaggerspec-2.0.yml), [ui select](?url=../swaggerspec-2.0.yml))\n- `swaggerspec-2.0.min.yml` ([view file](../swaggerspec-2.0.min.yml), [ui select](?url=../swaggerspec-2.0.min.yml))\n## Source Code\nSource code on [GitHub](https://github.com/MingweiSamuel/riotapi-schema). Pull requests welcome!\n## Automatically Generated\nRebuilt on [Travis CI](https://travis-ci.com/MingweiSamuel/riotapi-schema/builds) daily.\n***\n",
+    "description": "\nOpenAPI/Swagger version of the [Riot API](https://developer.riotgames.com/). Automatically generated daily.\n## OpenAPI Spec File\nThe following versions of the Riot API spec file are available:\n- `openapi-3.0.0.json` ([view file](../openapi-3.0.0.json), [ui select](?url=../openapi-3.0.0.json))\n- `openapi-3.0.0.min.json` ([view file](../openapi-3.0.0.min.json), [ui select](?url=../openapi-3.0.0.min.json))\n- `openapi-3.0.0.yml` ([view file](../openapi-3.0.0.yml), [ui select](?url=../openapi-3.0.0.yml))\n- `openapi-3.0.0.min.yml` ([view file](../openapi-3.0.0.min.yml), [ui select](?url=../openapi-3.0.0.min.yml))\n- `swaggerspec-2.0.json` ([view file](../swaggerspec-2.0.json), [ui select](?url=../swaggerspec-2.0.json))\n- `swaggerspec-2.0.min.json` ([view file](../swaggerspec-2.0.min.json), [ui select](?url=../swaggerspec-2.0.min.json))\n- `swaggerspec-2.0.yml` ([view file](../swaggerspec-2.0.yml), [ui select](?url=../swaggerspec-2.0.yml))\n- `swaggerspec-2.0.min.yml` ([view file](../swaggerspec-2.0.min.yml), [ui select](?url=../swaggerspec-2.0.min.yml))\n## Other Files\n- Missing DTOs: [`missing.json`](../missing.json)\n- [Enum Files](../enums/)\n## Source Code\nSource code on [GitHub](https://github.com/MingweiSamuel/riotapi-schema). Pull requests welcome!\n## Automatically Generated\nRebuilt on [Travis CI](https://travis-ci.com/MingweiSamuel/riotapi-schema/builds) daily.\n***\n",
     "termsOfService": "https://developer.riotgames.com/terms-and-conditions.html",
-    "version": "ce249d47e5205e2141923e8dade20ac0ac4fc33c"
+    "version": "e9fad555098e217edc088cc4b1ecc6fe095ba6cb"
   },
   "servers": [
     {
@@ -108,14 +108,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "account-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "account-v1",
       "x-platforms-available": [
         "americas",
         "asia",
         "europe"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}": {
       "get": {
@@ -133,8 +141,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "x-type": "String"
+                  "$ref": "#/components/schemas/account-v1.AccountDto",
+                  "x-type": "AccountDto"
                 }
               }
             }
@@ -174,6 +182,7 @@
           }
         },
         "operationId": "account-v1.getByRiotId",
+        "x-nullable-404": true,
         "description": "Get account by riot id",
         "parameters": [
           {
@@ -194,14 +203,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "account-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "account-v1",
       "x-platforms-available": [
         "americas",
         "asia",
         "europe"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/riot/account/v1/active-shards/by-game/{game}/by-puuid/{puuid}": {
       "get": {
@@ -260,6 +277,7 @@
           }
         },
         "operationId": "account-v1.getActiveShard",
+        "x-nullable-404": true,
         "description": "Get active shard for a player",
         "parameters": [
           {
@@ -284,14 +302,22 @@
               ]
             }
           }
-        ]
+        ],
+        "x-endpoint": "account-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "account-v1",
       "x-platforms-available": [
         "americas",
         "asia",
         "europe"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -366,7 +392,22 @@
             },
             "description": "Summoner ID associated with the player"
           }
-        ]
+        ],
+        "x-endpoint": "champion-mastery-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "champion-mastery-v4",
       "x-platforms-available": [
@@ -381,7 +422,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}": {
       "get": {
@@ -465,7 +507,22 @@
             },
             "description": "Summoner ID associated with the player"
           }
-        ]
+        ],
+        "x-endpoint": "champion-mastery-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "champion-mastery-v4",
       "x-platforms-available": [
@@ -480,7 +537,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/champion-mastery/v4/scores/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -552,7 +610,22 @@
             },
             "description": "Summoner ID associated with the player"
           }
-        ]
+        ],
+        "x-endpoint": "champion-mastery-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "champion-mastery-v4",
       "x-platforms-available": [
@@ -567,7 +640,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/platform/v3/champion-rotations": {
       "get": {
@@ -626,7 +700,22 @@
           }
         },
         "operationId": "champion-v3.getChampionInfo",
-        "description": "Returns champion rotations, including free-to-play and low-level free-to-play rotations (REST)"
+        "description": "Returns champion rotations, including free-to-play and low-level free-to-play rotations (REST)",
+        "x-endpoint": "champion-v3",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "champion-v3",
       "x-platforms-available": [
@@ -641,7 +730,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/clash/v1/players/by-summoner/{summonerId}": {
       "get": {
@@ -715,7 +805,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "clash-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "clash-v1",
       "x-platforms-available": [
@@ -730,7 +835,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/clash/v1/teams/{teamId}": {
       "get": {
@@ -801,7 +907,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "clash-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "clash-v1",
       "x-platforms-available": [
@@ -816,7 +937,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/clash/v1/tournaments": {
       "get": {
@@ -879,7 +1001,22 @@
           }
         },
         "operationId": "clash-v1.getTournaments",
-        "description": "Get all active or upcoming tournaments."
+        "description": "Get all active or upcoming tournaments.",
+        "x-endpoint": "clash-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "clash-v1",
       "x-platforms-available": [
@@ -894,7 +1031,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/clash/v1/tournaments/by-team/{teamId}": {
       "get": {
@@ -965,7 +1103,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "clash-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "clash-v1",
       "x-platforms-available": [
@@ -980,7 +1133,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/clash/v1/tournaments/{tournamentId}": {
       "get": {
@@ -1052,7 +1206,22 @@
               "x-type": "int"
             }
           }
-        ]
+        ],
+        "x-endpoint": "clash-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "clash-v1",
       "x-platforms-available": [
@@ -1067,7 +1236,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league-exp/v4/entries/{queue}/{tier}/{division}": {
       "get": {
@@ -1197,7 +1367,22 @@
             },
             "description": "Starts with page 1."
           }
-        ]
+        ],
+        "x-endpoint": "league-exp-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-exp-v4",
       "x-platforms-available": [
@@ -1212,7 +1397,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/challengerleagues/by-queue/{queue}": {
       "get": {
@@ -1288,7 +1474,22 @@
               ]
             }
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1303,7 +1504,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/entries/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -1377,7 +1579,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1392,7 +1609,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/entries/{queue}/{tier}/{division}": {
       "get": {
@@ -1518,7 +1736,22 @@
             },
             "description": "Starts with page 1."
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1533,7 +1766,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/grandmasterleagues/by-queue/{queue}": {
       "get": {
@@ -1609,7 +1843,22 @@
               ]
             }
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1624,7 +1873,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/leagues/{leagueId}": {
       "get": {
@@ -1696,7 +1946,22 @@
             },
             "description": "The UUID of the league."
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1711,7 +1976,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/league/v4/masterleagues/by-queue/{queue}": {
       "get": {
@@ -1787,7 +2053,22 @@
               ]
             }
           }
-        ]
+        ],
+        "x-endpoint": "league-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "league-v4",
       "x-platforms-available": [
@@ -1802,7 +2083,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/status/v3/shard-data": {
       "get": {
@@ -1862,7 +2144,23 @@
         },
         "operationId": "lol-status-v3.getShardData",
         "x-app-rate-limit-excluded": true,
-        "description": "Get League of Legends status for the given shard.\n## Rate Limit Notes\nRequests to this API are not counted against the application Rate Limits."
+        "description": "Get League of Legends status for the given shard.\n## Rate Limit Notes\nRequests to this API are not counted against the application Rate Limits.",
+        "x-endpoint": "lol-status-v3",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "pbe1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "lol-status-v3",
       "x-platforms-available": [
@@ -1878,7 +2176,8 @@
         "pbe1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lor/ranked/v1/leaderboards": {
       "get": {
@@ -1937,7 +2236,15 @@
           }
         },
         "operationId": "lor-ranked-v1.getLeaderboards",
-        "description": "Get the players in Master tier."
+        "description": "Get the players in Master tier.",
+        "x-endpoint": "lor-ranked-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe",
+          "sea"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "lor-ranked-v1",
       "x-platforms-available": [
@@ -1945,7 +2252,8 @@
         "asia",
         "europe",
         "sea"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/match/v4/matches/by-tournament-code/{tournamentCode}/ids": {
       "get": {
@@ -2021,7 +2329,22 @@
             },
             "description": "The tournament code."
           }
-        ]
+        ],
+        "x-endpoint": "match-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "match-v4",
       "x-platforms-available": [
@@ -2036,7 +2359,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/match/v4/matches/{matchId}": {
       "get": {
@@ -2109,7 +2433,22 @@
             },
             "description": "The match ID."
           }
-        ]
+        ],
+        "x-endpoint": "match-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "match-v4",
       "x-platforms-available": [
@@ -2124,7 +2463,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/match/v4/matches/{matchId}/by-tournament-code/{tournamentCode}": {
       "get": {
@@ -2206,7 +2546,22 @@
             },
             "description": "The match ID."
           }
-        ]
+        ],
+        "x-endpoint": "match-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "match-v4",
       "x-platforms-available": [
@@ -2221,7 +2576,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/match/v4/matchlists/by-account/{encryptedAccountId}": {
       "get": {
@@ -2388,7 +2744,22 @@
             },
             "description": "The begin index to use for filtering matchlist.  If beginIndex is specified, but not endIndex, then endIndex defaults to beginIndex+100. If endIndex is specified, but not beginIndex, then beginIndex defaults to 0. If both are specified, then endIndex must be greater than beginIndex. The maximum range allowed is 100, otherwise a 400 error code is returned."
           }
-        ]
+        ],
+        "x-endpoint": "match-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "match-v4",
       "x-platforms-available": [
@@ -2403,7 +2774,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/match/v4/timelines/by-match/{matchId}": {
       "get": {
@@ -2476,7 +2848,22 @@
             },
             "description": "The match ID."
           }
-        ]
+        ],
+        "x-endpoint": "match-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "match-v4",
       "x-platforms-available": [
@@ -2491,7 +2878,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/spectator/v4/active-games/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -2563,7 +2951,22 @@
             },
             "description": "The ID of the summoner."
           }
-        ]
+        ],
+        "x-endpoint": "spectator-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "spectator-v4",
       "x-platforms-available": [
@@ -2578,7 +2981,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/spectator/v4/featured-games": {
       "get": {
@@ -2637,7 +3041,22 @@
           }
         },
         "operationId": "spectator-v4.getFeaturedGames",
-        "description": "Get list of featured games."
+        "description": "Get list of featured games.",
+        "x-endpoint": "spectator-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "spectator-v4",
       "x-platforms-available": [
@@ -2652,7 +3071,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/summoner/v4/summoners/by-account/{encryptedAccountId}": {
       "get": {
@@ -2722,7 +3142,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "summoner-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "summoner-v4",
       "x-platforms-available": [
@@ -2737,7 +3172,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/summoner/v4/summoners/by-name/{summonerName}": {
       "get": {
@@ -2809,7 +3245,22 @@
             },
             "description": "Summoner Name"
           }
-        ]
+        ],
+        "x-endpoint": "summoner-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "summoner-v4",
       "x-platforms-available": [
@@ -2824,7 +3275,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}": {
       "get": {
@@ -2895,7 +3347,22 @@
             },
             "description": "Summoner ID"
           }
-        ]
+        ],
+        "x-endpoint": "summoner-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "summoner-v4",
       "x-platforms-available": [
@@ -2910,7 +3377,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/summoner/v4/summoners/{encryptedSummonerId}": {
       "get": {
@@ -2981,7 +3449,22 @@
             },
             "description": "Summoner ID"
           }
-        ]
+        ],
+        "x-endpoint": "summoner-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "summoner-v4",
       "x-platforms-available": [
@@ -2996,7 +3479,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/challenger": {
       "get": {
@@ -3055,7 +3539,22 @@
           }
         },
         "operationId": "tft-league-v1.getChallengerLeague",
-        "description": "Get the challenger league."
+        "description": "Get the challenger league.",
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3070,7 +3569,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -3144,7 +3644,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3159,7 +3674,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/entries/{tier}/{division}": {
       "get": {
@@ -3267,7 +3783,22 @@
             },
             "description": "Starts with page 1."
           }
-        ]
+        ],
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3282,7 +3813,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/grandmaster": {
       "get": {
@@ -3341,7 +3873,22 @@
           }
         },
         "operationId": "tft-league-v1.getGrandmasterLeague",
-        "description": "Get the grandmaster league."
+        "description": "Get the grandmaster league.",
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3356,7 +3903,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/leagues/{leagueId}": {
       "get": {
@@ -3428,7 +3976,22 @@
             },
             "description": "The UUID of the league."
           }
-        ]
+        ],
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3443,7 +4006,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/league/v1/master": {
       "get": {
@@ -3502,7 +4066,22 @@
           }
         },
         "operationId": "tft-league-v1.getMasterLeague",
-        "description": "Get the master league."
+        "description": "Get the master league.",
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-league-v1",
       "x-platforms-available": [
@@ -3517,7 +4096,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/match/v1/matches/by-puuid/{puuid}/ids": {
       "get": {
@@ -3601,14 +4181,22 @@
               "x-type": "int"
             }
           }
-        ]
+        ],
+        "x-endpoint": "tft-match-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tft-match-v1",
       "x-platforms-available": [
         "americas",
         "asia",
         "europe"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/tft/match/v1/matches/{matchId}": {
       "get": {
@@ -3679,14 +4267,22 @@
               "x-type": "String"
             }
           }
-        ]
+        ],
+        "x-endpoint": "tft-match-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tft-match-v1",
       "x-platforms-available": [
         "americas",
         "asia",
         "europe"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/tft/summoner/v1/summoners/by-account/{encryptedAccountId}": {
       "get": {
@@ -3756,7 +4352,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "tft-summoner-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-summoner-v1",
       "x-platforms-available": [
@@ -3771,7 +4382,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/summoner/v1/summoners/by-name/{summonerName}": {
       "get": {
@@ -3843,7 +4455,22 @@
             },
             "description": "Summoner Name"
           }
-        ]
+        ],
+        "x-endpoint": "tft-summoner-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-summoner-v1",
       "x-platforms-available": [
@@ -3858,7 +4485,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}": {
       "get": {
@@ -3929,7 +4557,22 @@
             },
             "description": "Summoner ID"
           }
-        ]
+        ],
+        "x-endpoint": "tft-summoner-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-summoner-v1",
       "x-platforms-available": [
@@ -3944,7 +4587,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/tft/summoner/v1/summoners/{encryptedSummonerId}": {
       "get": {
@@ -4015,7 +4659,22 @@
             },
             "description": "Summoner ID"
           }
-        ]
+        ],
+        "x-endpoint": "tft-summoner-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "tft-summoner-v1",
       "x-platforms-available": [
@@ -4030,7 +4689,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/platform/v4/third-party-code/by-summoner/{encryptedSummonerId}": {
       "get": {
@@ -4100,7 +4760,22 @@
               "x-type": "string"
             }
           }
-        ]
+        ],
+        "x-endpoint": "third-party-code-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
       },
       "x-endpoint": "third-party-code-v4",
       "x-platforms-available": [
@@ -4115,7 +4790,8 @@
         "oc1",
         "ru",
         "tr1"
-      ]
+      ],
+      "x-route-enum": "platform"
     },
     "/lol/tournament-stub/v4/codes": {
       "post": {
@@ -4214,12 +4890,18 @@
             },
             "description": "The tournament ID"
           }
-        ]
+        ],
+        "x-endpoint": "tournament-stub-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-stub-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament-stub/v4/lobby-events/by-code/{tournamentCode}": {
       "get": {
@@ -4290,12 +4972,18 @@
             },
             "description": "The short code to look up lobby events for"
           }
-        ]
+        ],
+        "x-endpoint": "tournament-stub-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-stub-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament-stub/v4/providers": {
       "post": {
@@ -4367,12 +5055,18 @@
           },
           "required": true,
           "description": "The provider definition."
-        }
+        },
+        "x-endpoint": "tournament-stub-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-stub-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament-stub/v4/tournaments": {
       "post": {
@@ -4444,12 +5138,18 @@
           },
           "required": true,
           "description": "The tournament definition."
-        }
+        },
+        "x-endpoint": "tournament-stub-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-stub-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament/v4/codes": {
       "post": {
@@ -4548,12 +5248,18 @@
             },
             "description": "The tournament ID"
           }
-        ]
+        ],
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament/v4/codes/{tournamentCode}": {
       "get": {
@@ -4624,12 +5330,18 @@
             },
             "description": "The tournament code string."
           }
-        ]
+        ],
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-v4",
       "x-platforms-available": [
         "americas"
       ],
+      "x-route-enum": "regional",
       "put": {
         "tags": [
           "tournament-v4"
@@ -4702,7 +5414,12 @@
             },
             "description": "The tournament code to update"
           }
-        ]
+        ],
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       }
     },
     "/lol/tournament/v4/lobby-events/by-code/{tournamentCode}": {
@@ -4774,12 +5491,18 @@
             },
             "description": "The short code to look up lobby events for"
           }
-        ]
+        ],
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament/v4/providers": {
       "post": {
@@ -4851,12 +5574,18 @@
           },
           "required": true,
           "description": "The provider definition."
-        }
+        },
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/lol/tournament/v4/tournaments": {
       "post": {
@@ -4928,12 +5657,18 @@
           },
           "required": true,
           "description": "The tournament definition."
-        }
+        },
+        "x-endpoint": "tournament-v4",
+        "x-platforms-available": [
+          "americas"
+        ],
+        "x-route-enum": "regional"
       },
       "x-endpoint": "tournament-v4",
       "x-platforms-available": [
         "americas"
-      ]
+      ],
+      "x-route-enum": "regional"
     },
     "/val/content/v1/contents": {
       "get": {
@@ -5003,7 +5738,17 @@
               "x-type": "String"
             }
           }
-        ]
+        ],
+        "x-endpoint": "val-content-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
       },
       "x-endpoint": "val-content-v1",
       "x-platforms-available": [
@@ -5013,7 +5758,8 @@
         "kr",
         "latam",
         "na"
-      ]
+      ],
+      "x-route-enum": "val-platform"
     },
     "/val/match/v1/matches/{matchId}": {
       "get": {
@@ -5072,6 +5818,7 @@
           }
         },
         "operationId": "val-match-v1.getMatch",
+        "x-nullable-404": true,
         "description": "Get match by id",
         "parameters": [
           {
@@ -5083,7 +5830,17 @@
               "x-type": "String"
             }
           }
-        ]
+        ],
+        "x-endpoint": "val-match-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
       },
       "x-endpoint": "val-match-v1",
       "x-platforms-available": [
@@ -5093,7 +5850,8 @@
         "kr",
         "latam",
         "na"
-      ]
+      ],
+      "x-route-enum": "val-platform"
     },
     "/val/match/v1/matchlists/by-puuid/{puuid}": {
       "get": {
@@ -5163,7 +5921,17 @@
               "x-type": "String"
             }
           }
-        ]
+        ],
+        "x-endpoint": "val-match-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
       },
       "x-endpoint": "val-match-v1",
       "x-platforms-available": [
@@ -5173,7 +5941,8 @@
         "kr",
         "latam",
         "na"
-      ]
+      ],
+      "x-route-enum": "val-platform"
     }
   },
   "components": {
@@ -5204,17 +5973,17 @@
           },
           "gameName": {
             "type": "string",
-            "x-type": "string"
+            "x-type": "string",
+            "description": "This field may be excluded if the account doesn't have a gameName"
           },
           "tagLine": {
             "type": "string",
-            "x-type": "string"
+            "x-type": "string",
+            "description": "This field may be excluded if the account doesn't have a tagLine"
           }
         },
         "required": [
-          "puuid",
-          "gameName",
-          "tagLine"
+          "puuid"
         ]
       },
       "account-v1.ActiveShardDto": {
@@ -6265,7 +7034,6 @@
           "currentAccountId",
           "currentPlatformId",
           "summonerName",
-          "summonerId",
           "platformId"
         ]
       },
@@ -6386,8 +7154,7 @@
           "firstTower",
           "vilemawKills",
           "firstRiftHerald",
-          "teamId",
-          "win"
+          "teamId"
         ]
       },
       "match-v4.TeamBansDto": {
@@ -7084,6 +7851,24 @@
             "format": "int32",
             "x-type": "int",
             "description": "Secondary rune path"
+          },
+          "statPerk0": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "First stat rune."
+          },
+          "statPerk1": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Second stat rune."
+          },
+          "statPerk2": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Third stat rune."
           }
         },
         "required": [
@@ -8606,6 +9391,12 @@
             "x-type": "int",
             "description": "Number of units with this trait."
           },
+          "style": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)"
+          },
           "tier_current": {
             "type": "integer",
             "format": "int32",
@@ -9489,12 +10280,8 @@
         "title": "MatchDto",
         "properties": {
           "matchInfo": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/val-match-v1.MatchInfoDto",
-              "x-type": "MatchInfoDto"
-            },
-            "x-type": "List[MatchInfoDto]"
+            "$ref": "#/components/schemas/val-match-v1.MatchInfoDto",
+            "x-type": "MatchInfoDto"
           },
           "players": {
             "type": "array",
@@ -9646,6 +10433,269 @@
         "type": "object",
         "title": "PlayerStatsDto",
         "properties": {
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "roundsPlayed": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "kills": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "deaths": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "assists": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "playtimeMillis": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "abilityCasts": {
+            "$ref": "#/components/schemas/val-match-v1.AbilityCastsDto",
+            "x-type": "AbilityCastsDto"
+          }
+        },
+        "required": [
+          "score",
+          "roundsPlayed",
+          "kills",
+          "deaths",
+          "assists",
+          "playtimeMillis",
+          "abilityCasts"
+        ]
+      },
+      "val-match-v1.AbilityCastsDto": {
+        "type": "object",
+        "title": "AbilityCastsDto",
+        "properties": {
+          "grenadeCasts": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "ability1Casts": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "ability2Casts": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "ultimateCasts": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          }
+        },
+        "required": [
+          "grenadeCasts",
+          "ability1Casts",
+          "ability2Casts",
+          "ultimateCasts"
+        ]
+      },
+      "val-match-v1.TeamDto": {
+        "type": "object",
+        "title": "TeamDto",
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "x-type": "string",
+            "description": "This is an arbitrary string. Red and Blue in bomb modes. The puuid of the player in deathmatch."
+          },
+          "won": {
+            "type": "boolean",
+            "x-type": "boolean"
+          },
+          "roundsPlayed": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "roundsWon": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "numPoints": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Team points scored. Number of kills in deathmatch."
+          }
+        },
+        "required": [
+          "teamId",
+          "won",
+          "roundsPlayed",
+          "roundsWon",
+          "numPoints"
+        ]
+      },
+      "val-match-v1.RoundResultDto": {
+        "type": "object",
+        "title": "RoundResultDto",
+        "properties": {
+          "roundNum": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "roundResult": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "roundCeremony": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "winningTeam": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "bombPlanter": {
+            "type": "string",
+            "x-type": "string",
+            "description": "PUUID of player"
+          },
+          "bombDefuser": {
+            "type": "string",
+            "x-type": "string",
+            "description": "PUUID of player"
+          },
+          "plantRoundTime": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "plantPlayerLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-match-v1.PlayerLocationsDto",
+              "x-type": "PlayerLocationsDto"
+            },
+            "x-type": "List[PlayerLocationsDto]"
+          },
+          "plantLocation": {
+            "$ref": "#/components/schemas/val-match-v1.LocationDto",
+            "x-type": "LocationDto"
+          },
+          "plantSite": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "defuseRoundTime": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "defusePlayerLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-match-v1.PlayerLocationsDto",
+              "x-type": "PlayerLocationsDto"
+            },
+            "x-type": "List[PlayerLocationsDto]"
+          },
+          "defuseLocation": {
+            "$ref": "#/components/schemas/val-match-v1.LocationDto",
+            "x-type": "LocationDto"
+          },
+          "playerStats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-match-v1.PlayerRoundStatsDto",
+              "x-type": "PlayerRoundStatsDto"
+            },
+            "x-type": "List[PlayerRoundStatsDto]"
+          },
+          "roundResultCode": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "roundNum",
+          "roundResult",
+          "roundCeremony",
+          "winningTeam",
+          "bombPlanter",
+          "bombDefuser",
+          "plantRoundTime",
+          "plantPlayerLocations",
+          "plantLocation",
+          "plantSite",
+          "defuseRoundTime",
+          "defusePlayerLocations",
+          "defuseLocation",
+          "playerStats",
+          "roundResultCode"
+        ]
+      },
+      "val-match-v1.PlayerLocationsDto": {
+        "type": "object",
+        "title": "PlayerLocationsDto",
+        "properties": {
+          "puuid": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "viewRadians": {
+            "type": "number",
+            "format": "float",
+            "x-type": "float"
+          },
+          "location": {
+            "$ref": "#/components/schemas/val-match-v1.LocationDto",
+            "x-type": "LocationDto"
+          }
+        },
+        "required": [
+          "puuid",
+          "viewRadians",
+          "location"
+        ]
+      },
+      "val-match-v1.LocationDto": {
+        "type": "object",
+        "title": "LocationDto",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ]
+      },
+      "val-match-v1.PlayerRoundStatsDto": {
+        "type": "object",
+        "title": "PlayerRoundStatsDto",
+        "properties": {
           "puuid": {
             "type": "string",
             "x-type": "string"
@@ -9703,6 +10753,16 @@
             "format": "int32",
             "x-type": "int"
           },
+          "timeSinceGameStartMillis": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "timeSinceRoundStartMillis": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
           "killer": {
             "type": "string",
             "x-type": "string",
@@ -9740,58 +10800,12 @@
           }
         },
         "required": [
-          "gameTime",
-          "roundTime",
           "killer",
           "victim",
           "victimLocation",
           "assistants",
           "playerLocations",
           "finishingDamage"
-        ]
-      },
-      "val-match-v1.LocationDto": {
-        "type": "object",
-        "title": "LocationDto",
-        "properties": {
-          "x": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "y": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          }
-        },
-        "required": [
-          "x",
-          "y"
-        ]
-      },
-      "val-match-v1.PlayerLocationsDto": {
-        "type": "object",
-        "title": "PlayerLocationsDto",
-        "properties": {
-          "puuid": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "viewRadians": {
-            "type": "number",
-            "format": "float",
-            "x-type": "float"
-          },
-          "location": {
-            "$ref": "#/components/schemas/val-match-v1.LocationDto",
-            "x-type": "LocationDto"
-          }
-        },
-        "required": [
-          "puuid",
-          "viewRadians",
-          "location"
         ]
       },
       "val-match-v1.FinishingDamageDto": {
@@ -9919,136 +10933,6 @@
           "ultimateEffects"
         ]
       },
-      "val-match-v1.TeamDto": {
-        "type": "object",
-        "title": "TeamDto",
-        "properties": {
-          "teamId": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "won": {
-            "type": "boolean",
-            "x-type": "boolean"
-          },
-          "roundsPlayed": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "roundsWon": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          }
-        },
-        "required": [
-          "teamId",
-          "won",
-          "roundsPlayed",
-          "roundsWon"
-        ]
-      },
-      "val-match-v1.RoundResultDto": {
-        "type": "object",
-        "title": "RoundResultDto",
-        "properties": {
-          "roundNum": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "roundResult": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "roundCeremony": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "winningTeam": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "bombPlanter": {
-            "type": "string",
-            "x-type": "string",
-            "description": "PUUID of player"
-          },
-          "bombDefuser": {
-            "type": "string",
-            "x-type": "string",
-            "description": "PUUID of player"
-          },
-          "plantRoundTime": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "plantPlayerLocations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/val-match-v1.PlayerLocationsDto",
-              "x-type": "PlayerLocationsDto"
-            },
-            "x-type": "List[PlayerLocationsDto]"
-          },
-          "plantLocation": {
-            "$ref": "#/components/schemas/val-match-v1.LocationDto",
-            "x-type": "LocationDto"
-          },
-          "plantSite": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "defuseRoundTime": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "defusePlayerLocations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/val-match-v1.PlayerLocationsDto",
-              "x-type": "PlayerLocationsDto"
-            },
-            "x-type": "List[PlayerLocationsDto]"
-          },
-          "defuseLocation": {
-            "$ref": "#/components/schemas/val-match-v1.LocationDto",
-            "x-type": "LocationDto"
-          },
-          "playerStats": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/val-match-v1.PlayerStatsDto",
-              "x-type": "PlayerStatsDto"
-            },
-            "x-type": "List[PlayerStatsDto]"
-          },
-          "roundResultCode": {
-            "type": "string",
-            "x-type": "string"
-          }
-        },
-        "required": [
-          "roundNum",
-          "roundResult",
-          "roundCeremony",
-          "winningTeam",
-          "bombPlanter",
-          "bombDefuser",
-          "plantRoundTime",
-          "plantPlayerLocations",
-          "plantLocation",
-          "plantSite",
-          "defuseRoundTime",
-          "defusePlayerLocations",
-          "defuseLocation",
-          "playerStats",
-          "roundResultCode"
-        ]
-      },
       "val-match-v1.MatchlistDto": {
         "type": "object",
         "title": "MatchlistDto",
@@ -10060,10 +10944,10 @@
           "history": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/val-match-v1.MatchReferenceDto",
-              "x-type": "MatchDto"
+              "$ref": "#/components/schemas/val-match-v1.MatchlistEntryDto",
+              "x-type": "MatchlistEntryDto"
             },
-            "x-type": "List[MatchDto]"
+            "x-type": "List[MatchlistEntryDto]"
           }
         },
         "required": [
@@ -10071,15 +10955,15 @@
           "history"
         ]
       },
-      "val-match-v1.MatchReferenceDto": {
+      "val-match-v1.MatchlistEntryDto": {
         "type": "object",
-        "title": "MatchReferenceDto",
+        "title": "MatchlistEntryDto",
         "properties": {
           "matchId": {
             "type": "string",
             "x-type": "string"
           },
-          "gameStartTime": {
+          "gameStartTimeMillis": {
             "type": "integer",
             "format": "int64",
             "x-type": "long"
@@ -10091,7 +10975,7 @@
         },
         "required": [
           "matchId",
-          "gameStartTime",
+          "gameStartTimeMillis",
           "teamId"
         ]
       }

@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version ce249d47e5205e2141923e8dade20ac0ac4fc33c
+// Version e9fad555098e217edc088cc4b1ecc6fe095ba6cb
 
 const RiotApiConfig = {
     apiKeys: {
@@ -52,13 +52,13 @@ const RiotApiConfig = {
              */
             getByRiotId: {
                 path: "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}",
-            } as ReqSpec<string, Exclude<RegionalRoute, RegionalRoute.SEA>, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
             /**
              * Get active shard for a player
              */
             getActiveShard: {
                 path: "/riot/account/v1/active-shards/by-game/{game}/by-puuid/{puuid}",
-            } as ReqSpec<accountV1.ActiveShardDto, Exclude<RegionalRoute, RegionalRoute.SEA>, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
+            } as ReqSpec<accountV1.ActiveShardDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
         },
         championMasteryV4: {
             /**
@@ -464,7 +464,7 @@ const RiotApiConfig = {
              */
             getMatch: {
                 path: "/val/match/v1/matches/{matchId}",
-            } as ReqSpec<valMatchV1.MatchDto, ValPlatformRoute, { matchId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<valMatchV1.MatchDto | null, ValPlatformRoute, { matchId: string } | [ string ], {}, undefined>,
             /**
              * Get matchlist for games played by puuid
              */
