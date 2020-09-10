@@ -9,7 +9,7 @@ curl -o srcgen/.spec.json http://www.mingweisamuel.com/riotapi-schema/openapi-3.
 node srcgen
 
 # Rune ESLint.
-node ./node_modules/eslint/bin/eslint.js src/** || echo "LINTING FAILED"
+node ./node_modules/eslint/bin/eslint.js . || echo "LINTING FAILED"
 
 # Compile typescript.
 node node_modules/typescript/bin/tsc
