@@ -84,14 +84,15 @@ Region.prototype.get = function() {
     if (delay >= 0)
       return delayPromise(delay).then(fn);
     if (this.liveRequests >= this.config.maxConcurrent)
-      return delayPromise(20).then(fn);
+      return delayPromise(100 + Math.random() * 100).then(fn);
     this.liveRequests++;
     let reqConfig = {
       uri, qs,
       forever: true, // keep-alive.
       simple: false,
       resolveWithFullResponse: true,
-      qsStringifyOptions: { arrayFormat: { indices: false }}
+      qsStringifyOptions: { arrayFormat: { indices: false }},
+      timeout: this.config.timeout,
     };
     if (this.config.keyHeader)
       reqConfig.headers = { [this.config.keyHeader]: this.config.key };
@@ -113,7 +114,8 @@ Region.prototype.get = function() {
       return JSON.parse(res.body);
     }, err => {
       this.liveRequests--;
-      if (err.error && 'ETIMEDOUT' === err.error.code && retries < this.config.retries) { // Retry connection timeouts.
+      if (err.error && [ 'ECONNRESET', 'ESOCKETTIMEDOUT', 'ETIMEDOUT' ].includes(err.error.code)
+          && retries < this.config.retries) { // Retry connection resets/timeouts.
         retries++;
         return fn();
       }

@@ -61,6 +61,7 @@ let api = TeemoJS(configWithKey);
 
 - `retries` [int]: Number of times to retry request if the request fails with a retriable error. Zero for no retires.
 - `maxConcurrent` [int]: Maximum live requests to allow.
+- `timeout` [int]: Request timeout time in milliseconds (default 10,000).
 - `distFator` [float 0..1]: Factor to multiply rate limits by. This can be changed at any time using the `api.setDistFactor(x)` method. For example, if your API key was distributed across two computers, you could set this to 0.5.
 - `key` [OPTIONAL string]: Overrides the `key` argument passed into the constructor. Do not set unless you actually use this key.
 
