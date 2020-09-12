@@ -1,7 +1,7 @@
 {
   "prefix": "https://%s.api.riotgames.com",
   "retries": 3,
-  "maxConcurrent": 2000,
+  "maxConcurrent": 500,
   "timeout": 10000,
   "distFactor": 1,
   "defaultBuckets": [

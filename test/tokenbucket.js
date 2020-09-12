@@ -13,7 +13,6 @@ function testBurst(timespan, limit, count) {
     }
     return delayPromise(0).then(fn);
   }
-  let startTime = Date.now();
   let promises = Array(count).fill().map(makeReq);
   return Promise.all(promises).then(timestamps => {
     timestamps.sort();

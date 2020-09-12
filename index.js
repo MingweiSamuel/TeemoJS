@@ -51,7 +51,7 @@ function Region(config) {
   this.config = config;
   this.appLimit = new RateLimit(this.config.rateLimitTypeApplication, 1, this.config);
   this.methodLimits = {};
-  this.liveRequests = 0;
+  this.concurrentSema = new Semaphore(this.config.maxConcurrent);
 }
 Region.prototype.get = function() {
   let prefix = arguments[0];
@@ -83,9 +83,6 @@ Region.prototype.get = function() {
     let delay = RateLimit.getAllOrDelay(rateLimits);
     if (delay >= 0)
       return delayPromise(delay).then(fn);
-    if (this.liveRequests >= this.config.maxConcurrent)
-      return delayPromise(100 + Math.random() * 100).then(fn);
-    this.liveRequests++;
     let reqConfig = {
       uri, qs,
       forever: true, // keep-alive.
@@ -99,7 +96,6 @@ Region.prototype.get = function() {
     else
       qs[this.config.keyQueryParam] = this.config.key;
     return req(reqConfig).then(res => {
-      this.liveRequests--;
       rateLimits.forEach(rl => rl.onResponse(res));
       if (400 === res.statusCode)
         throw new Error('Bad request, responded with: ' + res.body + '\nurl:' + reqConfig.uri);
@@ -113,7 +109,6 @@ Region.prototype.get = function() {
       }
       return JSON.parse(res.body);
     }, err => {
-      this.liveRequests--;
       if (err.error && [ 'ECONNRESET', 'ESOCKETTIMEDOUT', 'ETIMEDOUT' ].includes(err.error.code)
           && retries < this.config.retries) { // Retry connection resets/timeouts.
         retries++;
@@ -122,7 +117,17 @@ Region.prototype.get = function() {
       throw new Error('Failed after ' + retries + ' retries due to: ' + err.message);
     });
   };
-  return Promise.resolve(fn());
+  return new Promise((resolve, reject) => {
+    this.concurrentSema.acquire()
+      .then(fn)
+      .then(out => {
+        this.concurrentSema.release();
+        resolve(out);
+      }, err => {
+        this.concurrentSema.release();
+        reject(err);
+      });
+  });
 };
 Region.prototype.updateDistFactor = function() {
   this.appLimit.setDistFactor(this.config.distFactor);
@@ -305,8 +310,25 @@ TokenBucket.getAllOrDelay = function(tokenBuckets) {
   return -1;
 };
 
-module.exports = RiotApi;
-if (DEBUG) {
-  module.exports.delayPromise = delayPromise;
-  module.exports.TokenBucket = TokenBucket;
+function Semaphore(permits) {
+  this._permits = permits;
+  this._queue = [];
 }
+Semaphore.prototype.acquire = function() {
+  return new Promise(resolve => {
+    if (this._permits) {
+      this._permits--;
+      resolve();
+    }
+    else
+      this._queue.push(resolve);
+  });
+};
+Semaphore.prototype.release = function() {
+  const resolve = this._queue.shift();
+  (resolve ? resolve() : this._permits++);
+};
+
+module.exports = RiotApi;
+if (DEBUG)
+  Object.assign(module.exports, { delayPromise, TokenBucket, Semaphore });
