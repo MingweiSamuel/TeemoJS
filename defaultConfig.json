@@ -1,7 +1,7 @@
 {
   "prefix": "https://%s.api.riotgames.com",
   "retries": 3,
-  "maxConcurrent": 500,
+  "maxConcurrent": 2000,
   "timeout": 10000,
   "distFactor": 1,
   "defaultBuckets": [
@@ -110,7 +110,8 @@
     },
     "valMatch": {
       "getMatch": "/val/match/v1/matches/%s",
-      "getMatchlist": "/val/match/v1/matchlists/by-puuid/%s"
+      "getMatchlist": "/val/match/v1/matchlists/by-puuid/%s",
+      "getRecent": "/val/match/v1/recent-matches/by-queue/%s"
     }
   }
 }
