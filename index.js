@@ -99,7 +99,7 @@ Region.prototype.get = function() {
       rateLimits.forEach(rl => rl.onResponse(res));
       if (400 === res.statusCode)
         throw new Error('Bad request, responded with: ' + res.body + '\nurl:' + reqConfig.uri);
-      if ([404, 422].includes(res.statusCode))
+      if ([ 204, 404, 422 ].includes(res.statusCode))
         return null;
       if (429 === res.statusCode || 500 <= res.statusCode) {
         if (retries >= this.config.retries)
