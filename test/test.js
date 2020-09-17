@@ -131,5 +131,23 @@ describe('TeemoJS', function() {
           console.log(entry.wins);
         });
     });
+
+    it('tftLeague.getChallengerLeague', function() {
+      return api.get('na1', 'tftLeague.getChallengerLeague')
+        .then(data => {
+          console.log(data);
+          if (null == data) {
+            console.log('No one in TFT Challenger!');
+            return;
+          }
+          assert.ok(data.leagueId);
+          assert.ok(data.entries.length);
+          assert.ok(data.name);
+          for (const entry of data.entries) {
+            assert.ok(entry);
+            assert.ok(entry.summonerName);
+          }
+        });
+    });
   });
 });
