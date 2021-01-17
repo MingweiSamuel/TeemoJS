@@ -62,10 +62,17 @@
       "getMasterLeague": "/lol/league/v4/masterleagues/by-queue/%s"
     },
     "lolStatus": {
-      "getShardData": "/lol/status/v3/shard-data"
+      "getPlatformData": "/lol/status/v4/platform-data"
+    },
+    "lorMatch": {
+      "getMatchIdsByPUUID": "/lor/match/v1/matches/by-puuid/%s/ids",
+      "getMatch": "/lor/match/v1/matches/%s"
     },
     "lorRanked": {
       "getLeaderboards": "/lor/ranked/v1/leaderboards"
+    },
+    "lorStatus": {
+      "getPlatformData": "/lor/status/v1/platform-data"
     },
     "match": {
       "getMatchIdsByTournamentCode": "/lol/match/v4/matches/by-tournament-code/%s/ids",
@@ -112,6 +119,12 @@
       "getMatch": "/val/match/v1/matches/%s",
       "getMatchlist": "/val/match/v1/matchlists/by-puuid/%s",
       "getRecent": "/val/match/v1/recent-matches/by-queue/%s"
+    },
+    "valRanked": {
+      "getLeaderboard": "/val/ranked/v1/leaderboards/by-act/%s"
+    },
+    "valStatus": {
+      "getPlatformData": "/val/status/v1/platform-data"
     }
   }
 }

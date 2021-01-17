@@ -128,7 +128,7 @@ describe('TeemoJS', function() {
       return api.get('na1', 'league.getLeagueEntriesForSummoner', SID_TCTRE)
         .then(data => {
           let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
-          console.log(entry.wins);
+          console.log(entry ? entry.wins : 'TCTRE unranked.');
         });
     });
 
