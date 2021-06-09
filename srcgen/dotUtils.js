@@ -36,6 +36,16 @@ function formatPropType(prop, optional = false) {
         const [ endpoint, model ] = prop.$ref.split('/').pop().split('.');
         return `${toLowerCamel(endpoint)}.${model}`;
     }
+
+    if (null == prop['x-type']) {
+        if ('string' === prop.type)
+            return 'string';
+        if ('integer' === prop.type)
+            return 'int';
+        if ('boolean' === prop.type)
+            return 'boolean';
+        throw Error('Missing x-type key on prop: ' + JSON.stringify(prop));
+    }
     if ('STRING' === prop['x-type'].toUpperCase())
         return 'string';
     return prop['x-type'];
@@ -68,8 +78,9 @@ function paramsToType(params, ordered = false) {
     return namedType.join('');
 }
 
-const routesTable =require("./routes");
-function getRouteUnionType(routes) {
+const routesTable = require("./routes");
+function getRouteUnionType(operation) {
+    const routes = operation['x-platforms-available'].map(r => r.toUpperCase());
     for (const [ routeType, routeValues ] of Object.entries(routesTable)) {
         if (routes.every(r => routeValues.includes(r))) {
             if (routes.length === routeValues.length)
@@ -79,7 +90,7 @@ function getRouteUnionType(routes) {
             return routes.map(r => `${routeType}.${r}`).join(' | ');
         }
     }
-    console.warn(`Failed to find route enum for routes: ${JSON.stringify(routes)}.`);
+    console.warn(`Failed to find route enum for path: ${operation.operationId}, routes: ${JSON.stringify(routes)}.`);
     return 'AnyRoute';
 }
 

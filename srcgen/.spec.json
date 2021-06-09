@@ -3,8 +3,8 @@
   "info": {
     "title": "Riot API",
     "description": "\nOpenAPI/Swagger version of the [Riot API](https://developer.riotgames.com/). Automatically generated daily.\n## OpenAPI Spec File\nThe following versions of the Riot API spec file are available:\n- `openapi-3.0.0.json` ([view file](../openapi-3.0.0.json), [ui select](?url=../openapi-3.0.0.json))\n- `openapi-3.0.0.min.json` ([view file](../openapi-3.0.0.min.json), [ui select](?url=../openapi-3.0.0.min.json))\n- `openapi-3.0.0.yml` ([view file](../openapi-3.0.0.yml), [ui select](?url=../openapi-3.0.0.yml))\n- `openapi-3.0.0.min.yml` ([view file](../openapi-3.0.0.min.yml), [ui select](?url=../openapi-3.0.0.min.yml))\n- `swaggerspec-2.0.json` ([view file](../swaggerspec-2.0.json), [ui select](?url=../swaggerspec-2.0.json))\n- `swaggerspec-2.0.min.json` ([view file](../swaggerspec-2.0.min.json), [ui select](?url=../swaggerspec-2.0.min.json))\n- `swaggerspec-2.0.yml` ([view file](../swaggerspec-2.0.yml), [ui select](?url=../swaggerspec-2.0.yml))\n- `swaggerspec-2.0.min.yml` ([view file](../swaggerspec-2.0.min.yml), [ui select](?url=../swaggerspec-2.0.min.yml))\n## Other Files\n- Missing DTOs: [`missing.json`](../missing.json)\n- [Enum Files](../enums/)\n## Source Code\nSource code on [GitHub](https://github.com/MingweiSamuel/riotapi-schema). Pull requests welcome!\n## Automatically Generated\nRebuilt on [Travis CI](https://travis-ci.com/MingweiSamuel/riotapi-schema/builds) daily.\n***\n",
-    "termsOfService": "https://developer.riotgames.com/terms-and-conditions.html",
-    "version": "e9fad555098e217edc088cc4b1ecc6fe095ba6cb"
+    "termsOfService": "https://developer.riotgames.com/terms",
+    "version": "570eb12bfe9fb09e435976cb454f622293d0020e"
   },
   "servers": [
     {
@@ -14,6 +14,7 @@
           "enum": [
             "americas",
             "asia",
+            "esports",
             "europe",
             "br1",
             "eun1",
@@ -113,6 +114,7 @@
         "x-platforms-available": [
           "americas",
           "asia",
+          "esports",
           "europe"
         ],
         "x-route-enum": "regional"
@@ -121,6 +123,7 @@
       "x-platforms-available": [
         "americas",
         "asia",
+        "esports",
         "europe"
       ],
       "x-route-enum": "regional"
@@ -192,11 +195,100 @@
             "schema": {
               "type": "string",
               "x-type": "string"
-            }
+            },
+            "description": "When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response."
           },
           {
             "name": "gameName",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "description": "When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response."
+          }
+        ],
+        "x-endpoint": "account-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "esports",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "account-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "esports",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/riot/account/v1/accounts/me": {
+      "get": {
+        "tags": [
+          "account-v1"
+        ],
+        "summary": "Get account by access token",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/account-v1.AccountDto",
+                  "x-type": "AccountDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "account-v1.getByAccessToken",
+        "description": "Get account by access token",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
             "required": true,
             "schema": {
               "type": "string",
@@ -208,6 +300,7 @@
         "x-platforms-available": [
           "americas",
           "asia",
+          "esports",
           "europe"
         ],
         "x-route-enum": "regional"
@@ -216,6 +309,7 @@
       "x-platforms-available": [
         "americas",
         "asia",
+        "esports",
         "europe"
       ],
       "x-route-enum": "regional"
@@ -281,15 +375,6 @@
         "description": "Get active shard for a player",
         "parameters": [
           {
-            "name": "puuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "x-type": "string"
-            }
-          },
-          {
             "name": "game",
             "in": "path",
             "required": true,
@@ -301,12 +386,22 @@
                 "lor"
               ]
             }
+          },
+          {
+            "name": "puuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "string"
+            }
           }
         ],
         "x-endpoint": "account-v1",
         "x-platforms-available": [
           "americas",
           "asia",
+          "esports",
           "europe"
         ],
         "x-route-enum": "regional"
@@ -315,6 +410,7 @@
       "x-platforms-available": [
         "americas",
         "asia",
+        "esports",
         "europe"
       ],
       "x-route-enum": "regional"
@@ -337,10 +433,10 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/champion-mastery-v4.ChampionMasteryDTO",
-                    "x-type": "ChampionMasteryDTO"
+                    "$ref": "#/components/schemas/champion-mastery-v4.ChampionMasteryDto",
+                    "x-type": "ChampionMasteryDto"
                   },
-                  "x-type": "List[ChampionMasteryDTO]"
+                  "x-type": "List[ChampionMasteryDto]"
                 }
               }
             }
@@ -441,8 +537,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/champion-mastery-v4.ChampionMasteryDTO",
-                  "x-type": "ChampionMasteryDTO"
+                  "$ref": "#/components/schemas/champion-mastery-v4.ChampionMasteryDto",
+                  "x-type": "ChampionMasteryDto"
                 }
               }
             }
@@ -1365,7 +1461,7 @@
               "format": "int32",
               "x-type": "int"
             },
-            "description": "Starts with page 1."
+            "description": "Defaults to 1. Starts with page 1."
           }
         ],
         "x-endpoint": "league-exp-v4",
@@ -1734,7 +1830,7 @@
               "format": "int32",
               "x-type": "int"
             },
-            "description": "Starts with page 1."
+            "description": "Defaults to 1. Starts with page 1."
           }
         ],
         "x-endpoint": "league-v4",
@@ -2179,6 +2275,542 @@
       ],
       "x-route-enum": "platform"
     },
+    "/lol/status/v4/platform-data": {
+      "get": {
+        "tags": [
+          "lol-status-v4"
+        ],
+        "summary": "Get League of Legends status for the given platform.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/lol-status-v4.PlatformDataDto",
+                  "x-type": "PlatformDataDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lol-status-v4.getPlatformData",
+        "description": "Get League of Legends status for the given platform.",
+        "x-endpoint": "lol-status-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "pbe1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
+      },
+      "x-endpoint": "lol-status-v4",
+      "x-platforms-available": [
+        "br1",
+        "eun1",
+        "euw1",
+        "jp1",
+        "kr",
+        "la1",
+        "la2",
+        "na1",
+        "oc1",
+        "pbe1",
+        "ru",
+        "tr1"
+      ],
+      "x-route-enum": "platform"
+    },
+    "/lor/deck/v1/decks/me": {
+      "get": {
+        "tags": [
+          "lor-deck-v1"
+        ],
+        "summary": "Get a list of the calling user's decks.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-deck-v1/GET_getDecks"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/lor-deck-v1.DeckDto",
+                    "x-type": "DeckDto"
+                  },
+                  "x-type": "List[DeckDto]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-deck-v1.getDecks",
+        "description": "Get a list of the calling user's decks.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "lor-deck-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe",
+          "sea"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "lor-deck-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe",
+        "sea"
+      ],
+      "x-route-enum": "regional",
+      "post": {
+        "tags": [
+          "lor-deck-v1"
+        ],
+        "summary": "Create a new deck for the calling user.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-deck-v1/POST_createDeck"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "x-type": "String"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-deck-v1.createDeck",
+        "description": "Create a new deck for the calling user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/lor-deck-v1.NewDeckDto",
+                "x-type": "NewDeckDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "lor-deck-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe",
+          "sea"
+        ],
+        "x-route-enum": "regional"
+      }
+    },
+    "/lor/inventory/v1/cards/me": {
+      "get": {
+        "tags": [
+          "lor-inventory-v1"
+        ],
+        "summary": "Return a list of cards owned by the calling user.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-inventory-v1/GET_getCards"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/lor-inventory-v1.CardDto",
+                    "x-type": "CardDto"
+                  },
+                  "x-type": "List[CardDto]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-inventory-v1.getCards",
+        "description": "Return a list of cards owned by the calling user.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "lor-inventory-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe",
+          "sea"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "lor-inventory-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe",
+        "sea"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/lor/match/v1/matches/by-puuid/{puuid}/ids": {
+      "get": {
+        "tags": [
+          "lor-match-v1"
+        ],
+        "summary": "Get a list of match ids by PUUID",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatchIdsByPUUID"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "x-type": "string"
+                  },
+                  "x-type": "List[string]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-match-v1.getMatchIdsByPUUID",
+        "description": "Get a list of match ids by PUUID",
+        "parameters": [
+          {
+            "name": "puuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "lor-match-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "lor-match-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/lor/match/v1/matches/{matchId}": {
+      "get": {
+        "tags": [
+          "lor-match-v1"
+        ],
+        "summary": "Get match by id",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatch"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/lor-match-v1.MatchDto",
+                  "x-type": "MatchDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-match-v1.getMatch",
+        "description": "Get match by id",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "lor-match-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "lor-match-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
     "/lor/ranked/v1/leaderboards": {
       "get": {
         "tags": [
@@ -2247,6 +2879,82 @@
         "x-route-enum": "regional"
       },
       "x-endpoint": "lor-ranked-v1",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe",
+        "sea"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/lor/status/v1/platform-data": {
+      "get": {
+        "tags": [
+          "lor-status-v1"
+        ],
+        "summary": "Get Legends of Runeterra status for the given platform.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#lor-status-v1/GET_getPlatformData"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/lor-status-v1.PlatformDataDto",
+                  "x-type": "PlatformDataDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "lor-status-v1.getPlatformData",
+        "description": "Get Legends of Runeterra status for the given platform.",
+        "x-endpoint": "lor-status-v1",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe",
+          "sea"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "lor-status-v1",
       "x-platforms-available": [
         "americas",
         "asia",
@@ -2881,6 +3589,289 @@
       ],
       "x-route-enum": "platform"
     },
+    "/lol/match/v5/matches/by-puuid/{puuid}/ids": {
+      "get": {
+        "tags": [
+          "match-v5"
+        ],
+        "summary": "Get a list of match ids by puuid",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "x-type": "string"
+                  },
+                  "x-type": "List[string]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "match-v5.getMatchIdsByPUUID",
+        "description": "Get a list of match ids by puuid",
+        "parameters": [
+          {
+            "name": "puuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-type": "int"
+            },
+            "description": "Defaults to 0. Start index."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-type": "int"
+            },
+            "description": "Defaults to 20. Valid values: 0 to 100. Match id count."
+          }
+        ],
+        "x-endpoint": "match-v5",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "match-v5",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/lol/match/v5/matches/{matchId}": {
+      "get": {
+        "tags": [
+          "match-v5"
+        ],
+        "summary": "Get a match by match id",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#match-v5/GET_getMatch"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/match-v5.MatchDto",
+                  "x-type": "MatchDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "match-v5.getMatch",
+        "x-nullable-404": true,
+        "description": "Get a match by match id",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "match-v5",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "match-v5",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
+    "/lol/match/v5/matches/{matchId}/timeline": {
+      "get": {
+        "tags": [
+          "match-v5"
+        ],
+        "summary": "Get a match timeline by match id",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#match-v5/GET_getTimeline"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/match-v5.MatchTimelineDto",
+                  "x-type": "MatchTimelineDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "match-v5.getTimeline",
+        "x-nullable-404": true,
+        "description": "Get a match timeline by match id",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "String"
+            }
+          }
+        ],
+        "x-endpoint": "match-v5",
+        "x-platforms-available": [
+          "americas",
+          "asia",
+          "europe"
+        ],
+        "x-route-enum": "regional"
+      },
+      "x-endpoint": "match-v5",
+      "x-platforms-available": [
+        "americas",
+        "asia",
+        "europe"
+      ],
+      "x-route-enum": "regional"
+    },
     "/lol/spectator/v4/active-games/by-summoner/{encryptedSummonerId}": {
       "get": {
         "tags": [
@@ -3380,6 +4371,108 @@
       ],
       "x-route-enum": "platform"
     },
+    "/lol/summoner/v4/summoners/me": {
+      "get": {
+        "tags": [
+          "summoner-v4"
+        ],
+        "summary": "Get a summoner by access token.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccessToken"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/summoner-v4.SummonerDTO",
+                  "x-type": "SummonerDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "summoner-v4.getByAccessToken",
+        "description": "Get a summoner by access token.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "description": "Bearer token"
+          }
+        ],
+        "x-endpoint": "summoner-v4",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
+      },
+      "x-endpoint": "summoner-v4",
+      "x-platforms-available": [
+        "br1",
+        "eun1",
+        "euw1",
+        "jp1",
+        "kr",
+        "la1",
+        "la2",
+        "na1",
+        "oc1",
+        "ru",
+        "tr1"
+      ],
+      "x-route-enum": "platform"
+    },
     "/lol/summoner/v4/summoners/{encryptedSummonerId}": {
       "get": {
         "tags": [
@@ -3572,7 +4665,7 @@
       ],
       "x-route-enum": "platform"
     },
-    "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}": {
+    "/tft/league/v1/entries/by-summoner/{summonerId}": {
       "get": {
         "tags": [
           "tft-league-v1"
@@ -3636,7 +4729,7 @@
         "description": "Get league entries for a given summoner ID.",
         "parameters": [
           {
-            "name": "encryptedSummonerId",
+            "name": "summonerId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3781,7 +4874,7 @@
               "format": "int32",
               "x-type": "int"
             },
-            "description": "Starts with page 1."
+            "description": "Defaults to 1. Starts with page 1."
           }
         ],
         "x-endpoint": "tft-league-v1",
@@ -4099,12 +5192,121 @@
       ],
       "x-route-enum": "platform"
     },
+    "/tft/league/v1/rated-ladders/{queue}/top": {
+      "get": {
+        "tags": [
+          "tft-league-v1"
+        ],
+        "summary": "Get the top rated ladder for given queue",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getTopRatedLadder"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/tft-league-v1.TopRatedLadderEntryDto",
+                    "x-type": "TopRatedLadderEntryDto"
+                  },
+                  "x-type": "List[TopRatedLadderEntryDto]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "tft-league-v1.getTopRatedLadder",
+        "description": "Get the top rated ladder for given queue",
+        "parameters": [
+          {
+            "name": "queue",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "string",
+              "x-enum": "queueType",
+              "enum": [
+                "RANKED_TFT_TURBO"
+              ]
+            }
+          }
+        ],
+        "x-endpoint": "tft-league-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
+      },
+      "x-endpoint": "tft-league-v1",
+      "x-platforms-available": [
+        "br1",
+        "eun1",
+        "euw1",
+        "jp1",
+        "kr",
+        "la1",
+        "la2",
+        "na1",
+        "oc1",
+        "ru",
+        "tr1"
+      ],
+      "x-route-enum": "platform"
+    },
     "/tft/match/v1/matches/by-puuid/{puuid}/ids": {
       "get": {
         "tags": [
           "tft-match-v1"
         ],
-        "summary": "Get a list of match ids by PUUID.",
+        "summary": "Get a list of match ids by PUUID",
         "externalDocs": {
           "description": "Official API Reference",
           "url": "https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID"
@@ -4160,7 +5362,7 @@
           }
         },
         "operationId": "tft-match-v1.getMatchIdsByPUUID",
-        "description": "Get a list of match ids by PUUID.",
+        "description": "Get a list of match ids by PUUID",
         "parameters": [
           {
             "name": "puuid",
@@ -4179,7 +5381,8 @@
               "type": "integer",
               "format": "int32",
               "x-type": "int"
-            }
+            },
+            "description": "Defaults to 20."
           }
         ],
         "x-endpoint": "tft-match-v1",
@@ -4203,7 +5406,7 @@
         "tags": [
           "tft-match-v1"
         ],
-        "summary": "Get a match by match id.",
+        "summary": "Get a match by match id",
         "externalDocs": {
           "description": "Official API Reference",
           "url": "https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatch"
@@ -4256,7 +5459,7 @@
         },
         "operationId": "tft-match-v1.getMatch",
         "x-nullable-404": true,
-        "description": "Get a match by match id.",
+        "description": "Get a match by match id",
         "parameters": [
           {
             "name": "matchId",
@@ -4556,6 +5759,108 @@
               "x-type": "string"
             },
             "description": "Summoner ID"
+          }
+        ],
+        "x-endpoint": "tft-summoner-v1",
+        "x-platforms-available": [
+          "br1",
+          "eun1",
+          "euw1",
+          "jp1",
+          "kr",
+          "la1",
+          "la2",
+          "na1",
+          "oc1",
+          "ru",
+          "tr1"
+        ],
+        "x-route-enum": "platform"
+      },
+      "x-endpoint": "tft-summoner-v1",
+      "x-platforms-available": [
+        "br1",
+        "eun1",
+        "euw1",
+        "jp1",
+        "kr",
+        "la1",
+        "la2",
+        "na1",
+        "oc1",
+        "ru",
+        "tr1"
+      ],
+      "x-route-enum": "platform"
+    },
+    "/tft/summoner/v1/summoners/me": {
+      "get": {
+        "tags": [
+          "tft-summoner-v1"
+        ],
+        "summary": "Get a summoner by access token.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccessToken"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/tft-summoner-v1.SummonerDTO",
+                  "x-type": "SummonerDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "tft-summoner-v1.getByAccessToken",
+        "description": "Get a summoner by access token.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "description": "Bearer token."
           }
         ],
         "x-endpoint": "tft-summoner-v1",
@@ -5743,6 +7048,7 @@
         "x-platforms-available": [
           "ap",
           "br",
+          "esports",
           "eu",
           "kr",
           "latam",
@@ -5754,6 +7060,7 @@
       "x-platforms-available": [
         "ap",
         "br",
+        "esports",
         "eu",
         "kr",
         "latam",
@@ -5835,6 +7142,7 @@
         "x-platforms-available": [
           "ap",
           "br",
+          "esports",
           "eu",
           "kr",
           "latam",
@@ -5846,6 +7154,7 @@
       "x-platforms-available": [
         "ap",
         "br",
+        "esports",
         "eu",
         "kr",
         "latam",
@@ -5926,6 +7235,7 @@
         "x-platforms-available": [
           "ap",
           "br",
+          "esports",
           "eu",
           "kr",
           "latam",
@@ -5934,6 +7244,301 @@
         "x-route-enum": "val-platform"
       },
       "x-endpoint": "val-match-v1",
+      "x-platforms-available": [
+        "ap",
+        "br",
+        "esports",
+        "eu",
+        "kr",
+        "latam",
+        "na"
+      ],
+      "x-route-enum": "val-platform"
+    },
+    "/val/match/v1/recent-matches/by-queue/{queue}": {
+      "get": {
+        "tags": [
+          "val-match-v1"
+        ],
+        "summary": "Get recent matches",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/val-match-v1.RecentMatchesDto",
+                  "x-type": "RecentMatchesDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "val-match-v1.getRecent",
+        "description": "Get recent matches\n## Implementation Notes\nReturns a list of match ids that have completed in the last 10 minutes for live regions and 12 hours for the esports routing value. NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions. Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.",
+        "parameters": [
+          {
+            "name": "queue",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "string",
+              "enum": [
+                "competitive",
+                "unrated",
+                "spikerush",
+                "tournamentmode"
+              ]
+            }
+          }
+        ],
+        "x-endpoint": "val-match-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "esports",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
+      },
+      "x-endpoint": "val-match-v1",
+      "x-platforms-available": [
+        "ap",
+        "br",
+        "esports",
+        "eu",
+        "kr",
+        "latam",
+        "na"
+      ],
+      "x-route-enum": "val-platform"
+    },
+    "/val/ranked/v1/leaderboards/by-act/{actId}": {
+      "get": {
+        "tags": [
+          "val-ranked-v1"
+        ],
+        "summary": "Get leaderboard for the competitive queue",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/val-ranked-v1.LeaderboardDto",
+                  "x-type": "LeaderboardDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "val-ranked-v1.getLeaderboard",
+        "x-nullable-404": true,
+        "description": "Get leaderboard for the competitive queue",
+        "parameters": [
+          {
+            "name": "actId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "description": "Act ids can be found using the val-content API."
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-type": "int"
+            },
+            "description": "Defaults to 200. Valid values: 1 to 200."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-type": "int"
+            },
+            "description": "Defaults to 0."
+          }
+        ],
+        "x-endpoint": "val-ranked-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
+      },
+      "x-endpoint": "val-ranked-v1",
+      "x-platforms-available": [
+        "ap",
+        "br",
+        "eu",
+        "kr",
+        "latam",
+        "na"
+      ],
+      "x-route-enum": "val-platform"
+    },
+    "/val/status/v1/platform-data": {
+      "get": {
+        "tags": [
+          "val-status-v1"
+        ],
+        "summary": "Get VALORANT status for the given platform.",
+        "externalDocs": {
+          "description": "Official API Reference",
+          "url": "https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/val-status-v1.PlatformDataDto",
+                  "x-type": "PlatformDataDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "405": {
+            "description": "Method not allowed"
+          },
+          "415": {
+            "description": "Unsupported media type"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "502": {
+            "description": "Bad gateway"
+          },
+          "503": {
+            "description": "Service unavailable"
+          },
+          "504": {
+            "description": "Gateway timeout"
+          }
+        },
+        "operationId": "val-status-v1.getPlatformData",
+        "description": "Get VALORANT status for the given platform.",
+        "x-endpoint": "val-status-v1",
+        "x-platforms-available": [
+          "ap",
+          "br",
+          "eu",
+          "kr",
+          "latam",
+          "na"
+        ],
+        "x-route-enum": "val-platform"
+      },
+      "x-endpoint": "val-status-v1",
       "x-platforms-available": [
         "ap",
         "br",
@@ -5974,12 +7579,12 @@
           "gameName": {
             "type": "string",
             "x-type": "string",
-            "description": "This field may be excluded if the account doesn't have a gameName"
+            "description": "This field may be excluded from the response if the account doesn't have a gameName."
           },
           "tagLine": {
             "type": "string",
             "x-type": "string",
-            "description": "This field may be excluded if the account doesn't have a tagLine"
+            "description": "This field may be excluded from the response if the account doesn't have a tagLine."
           }
         },
         "required": [
@@ -6009,9 +7614,9 @@
           "activeShard"
         ]
       },
-      "champion-mastery-v4.ChampionMasteryDTO": {
+      "champion-mastery-v4.ChampionMasteryDto": {
         "type": "object",
-        "title": "ChampionMasteryDTO",
+        "title": "ChampionMasteryDto",
         "properties": {
           "championPointsUntilNextLevel": {
             "type": "integer",
@@ -6064,7 +7669,7 @@
             "type": "integer",
             "format": "int32",
             "x-type": "int",
-            "description": "The token earned for this champion to levelup."
+            "description": "The token earned for this champion at the current championLevel. When the championLevel is advanced the tokensEarned resets to 0."
           }
         },
         "description": "This object contains single Champion Mastery information for player and champion combination.",
@@ -6154,7 +7759,6 @@
         },
         "required": [
           "summonerId",
-          "teamId",
           "position",
           "role"
         ]
@@ -6317,6 +7921,7 @@
           "rank": {
             "type": "string",
             "x-type": "string",
+            "description": "The player's division within a tier.",
             "x-enum": "division"
           },
           "leaguePoints": {
@@ -6573,6 +8178,7 @@
           "rank": {
             "type": "string",
             "x-type": "string",
+            "description": "The player's division within a tier.",
             "x-enum": "division"
           },
           "leaguePoints": {
@@ -6680,14 +8286,6 @@
         "type": "object",
         "title": "Service",
         "properties": {
-          "incidents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/lol-status-v3.Incident",
-              "x-type": "Incident"
-            },
-            "x-type": "List[Incident]"
-          },
           "name": {
             "type": "string",
             "x-type": "string"
@@ -6699,19 +8297,32 @@
           "status": {
             "type": "string",
             "x-type": "string"
+          },
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v3.Incident",
+              "x-type": "Incident"
+            },
+            "x-type": "List[Incident]"
           }
         },
         "required": [
-          "incidents",
           "name",
           "slug",
-          "status"
+          "status",
+          "incidents"
         ]
       },
       "lol-status-v3.Incident": {
         "type": "object",
         "title": "Incident",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long"
+          },
           "active": {
             "type": "boolean",
             "x-type": "boolean"
@@ -6719,11 +8330,6 @@
           "created_at": {
             "type": "string",
             "x-type": "string"
-          },
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "x-type": "long"
           },
           "updates": {
             "type": "array",
@@ -6735,9 +8341,9 @@
           }
         },
         "required": [
+          "id",
           "active",
           "created_at",
-          "id",
           "updates"
         ]
       },
@@ -6745,15 +8351,31 @@
         "type": "object",
         "title": "Message",
         "properties": {
-          "severity": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "updated_at": {
+          "id": {
             "type": "string",
             "x-type": "string"
           },
           "author": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "heading": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "content": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
             "type": "string",
             "x-type": "string"
           },
@@ -6764,34 +8386,27 @@
               "x-type": "Translation"
             },
             "x-type": "List[Translation]"
-          },
-          "created_at": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "id": {
-            "type": "string",
-            "x-type": "string"
-          },
-          "content": {
-            "type": "string",
-            "x-type": "string"
           }
         },
         "required": [
-          "severity",
-          "updated_at",
-          "author",
-          "translations",
-          "created_at",
           "id",
-          "content"
+          "author",
+          "heading",
+          "content",
+          "severity",
+          "created_at",
+          "updated_at",
+          "translations"
         ]
       },
       "lol-status-v3.Translation": {
         "type": "object",
         "title": "Translation",
         "properties": {
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          },
           "locale": {
             "type": "string",
             "x-type": "string",
@@ -6800,16 +8415,435 @@
           "content": {
             "type": "string",
             "x-type": "string"
+          }
+        },
+        "required": [
+          "updated_at",
+          "locale",
+          "content"
+        ]
+      },
+      "lol-status-v4.PlatformDataDto": {
+        "type": "object",
+        "title": "PlatformDataDto",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-type": "string"
           },
-          "heading": {
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]"
+          },
+          "maintenances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v4.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          },
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v4.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "locales",
+          "maintenances",
+          "incidents"
+        ]
+      },
+      "lol-status-v4.StatusDto": {
+        "type": "object",
+        "title": "StatusDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "maintenance_status": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "scheduled",
+              "in_progress",
+              "complete"
+            ],
+            "description": "(Legal values:  scheduled,  in_progress,  complete)"
+          },
+          "incident_severity": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "critical"
+            ],
+            "description": "(Legal values:  info,  warning,  critical)"
+          },
+          "titles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v4.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "updates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v4.UpdateDto",
+              "x-type": "UpdateDto"
+            },
+            "x-type": "List[UpdateDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "archive_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "windows",
+              "macos",
+              "android",
+              "ios",
+              "ps4",
+              "xbone",
+              "switch"
+            ],
+            "description": "(Legal values: windows, macos, android, ios, ps4, xbone, switch)"
+          }
+        },
+        "required": [
+          "id",
+          "maintenance_status",
+          "incident_severity",
+          "titles",
+          "updates",
+          "created_at",
+          "archive_at",
+          "updated_at",
+          "platforms"
+        ]
+      },
+      "lol-status-v4.ContentDto": {
+        "type": "object",
+        "title": "ContentDto",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "content": {
             "type": "string",
             "x-type": "string"
           }
         },
         "required": [
           "locale",
-          "content",
-          "heading"
+          "content"
+        ]
+      },
+      "lol-status-v4.UpdateDto": {
+        "type": "object",
+        "title": "UpdateDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "author": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "publish": {
+            "type": "boolean",
+            "x-type": "boolean"
+          },
+          "publish_locations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "riotclient",
+              "riotstatus",
+              "game"
+            ],
+            "description": "(Legal values: riotclient, riotstatus, game)"
+          },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lol-status-v4.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "publish",
+          "publish_locations",
+          "translations",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "lor-deck-v1.DeckDto": {
+        "type": "object",
+        "title": "DeckDto",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "code": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "code"
+        ]
+      },
+      "lor-deck-v1.NewDeckDto": {
+        "type": "object",
+        "title": "NewDeckDto",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "code": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "code"
+        ]
+      },
+      "lor-inventory-v1.CardDto": {
+        "type": "object",
+        "title": "CardDto",
+        "properties": {
+          "code": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "count": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "count"
+        ]
+      },
+      "lor-match-v1.MatchDto": {
+        "type": "object",
+        "title": "MatchDto",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/lor-match-v1.MetadataDto",
+            "x-type": "MetadataDto",
+            "description": "Match metadata."
+          },
+          "info": {
+            "$ref": "#/components/schemas/lor-match-v1.InfoDto",
+            "x-type": "InfoDto",
+            "description": "Match info."
+          }
+        },
+        "required": [
+          "metadata",
+          "info"
+        ]
+      },
+      "lor-match-v1.MetadataDto": {
+        "type": "object",
+        "title": "MetadataDto",
+        "properties": {
+          "data_version": {
+            "type": "string",
+            "x-type": "string",
+            "description": "Match data version."
+          },
+          "match_id": {
+            "type": "string",
+            "x-type": "string",
+            "description": "Match id."
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "description": "A list of participant PUUIDs."
+          }
+        },
+        "required": [
+          "data_version",
+          "match_id",
+          "participants"
+        ]
+      },
+      "lor-match-v1.InfoDto": {
+        "type": "object",
+        "title": "InfoDto",
+        "properties": {
+          "game_mode": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "Constructed",
+              "Expeditions",
+              "Tutorial"
+            ],
+            "description": "(Legal values:  Constructed,  Expeditions,  Tutorial)"
+          },
+          "game_type": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "Ranked",
+              "Normal",
+              "AI",
+              "Tutorial",
+              "VanillaTrial",
+              "Singleton",
+              "StandardGauntlet"
+            ],
+            "description": "(Legal values:  Ranked,  Normal,  AI,  Tutorial,  VanillaTrial,  Singleton,  StandardGauntlet)"
+          },
+          "game_start_time_utc": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "game_version": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-match-v1.PlayerDto",
+              "x-type": "PlayerDto"
+            },
+            "x-type": "List[PlayerDto]"
+          },
+          "total_turn_count": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Total turns taken by both players."
+          }
+        },
+        "required": [
+          "game_mode",
+          "game_type",
+          "game_start_time_utc",
+          "game_version",
+          "players",
+          "total_turn_count"
+        ]
+      },
+      "lor-match-v1.PlayerDto": {
+        "type": "object",
+        "title": "PlayerDto",
+        "properties": {
+          "puuid": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "deck_id": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "deck_code": {
+            "type": "string",
+            "x-type": "string",
+            "description": "Code for the deck played. Refer to LOR documentation for details on deck codes."
+          },
+          "factions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]"
+          },
+          "game_outcome": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "order_of_play": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "The order in which the players took turns."
+          }
+        },
+        "required": [
+          "puuid",
+          "deck_id",
+          "deck_code",
+          "factions",
+          "game_outcome",
+          "order_of_play"
         ]
       },
       "lor-ranked-v1.LeaderboardDto": {
@@ -6854,6 +8888,215 @@
           "name",
           "rank",
           "lp"
+        ]
+      },
+      "lor-status-v1.PlatformDataDto": {
+        "type": "object",
+        "title": "PlatformDataDto",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]"
+          },
+          "maintenances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-status-v1.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          },
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-status-v1.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "locales",
+          "maintenances",
+          "incidents"
+        ]
+      },
+      "lor-status-v1.StatusDto": {
+        "type": "object",
+        "title": "StatusDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "maintenance_status": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "scheduled",
+              "in_progress",
+              "complete"
+            ],
+            "description": "(Legal values:  scheduled,  in_progress,  complete)"
+          },
+          "incident_severity": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "critical"
+            ],
+            "description": "(Legal values:  info,  warning,  critical)"
+          },
+          "titles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-status-v1.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "updates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-status-v1.UpdateDto",
+              "x-type": "UpdateDto"
+            },
+            "x-type": "List[UpdateDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "archive_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "windows",
+              "macos",
+              "android",
+              "ios",
+              "ps4",
+              "xbone",
+              "switch"
+            ],
+            "description": "(Legal values: windows, macos, android, ios, ps4, xbone, switch)"
+          }
+        },
+        "required": [
+          "id",
+          "maintenance_status",
+          "incident_severity",
+          "titles",
+          "updates",
+          "created_at",
+          "archive_at",
+          "updated_at",
+          "platforms"
+        ]
+      },
+      "lor-status-v1.ContentDto": {
+        "type": "object",
+        "title": "ContentDto",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "content": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "locale",
+          "content"
+        ]
+      },
+      "lor-status-v1.UpdateDto": {
+        "type": "object",
+        "title": "UpdateDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "author": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "publish": {
+            "type": "boolean",
+            "x-type": "boolean"
+          },
+          "publish_locations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "riotclient",
+              "riotstatus",
+              "game"
+            ],
+            "description": "(Legal values: riotclient, riotstatus, game)"
+          },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/lor-status-v1.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "publish",
+          "publish_locations",
+          "translations",
+          "created_at",
+          "updated_at"
         ]
       },
       "match-v4.MatchDto": {
@@ -7264,7 +9507,6 @@
           "championId",
           "stats",
           "teamId",
-          "timeline",
           "spell1Id",
           "spell2Id"
         ]
@@ -7856,19 +10098,19 @@
             "type": "integer",
             "format": "int32",
             "x-type": "int",
-            "description": "First stat rune."
+            "description": "Stat rune"
           },
           "statPerk1": {
             "type": "integer",
             "format": "int32",
             "x-type": "int",
-            "description": "Second stat rune."
+            "description": "Stat rune"
           },
           "statPerk2": {
             "type": "integer",
             "format": "int32",
             "x-type": "int",
-            "description": "Third stat rune."
+            "description": "Stat rune"
           }
         },
         "required": [
@@ -7886,7 +10128,6 @@
           "deaths",
           "tripleKills",
           "magicDamageDealtToChampions",
-          "wardsKilled",
           "pentaKills",
           "damageSelfMitigated",
           "largestCriticalStrike",
@@ -7898,7 +10139,6 @@
           "largestKillingSpree",
           "totalDamageDealtToChampions",
           "physicalDamageDealtToChampions",
-          "neutralMinionsKilledTeamJungle",
           "totalMinionsKilled",
           "visionWardsBoughtInGame",
           "kills",
@@ -7914,7 +10154,6 @@
           "longestTimeSpentLiving",
           "killingSprees",
           "trueDamageDealtToChampions",
-          "neutralMinionsKilledEnemyJungle",
           "doubleKills",
           "trueDamageDealt",
           "quadraKills",
@@ -8160,12 +10399,10 @@
         },
         "required": [
           "gameId",
-          "role",
           "season",
           "platformId",
           "champion",
           "queue",
-          "lane",
           "timestamp"
         ]
       },
@@ -8446,6 +10683,38 @@
           "timestamp"
         ]
       },
+      "match-v5.MatchDto": {
+        "title": "MatchDto",
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/match-v5.MatchMetadata"
+          },
+          "info": {
+            "$ref": "#/components/schemas/match-v5.MatchInfo"
+          }
+        },
+        "required": [
+          "metadata",
+          "info"
+        ]
+      },
+      "match-v5.MatchTimelineDto": {
+        "title": "MatchTimelineDto",
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/match-v5.MatchMetadata"
+          },
+          "info": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfo"
+          }
+        },
+        "required": [
+          "metadata",
+          "info"
+        ]
+      },
       "spectator-v4.CurrentGameInfo": {
         "type": "object",
         "title": "CurrentGameInfo",
@@ -8649,7 +10918,6 @@
         },
         "required": [
           "championId",
-          "perks",
           "profileIconId",
           "bot",
           "teamId",
@@ -8902,8 +11170,9 @@
         ]
       },
       "summoner-v4.SummonerDTO": {
-        "type": "object",
-        "title": "SummonerDTO",
+        "endpointName": "summoner-v4",
+        "name": "SummonerDTO",
+        "description": "represents a summoner",
         "properties": {
           "accountId": {
             "type": "string",
@@ -8920,7 +11189,7 @@
             "type": "integer",
             "format": "int64",
             "x-type": "long",
-            "description": "Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change."
+            "description": "Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: profile icon change, playing the tutorial or advanced tutorial, finishing a game, summoner name change"
           },
           "name": {
             "type": "string",
@@ -8944,7 +11213,6 @@
             "description": "Summoner level associated with the summoner."
           }
         },
-        "description": "represents a summoner",
         "required": [
           "accountId",
           "profileIconId",
@@ -9100,7 +11368,8 @@
         "properties": {
           "leagueId": {
             "type": "string",
-            "x-type": "string"
+            "x-type": "string",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "summonerId": {
             "type": "string",
@@ -9116,20 +11385,41 @@
             "x-type": "string",
             "x-enum": "queueType"
           },
+          "ratedTier": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "ORANGE",
+              "PURPLE",
+              "BLUE",
+              "GREEN",
+              "GRAY"
+            ],
+            "description": "Only included for the RANKED_TFT_TURBO queueType.\n             (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)"
+          },
+          "ratedRating": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "Only included for the RANKED_TFT_TURBO queueType."
+          },
           "tier": {
             "type": "string",
             "x-type": "string",
+            "description": "Not included for the RANKED_TFT_TURBO queueType.",
             "x-enum": "tier"
           },
           "rank": {
             "type": "string",
             "x-type": "string",
+            "description": "A player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.",
             "x-enum": "division"
           },
           "leaguePoints": {
             "type": "integer",
             "format": "int32",
-            "x-type": "int"
+            "x-type": "int",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "wins": {
             "type": "integer",
@@ -9145,39 +11435,86 @@
           },
           "hotStreak": {
             "type": "boolean",
-            "x-type": "boolean"
+            "x-type": "boolean",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "veteran": {
             "type": "boolean",
-            "x-type": "boolean"
+            "x-type": "boolean",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "freshBlood": {
             "type": "boolean",
-            "x-type": "boolean"
+            "x-type": "boolean",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "inactive": {
             "type": "boolean",
-            "x-type": "boolean"
+            "x-type": "boolean",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           },
           "miniSeries": {
             "$ref": "#/components/schemas/tft-league-v1.MiniSeriesDTO",
-            "x-type": "MiniSeriesDTO"
+            "x-type": "MiniSeriesDTO",
+            "description": "Not included for the RANKED_TFT_TURBO queueType."
           }
         },
         "required": [
-          "leagueId",
           "summonerId",
           "summonerName",
           "queueType",
-          "tier",
-          "rank",
-          "leaguePoints",
           "wins",
-          "losses",
-          "hotStreak",
-          "veteran",
-          "freshBlood",
-          "inactive"
+          "losses"
+        ]
+      },
+      "tft-league-v1.TopRatedLadderEntryDto": {
+        "type": "object",
+        "title": "TopRatedLadderEntryDto",
+        "properties": {
+          "summonerId": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "summonerName": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "ratedTier": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "ORANGE",
+              "PURPLE",
+              "BLUE",
+              "GREEN",
+              "GRAY"
+            ],
+            "description": "(Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)"
+          },
+          "ratedRating": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "wins": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int",
+            "description": "First placement."
+          },
+          "previousUpdateLadderPosition": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          }
+        },
+        "required": [
+          "summonerId",
+          "summonerName",
+          "ratedTier",
+          "ratedRating",
+          "wins",
+          "previousUpdateLadderPosition"
         ]
       },
       "tft-match-v1.MatchDto": {
@@ -9221,7 +11558,7 @@
               "x-type": "string"
             },
             "x-type": "List[string]",
-            "description": "A list of encrypted participant PUUIDs."
+            "description": "A list of participant PUUIDs."
           }
         },
         "required": [
@@ -9262,8 +11599,7 @@
               "$ref": "#/components/schemas/tft-match-v1.ParticipantDto",
               "x-type": "ParticipantDto"
             },
-            "x-type": "List[ParticipantDto]",
-            "description": "Participants."
+            "x-type": "List[ParticipantDto]"
           },
           "queue_id": {
             "type": "integer",
@@ -9328,8 +11664,7 @@
           },
           "puuid": {
             "type": "string",
-            "x-type": "string",
-            "description": "Encrypted PUUID."
+            "x-type": "string"
           },
           "time_eliminated": {
             "type": "number",
@@ -9435,10 +11770,15 @@
             "x-type": "string",
             "description": "This field was introduced in patch 9.22 with data_version 2."
           },
+          "chosen": {
+            "type": "string",
+            "x-type": "string",
+            "description": "If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response."
+          },
           "name": {
             "type": "string",
             "x-type": "string",
-            "description": "Unit name."
+            "description": "Unit name. This field is often left blank."
           },
           "rarity": {
             "type": "integer",
@@ -10130,6 +12470,14 @@
               "x-type": "ContentItemDto"
             },
             "x-type": "List[ContentItemDto]"
+          },
+          "acts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-content-v1.ActDto",
+              "x-type": "ActDto"
+            },
+            "x-type": "List[ActDto]"
           }
         },
         "required": [
@@ -10146,7 +12494,8 @@
           "charms",
           "charmLevels",
           "playerCards",
-          "playerTitles"
+          "playerTitles",
+          "acts"
         ]
       },
       "val-content-v1.ContentItemDto": {
@@ -10162,13 +12511,23 @@
             "x-type": "LocalizedNamesDto",
             "description": "This field is excluded from the response when a locale is set"
           },
+          "id": {
+            "type": "string",
+            "x-type": "string"
+          },
           "assetName": {
             "type": "string",
             "x-type": "string"
+          },
+          "assetPath": {
+            "type": "string",
+            "x-type": "string",
+            "description": "This field is only included for maps and game modes. These values are used in the match response."
           }
         },
         "required": [
           "name",
+          "id",
           "assetName"
         ]
       },
@@ -10275,6 +12634,34 @@
           "zh-TW"
         ]
       },
+      "val-content-v1.ActDto": {
+        "type": "object",
+        "title": "ActDto",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "localizedNames": {
+            "$ref": "#/components/schemas/val-content-v1.LocalizedNamesDto",
+            "x-type": "LocalizedNamesDto",
+            "description": "This field is excluded from the response when a locale is set"
+          },
+          "id": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "isActive": {
+            "type": "boolean",
+            "x-type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "isActive"
+        ]
+      },
       "val-match-v1.MatchDto": {
         "type": "object",
         "title": "MatchDto",
@@ -10290,6 +12677,14 @@
               "x-type": "PlayerDto"
             },
             "x-type": "List[PlayerDto]"
+          },
+          "coaches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-match-v1.CoachDto",
+              "x-type": "CoachDto"
+            },
+            "x-type": "List[CoachDto]"
           },
           "teams": {
             "type": "array",
@@ -10311,6 +12706,7 @@
         "required": [
           "matchInfo",
           "players",
+          "coaches",
           "teams",
           "roundResults"
         ]
@@ -10388,6 +12784,14 @@
             "type": "string",
             "x-type": "string"
           },
+          "gameName": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "tagLine": {
+            "type": "string",
+            "x-type": "string"
+          },
           "teamId": {
             "type": "string",
             "x-type": "string"
@@ -10420,6 +12824,8 @@
         },
         "required": [
           "puuid",
+          "gameName",
+          "tagLine",
           "teamId",
           "partyId",
           "characterId",
@@ -10508,6 +12914,24 @@
           "ability1Casts",
           "ability2Casts",
           "ultimateCasts"
+        ]
+      },
+      "val-match-v1.CoachDto": {
+        "type": "object",
+        "title": "CoachDto",
+        "properties": {
+          "puuid": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "teamId": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "puuid",
+          "teamId"
         ]
       },
       "val-match-v1.TeamDto": {
@@ -10743,16 +13167,6 @@
         "type": "object",
         "title": "KillDto",
         "properties": {
-          "gameTime": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
-          "roundTime": {
-            "type": "integer",
-            "format": "int32",
-            "x-type": "int"
-          },
           "timeSinceGameStartMillis": {
             "type": "integer",
             "format": "int32",
@@ -10800,6 +13214,8 @@
           }
         },
         "required": [
+          "timeSinceGameStartMillis",
+          "timeSinceRoundStartMillis",
           "killer",
           "victim",
           "victimLocation",
@@ -10977,6 +13393,1526 @@
           "matchId",
           "gameStartTimeMillis",
           "teamId"
+        ]
+      },
+      "val-match-v1.RecentMatchesDto": {
+        "type": "object",
+        "title": "RecentMatchesDto",
+        "properties": {
+          "currentTime": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long"
+          },
+          "matchIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "description": "A list of recent match ids."
+          }
+        },
+        "required": [
+          "currentTime",
+          "matchIds"
+        ]
+      },
+      "val-ranked-v1.LeaderboardDto": {
+        "type": "object",
+        "title": "LeaderboardDto",
+        "properties": {
+          "shard": {
+            "type": "string",
+            "x-type": "string",
+            "description": "The shard for the given leaderboard."
+          },
+          "actId": {
+            "type": "string",
+            "x-type": "string",
+            "description": "The act id for the given leaderboard. Act ids can be found using the val-content API."
+          },
+          "totalPlayers": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long",
+            "description": "The total number of players in the leaderboard."
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-ranked-v1.PlayerDto",
+              "x-type": "PlayerDto"
+            },
+            "x-type": "List[PlayerDto]"
+          }
+        },
+        "required": [
+          "shard",
+          "actId",
+          "totalPlayers",
+          "players"
+        ]
+      },
+      "val-ranked-v1.PlayerDto": {
+        "type": "object",
+        "title": "PlayerDto",
+        "properties": {
+          "puuid": {
+            "type": "string",
+            "x-type": "string",
+            "description": "This field may be omitted if the player has been anonymized."
+          },
+          "gameName": {
+            "type": "string",
+            "x-type": "string",
+            "description": "This field may be omitted if the player has been anonymized."
+          },
+          "tagLine": {
+            "type": "string",
+            "x-type": "string",
+            "description": "This field may be omitted if the player has been anonymized."
+          },
+          "leaderboardRank": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long"
+          },
+          "rankedRating": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long"
+          },
+          "numberOfWins": {
+            "type": "integer",
+            "format": "int64",
+            "x-type": "long"
+          }
+        },
+        "required": [
+          "leaderboardRank",
+          "rankedRating",
+          "numberOfWins"
+        ]
+      },
+      "val-status-v1.PlatformDataDto": {
+        "type": "object",
+        "title": "PlatformDataDto",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "name": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]"
+          },
+          "maintenances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-status-v1.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          },
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-status-v1.StatusDto",
+              "x-type": "StatusDto"
+            },
+            "x-type": "List[StatusDto]"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "locales",
+          "maintenances",
+          "incidents"
+        ]
+      },
+      "val-status-v1.StatusDto": {
+        "type": "object",
+        "title": "StatusDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "maintenance_status": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "scheduled",
+              "in_progress",
+              "complete"
+            ],
+            "description": "(Legal values:  scheduled,  in_progress,  complete)"
+          },
+          "incident_severity": {
+            "type": "string",
+            "x-type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "critical"
+            ],
+            "description": "(Legal values:  info,  warning,  critical)"
+          },
+          "titles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-status-v1.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "updates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-status-v1.UpdateDto",
+              "x-type": "UpdateDto"
+            },
+            "x-type": "List[UpdateDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "archive_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "windows",
+              "macos",
+              "android",
+              "ios",
+              "ps4",
+              "xbone",
+              "switch"
+            ],
+            "description": "(Legal values: windows, macos, android, ios, ps4, xbone, switch)"
+          }
+        },
+        "required": [
+          "id",
+          "maintenance_status",
+          "incident_severity",
+          "titles",
+          "updates",
+          "created_at",
+          "archive_at",
+          "updated_at",
+          "platforms"
+        ]
+      },
+      "val-status-v1.ContentDto": {
+        "type": "object",
+        "title": "ContentDto",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "content": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "locale",
+          "content"
+        ]
+      },
+      "val-status-v1.UpdateDto": {
+        "type": "object",
+        "title": "UpdateDto",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "x-type": "int"
+          },
+          "author": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "publish": {
+            "type": "boolean",
+            "x-type": "boolean"
+          },
+          "publish_locations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-type": "string"
+            },
+            "x-type": "List[string]",
+            "enum": [
+              "riotclient",
+              "riotstatus",
+              "game"
+            ],
+            "description": "(Legal values: riotclient, riotstatus, game)"
+          },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/val-status-v1.ContentDto",
+              "x-type": "ContentDto"
+            },
+            "x-type": "List[ContentDto]"
+          },
+          "created_at": {
+            "type": "string",
+            "x-type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "x-type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "publish",
+          "publish_locations",
+          "translations",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "match-v5.MatchMetadata": {
+        "title": "MatchMetadata",
+        "type": "object",
+        "properties": {
+          "dataVersion": {
+            "type": "string"
+          },
+          "matchId": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "dataVersion",
+          "matchId",
+          "participants"
+        ]
+      },
+      "match-v5.MatchInfoParticipantPerksStatPerks": {
+        "title": "MatchInfoParticipantPerksStatPerks",
+        "type": "object",
+        "properties": {
+          "defense": {
+            "type": "integer"
+          },
+          "flex": {
+            "type": "integer"
+          },
+          "offense": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "defense",
+          "flex",
+          "offense"
+        ]
+      },
+      "match-v5.MatchInfoParticipantPerksStyleSelection": {
+        "title": "MatchInfoParticipantPerksStyleSelection",
+        "type": "object",
+        "properties": {
+          "perk": {
+            "type": "integer"
+          },
+          "var1": {
+            "type": "integer"
+          },
+          "var2": {
+            "type": "integer"
+          },
+          "var3": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "perk",
+          "var1",
+          "var2",
+          "var3"
+        ]
+      },
+      "match-v5.MatchInfoParticipantPerksStyle": {
+        "title": "MatchInfoParticipantPerksStyle",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "selections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchInfoParticipantPerksStyleSelection"
+            }
+          },
+          "style": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "description",
+          "selections",
+          "style"
+        ]
+      },
+      "match-v5.MatchInfoParticipantPerks": {
+        "title": "MatchInfoParticipantPerks",
+        "type": "object",
+        "properties": {
+          "statPerks": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoParticipantPerksStatPerks"
+          },
+          "styles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchInfoParticipantPerksStyle"
+            }
+          }
+        },
+        "required": [
+          "statPerks",
+          "styles"
+        ]
+      },
+      "match-v5.MatchInfoParticipant": {
+        "title": "MatchInfoParticipant",
+        "type": "object",
+        "properties": {
+          "assists": {
+            "type": "integer"
+          },
+          "baronKills": {
+            "type": "integer"
+          },
+          "bountyLevel": {
+            "type": "integer"
+          },
+          "champExperience": {
+            "type": "integer"
+          },
+          "champLevel": {
+            "type": "integer"
+          },
+          "championId": {
+            "type": "integer",
+            "x-enum": "champion"
+          },
+          "championName": {
+            "type": "string"
+          },
+          "championTransform": {
+            "type": "integer"
+          },
+          "consumablesPurchased": {
+            "type": "integer"
+          },
+          "damageDealtToBuildings": {
+            "type": "integer"
+          },
+          "damageDealtToObjectives": {
+            "type": "integer"
+          },
+          "damageDealtToTurrets": {
+            "type": "integer"
+          },
+          "damageSelfMitigated": {
+            "type": "integer"
+          },
+          "deaths": {
+            "type": "integer"
+          },
+          "detectorWardsPlaced": {
+            "type": "integer"
+          },
+          "doubleKills": {
+            "type": "integer"
+          },
+          "dragonKills": {
+            "type": "integer"
+          },
+          "firstBloodAssist": {
+            "type": "boolean"
+          },
+          "firstBloodKill": {
+            "type": "boolean"
+          },
+          "firstTowerAssist": {
+            "type": "boolean"
+          },
+          "firstTowerKill": {
+            "type": "boolean"
+          },
+          "gameEndedInEarlySurrender": {
+            "type": "boolean"
+          },
+          "gameEndedInSurrender": {
+            "type": "boolean"
+          },
+          "goldEarned": {
+            "type": "integer"
+          },
+          "goldSpent": {
+            "type": "integer"
+          },
+          "individualPosition": {
+            "type": "string"
+          },
+          "inhibitorKills": {
+            "type": "integer"
+          },
+          "inhibitorsLost": {
+            "type": "integer"
+          },
+          "item0": {
+            "type": "integer"
+          },
+          "item1": {
+            "type": "integer"
+          },
+          "item2": {
+            "type": "integer"
+          },
+          "item3": {
+            "type": "integer"
+          },
+          "item4": {
+            "type": "integer"
+          },
+          "item5": {
+            "type": "integer"
+          },
+          "item6": {
+            "type": "integer"
+          },
+          "itemsPurchased": {
+            "type": "integer"
+          },
+          "killingSprees": {
+            "type": "integer"
+          },
+          "kills": {
+            "type": "integer"
+          },
+          "lane": {
+            "type": "string"
+          },
+          "largestCriticalStrike": {
+            "type": "integer"
+          },
+          "largestKillingSpree": {
+            "type": "integer"
+          },
+          "largestMultiKill": {
+            "type": "integer"
+          },
+          "longestTimeSpentLiving": {
+            "type": "integer"
+          },
+          "magicDamageDealt": {
+            "type": "integer"
+          },
+          "magicDamageDealtToChampions": {
+            "type": "integer"
+          },
+          "magicDamageTaken": {
+            "type": "integer"
+          },
+          "neutralMinionsKilled": {
+            "type": "integer"
+          },
+          "nexusKills": {
+            "type": "integer"
+          },
+          "nexusLost": {
+            "type": "integer"
+          },
+          "objectivesStolen": {
+            "type": "integer"
+          },
+          "objectivesStolenAssists": {
+            "type": "integer"
+          },
+          "participantId": {
+            "type": "integer"
+          },
+          "pentaKills": {
+            "type": "integer"
+          },
+          "perks": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoParticipantPerks"
+          },
+          "physicalDamageDealt": {
+            "type": "integer"
+          },
+          "physicalDamageDealtToChampions": {
+            "type": "integer"
+          },
+          "physicalDamageTaken": {
+            "type": "integer"
+          },
+          "profileIcon": {
+            "type": "integer"
+          },
+          "puuid": {
+            "type": "string"
+          },
+          "quadraKills": {
+            "type": "integer"
+          },
+          "riotIdName": {
+            "type": "string"
+          },
+          "riotIdTagline": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "sightWardsBoughtInGame": {
+            "type": "integer"
+          },
+          "spell1Casts": {
+            "type": "integer"
+          },
+          "spell2Casts": {
+            "type": "integer"
+          },
+          "spell3Casts": {
+            "type": "integer"
+          },
+          "spell4Casts": {
+            "type": "integer"
+          },
+          "summoner1Casts": {
+            "type": "integer"
+          },
+          "summoner1Id": {
+            "type": "integer"
+          },
+          "summoner2Casts": {
+            "type": "integer"
+          },
+          "summoner2Id": {
+            "type": "integer"
+          },
+          "summonerId": {
+            "type": "string"
+          },
+          "summonerLevel": {
+            "type": "integer"
+          },
+          "summonerName": {
+            "type": "string"
+          },
+          "teamEarlySurrendered": {
+            "type": "boolean"
+          },
+          "teamId": {
+            "type": "integer",
+            "x-enum": "team"
+          },
+          "teamPosition": {
+            "type": "string"
+          },
+          "timeCCingOthers": {
+            "type": "integer"
+          },
+          "timePlayed": {
+            "type": "integer"
+          },
+          "totalDamageDealt": {
+            "type": "integer"
+          },
+          "totalDamageDealtToChampions": {
+            "type": "integer"
+          },
+          "totalDamageShieldedOnTeammates": {
+            "type": "integer"
+          },
+          "totalDamageTaken": {
+            "type": "integer"
+          },
+          "totalHeal": {
+            "type": "integer"
+          },
+          "totalHealsOnTeammates": {
+            "type": "integer"
+          },
+          "totalMinionsKilled": {
+            "type": "integer"
+          },
+          "totalTimeCCDealt": {
+            "type": "integer"
+          },
+          "totalTimeSpentDead": {
+            "type": "integer"
+          },
+          "totalUnitsHealed": {
+            "type": "integer"
+          },
+          "tripleKills": {
+            "type": "integer"
+          },
+          "trueDamageDealt": {
+            "type": "integer"
+          },
+          "trueDamageDealtToChampions": {
+            "type": "integer"
+          },
+          "trueDamageTaken": {
+            "type": "integer"
+          },
+          "turretKills": {
+            "type": "integer"
+          },
+          "turretsLost": {
+            "type": "integer"
+          },
+          "unrealKills": {
+            "type": "integer"
+          },
+          "visionScore": {
+            "type": "integer"
+          },
+          "visionWardsBoughtInGame": {
+            "type": "integer"
+          },
+          "wardsKilled": {
+            "type": "integer"
+          },
+          "wardsPlaced": {
+            "type": "integer"
+          },
+          "win": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "assists",
+          "baronKills",
+          "bountyLevel",
+          "champExperience",
+          "champLevel",
+          "championId",
+          "championName",
+          "championTransform",
+          "consumablesPurchased",
+          "damageDealtToBuildings",
+          "damageDealtToObjectives",
+          "damageDealtToTurrets",
+          "damageSelfMitigated",
+          "deaths",
+          "detectorWardsPlaced",
+          "doubleKills",
+          "dragonKills",
+          "firstBloodAssist",
+          "firstBloodKill",
+          "firstTowerAssist",
+          "firstTowerKill",
+          "gameEndedInEarlySurrender",
+          "gameEndedInSurrender",
+          "goldEarned",
+          "goldSpent",
+          "individualPosition",
+          "inhibitorKills",
+          "inhibitorsLost",
+          "item0",
+          "item1",
+          "item2",
+          "item3",
+          "item4",
+          "item5",
+          "item6",
+          "itemsPurchased",
+          "killingSprees",
+          "kills",
+          "lane",
+          "largestCriticalStrike",
+          "largestKillingSpree",
+          "largestMultiKill",
+          "longestTimeSpentLiving",
+          "magicDamageDealt",
+          "magicDamageDealtToChampions",
+          "magicDamageTaken",
+          "neutralMinionsKilled",
+          "nexusKills",
+          "nexusLost",
+          "objectivesStolen",
+          "objectivesStolenAssists",
+          "participantId",
+          "pentaKills",
+          "perks",
+          "physicalDamageDealt",
+          "physicalDamageDealtToChampions",
+          "physicalDamageTaken",
+          "profileIcon",
+          "puuid",
+          "quadraKills",
+          "riotIdName",
+          "riotIdTagline",
+          "role",
+          "sightWardsBoughtInGame",
+          "spell1Casts",
+          "spell2Casts",
+          "spell3Casts",
+          "spell4Casts",
+          "summoner1Casts",
+          "summoner1Id",
+          "summoner2Casts",
+          "summoner2Id",
+          "summonerId",
+          "summonerLevel",
+          "summonerName",
+          "teamEarlySurrendered",
+          "teamId",
+          "teamPosition",
+          "timeCCingOthers",
+          "timePlayed",
+          "totalDamageDealt",
+          "totalDamageDealtToChampions",
+          "totalDamageShieldedOnTeammates",
+          "totalDamageTaken",
+          "totalHeal",
+          "totalHealsOnTeammates",
+          "totalMinionsKilled",
+          "totalTimeCCDealt",
+          "totalTimeSpentDead",
+          "totalUnitsHealed",
+          "tripleKills",
+          "trueDamageDealt",
+          "trueDamageDealtToChampions",
+          "trueDamageTaken",
+          "turretKills",
+          "turretsLost",
+          "unrealKills",
+          "visionScore",
+          "visionWardsBoughtInGame",
+          "wardsKilled",
+          "wardsPlaced",
+          "win"
+        ]
+      },
+      "match-v5.MatchInfoTeamBan": {
+        "title": "MatchInfoTeamBan",
+        "type": "object",
+        "properties": {
+          "championId": {
+            "type": "integer",
+            "x-enum": "champion"
+          },
+          "pickTurn": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "championId",
+          "pickTurn"
+        ]
+      },
+      "match-v5.MatchInfoTeamObjective": {
+        "title": "MatchInfoTeamObjective",
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "boolean"
+          },
+          "kills": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "first",
+          "kills"
+        ]
+      },
+      "match-v5.MatchInfoTeamObjectives": {
+        "title": "MatchInfoTeamObjectives",
+        "type": "object",
+        "properties": {
+          "baron": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          },
+          "champion": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          },
+          "dragon": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          },
+          "inhibitor": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          },
+          "riftHerald": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          },
+          "tower": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjective"
+          }
+        },
+        "required": [
+          "baron",
+          "champion",
+          "dragon",
+          "inhibitor",
+          "riftHerald",
+          "tower"
+        ]
+      },
+      "match-v5.MatchInfoTeam": {
+        "title": "MatchInfoTeam",
+        "type": "object",
+        "properties": {
+          "bans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchInfoTeamBan"
+            }
+          },
+          "objectives": {
+            "$ref": "#/components/schemas/match-v5.MatchInfoTeamObjectives"
+          },
+          "teamId": {
+            "type": "integer",
+            "x-enum": "team"
+          },
+          "win": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "bans",
+          "objectives",
+          "teamId",
+          "win"
+        ]
+      },
+      "match-v5.MatchInfo": {
+        "title": "MatchInfo",
+        "type": "object",
+        "properties": {
+          "gameCreation": {
+            "type": "integer"
+          },
+          "gameDuration": {
+            "type": "integer"
+          },
+          "gameId": {
+            "type": "integer"
+          },
+          "gameMode": {
+            "type": "string",
+            "x-enum": "gameMode"
+          },
+          "gameName": {
+            "type": "string"
+          },
+          "gameStartTimestamp": {
+            "type": "integer"
+          },
+          "gameType": {
+            "type": "string",
+            "x-enum": "gameType"
+          },
+          "gameVersion": {
+            "type": "string"
+          },
+          "mapId": {
+            "type": "integer",
+            "x-enum": "map"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchInfoParticipant"
+            }
+          },
+          "platformId": {
+            "type": "string"
+          },
+          "queueId": {
+            "type": "integer",
+            "x-enum": "queue"
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchInfoTeam"
+            }
+          }
+        },
+        "required": [
+          "gameCreation",
+          "gameDuration",
+          "gameId",
+          "gameMode",
+          "gameName",
+          "gameStartTimestamp",
+          "gameType",
+          "gameVersion",
+          "mapId",
+          "participants",
+          "platformId",
+          "queueId",
+          "teams"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameEvent": {
+        "title": "MatchTimelineInfoFrameEvent",
+        "type": "object",
+        "properties": {
+          "realTimestamp": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "integer"
+          },
+          "participantId": {
+            "type": "integer"
+          },
+          "levelUpType": {
+            "type": "string"
+          },
+          "skillSlot": {
+            "type": "integer"
+          },
+          "creatorId": {
+            "type": "integer"
+          },
+          "wardType": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "assistingParticipantIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "bounty": {
+            "type": "integer"
+          },
+          "killStreakLength": {
+            "type": "integer"
+          },
+          "killerId": {
+            "type": "integer"
+          },
+          "position": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFramePosition"
+          },
+          "victimDamageDealt": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameEventVictimDamageDealt"
+            }
+          },
+          "victimDamageReceived": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameEventVictimDamageDealt"
+            }
+          },
+          "victimId": {
+            "type": "integer"
+          },
+          "killType": {
+            "type": "string"
+          },
+          "laneType": {
+            "type": "string"
+          },
+          "teamId": {
+            "type": "integer",
+            "x-enum": "team"
+          },
+          "multiKillLength": {
+            "type": "integer"
+          },
+          "killerTeamId": {
+            "type": "integer",
+            "x-enum": "team"
+          },
+          "monsterType": {
+            "type": "string"
+          },
+          "monsterSubType": {
+            "type": "string"
+          },
+          "buildingType": {
+            "type": "string"
+          },
+          "towerType": {
+            "type": "string"
+          },
+          "afterId": {
+            "type": "integer"
+          },
+          "beforeId": {
+            "type": "integer"
+          },
+          "goldGain": {
+            "type": "integer"
+          },
+          "gameId": {
+            "type": "integer"
+          },
+          "winningTeam": {
+            "type": "integer"
+          },
+          "transformType": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp",
+          "type"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameParticipantFrameChampionStats": {
+        "title": "MatchTimelineInfoFrameParticipantFrameChampionStats",
+        "type": "object",
+        "properties": {
+          "abilityHaste": {
+            "type": "integer"
+          },
+          "abilityPower": {
+            "type": "integer"
+          },
+          "armor": {
+            "type": "integer"
+          },
+          "armorPen": {
+            "type": "integer"
+          },
+          "armorPenPercent": {
+            "type": "integer"
+          },
+          "attackDamage": {
+            "type": "integer"
+          },
+          "attackSpeed": {
+            "type": "integer"
+          },
+          "bonusArmorPenPercent": {
+            "type": "integer"
+          },
+          "bonusMagicPenPercent": {
+            "type": "integer"
+          },
+          "ccReduction": {
+            "type": "integer"
+          },
+          "cooldownReduction": {
+            "type": "integer"
+          },
+          "health": {
+            "type": "integer"
+          },
+          "healthMax": {
+            "type": "integer"
+          },
+          "healthRegen": {
+            "type": "integer"
+          },
+          "lifesteal": {
+            "type": "integer"
+          },
+          "magicPen": {
+            "type": "integer"
+          },
+          "magicPenPercent": {
+            "type": "integer"
+          },
+          "magicResist": {
+            "type": "integer"
+          },
+          "movementSpeed": {
+            "type": "integer"
+          },
+          "omnivamp": {
+            "type": "integer"
+          },
+          "physicalVamp": {
+            "type": "integer"
+          },
+          "power": {
+            "type": "integer"
+          },
+          "powerMax": {
+            "type": "integer"
+          },
+          "powerRegen": {
+            "type": "integer"
+          },
+          "spellVamp": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "abilityHaste",
+          "abilityPower",
+          "armor",
+          "armorPen",
+          "armorPenPercent",
+          "attackDamage",
+          "attackSpeed",
+          "bonusArmorPenPercent",
+          "bonusMagicPenPercent",
+          "ccReduction",
+          "cooldownReduction",
+          "health",
+          "healthMax",
+          "healthRegen",
+          "lifesteal",
+          "magicPen",
+          "magicPenPercent",
+          "magicResist",
+          "movementSpeed",
+          "omnivamp",
+          "physicalVamp",
+          "power",
+          "powerMax",
+          "powerRegen",
+          "spellVamp"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameParticipantFrameDamageStats": {
+        "title": "MatchTimelineInfoFrameParticipantFrameDamageStats",
+        "type": "object",
+        "properties": {
+          "magicDamageDone": {
+            "type": "integer"
+          },
+          "magicDamageDoneToChampions": {
+            "type": "integer"
+          },
+          "magicDamageTaken": {
+            "type": "integer"
+          },
+          "physicalDamageDone": {
+            "type": "integer"
+          },
+          "physicalDamageDoneToChampions": {
+            "type": "integer"
+          },
+          "physicalDamageTaken": {
+            "type": "integer"
+          },
+          "totalDamageDone": {
+            "type": "integer"
+          },
+          "totalDamageDoneToChampions": {
+            "type": "integer"
+          },
+          "totalDamageTaken": {
+            "type": "integer"
+          },
+          "trueDamageDone": {
+            "type": "integer"
+          },
+          "trueDamageDoneToChampions": {
+            "type": "integer"
+          },
+          "trueDamageTaken": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "magicDamageDone",
+          "magicDamageDoneToChampions",
+          "magicDamageTaken",
+          "physicalDamageDone",
+          "physicalDamageDoneToChampions",
+          "physicalDamageTaken",
+          "totalDamageDone",
+          "totalDamageDoneToChampions",
+          "totalDamageTaken",
+          "trueDamageDone",
+          "trueDamageDoneToChampions",
+          "trueDamageTaken"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameParticipantFramePosition": {
+        "title": "MatchTimelineInfoFrameParticipantFramePosition",
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameParticipantFrame": {
+        "title": "MatchTimelineInfoFrameParticipantFrame",
+        "type": "object",
+        "properties": {
+          "championStats": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrameChampionStats"
+          },
+          "currentGold": {
+            "type": "integer"
+          },
+          "damageStats": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrameDamageStats"
+          },
+          "goldPerSecond": {
+            "type": "integer"
+          },
+          "jungleMinionsKilled": {
+            "type": "integer"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "minionsKilled": {
+            "type": "integer"
+          },
+          "participantId": {
+            "type": "integer"
+          },
+          "position": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFramePosition"
+          },
+          "timeEnemySpentControlled": {
+            "type": "integer"
+          },
+          "totalGold": {
+            "type": "integer"
+          },
+          "xp": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "championStats",
+          "currentGold",
+          "damageStats",
+          "goldPerSecond",
+          "jungleMinionsKilled",
+          "level",
+          "minionsKilled",
+          "participantId",
+          "position",
+          "timeEnemySpentControlled",
+          "totalGold",
+          "xp"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameParticipantFrames": {
+        "title": "MatchTimelineInfoFrameParticipantFrames",
+        "type": "object",
+        "properties": {
+          "1": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "2": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "3": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "4": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "5": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "6": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "7": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "8": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "9": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          },
+          "10": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrame"
+          }
+        },
+        "required": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrame": {
+        "title": "MatchTimelineInfoFrame",
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameEvent"
+            }
+          },
+          "participantFrames": {
+            "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrameParticipantFrames"
+          },
+          "timestamp": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "events",
+          "participantFrames",
+          "timestamp"
+        ]
+      },
+      "match-v5.MatchTimelineInfoFrameEventVictimDamageDealt": {
+        "title": "MatchTimelineInfoFrameEventVictimDamageReceived",
+        "type": "object",
+        "properties": {
+          "basic": {
+            "type": "boolean"
+          },
+          "magicDamage": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "participantId": {
+            "type": "integer"
+          },
+          "physicalDamage": {
+            "type": "integer"
+          },
+          "spellName": {
+            "type": "string"
+          },
+          "spellSlot": {
+            "type": "integer"
+          },
+          "trueDamage": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "basic",
+          "magicDamage",
+          "name",
+          "participantId",
+          "physicalDamage",
+          "spellName",
+          "spellSlot",
+          "trueDamage",
+          "type"
+        ]
+      },
+      "match-v5.MatchTimelineInfoParticipant": {
+        "title": "MatchTimelineInfoParticipant",
+        "type": "object",
+        "properties": {
+          "participantId": {
+            "type": "integer"
+          },
+          "puuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "participantId",
+          "puuid"
+        ]
+      },
+      "match-v5.MatchTimelineInfo": {
+        "title": "MatchTimelineInfo",
+        "type": "object",
+        "properties": {
+          "frameInterval": {
+            "type": "integer"
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchTimelineInfoFrame"
+            }
+          },
+          "gameId": {
+            "type": "integer"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/match-v5.MatchTimelineInfoParticipant"
+            }
+          }
+        },
+        "required": [
+          "frameInterval",
+          "frames",
+          "gameId",
+          "participants"
         ]
       }
     },

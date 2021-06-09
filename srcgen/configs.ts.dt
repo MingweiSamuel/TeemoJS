@@ -15,10 +15,11 @@
         (endpointGroups[ep] || (endpointGroups[ep] = [])).push(endpointPair);
         endpointMethodGroups[ep] || (endpointMethodGroups[ep] = []);
 
-        const routesType = dotUtils.getRouteUnionType(pathInfo['x-platforms-available'].map(r => r.toUpperCase()));
-
         for (const [ verb, operation ] of Object.entries(pathInfo)) {
             if (verb.startsWith('x-')) continue;
+
+            const routesType = dotUtils.getRouteUnionType(operation);
+
             const [ endpoint, method ] = operation.operationId.split('.');
             /* const ep = dotUtils.toLowerCamel(endpoint); */
             const descArr = operation.description

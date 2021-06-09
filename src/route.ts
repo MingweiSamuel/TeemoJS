@@ -47,12 +47,16 @@ enum ValPlatformRoute {
     BR    = 65,
     /** Europe. */
     EU    = 66,
-    /** Korea. */
-    KR    = 67,
+
     /** Latin America. */
     LATAM = 68,
     /** North America. */
     NA    = 69,
+    /** Korea. */
+    KR    = 70,
+
+    /** Valorant E-Sports route. */
+    ESPORTS = 95,
 }
 
 /** Combined routing enum. */

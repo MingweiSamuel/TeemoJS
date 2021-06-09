@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version e9fad555098e217edc088cc4b1ecc6fe095ba6cb
+// Version 570eb12bfe9fb09e435976cb454f622293d0020e
 
 const RiotApiConfig = {
     apiKeys: {
@@ -46,19 +46,25 @@ const RiotApiConfig = {
              */
             getByPuuid: {
                 path: "/riot/account/v1/accounts/by-puuid/{puuid}",
-            } as ReqSpec<accountV1.AccountDto, Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto, AnyRoute, { puuid: string } | [ string ], {}, undefined>,
             /**
              * Get account by riot id
              */
             getByRiotId: {
                 path: "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}",
-            } as ReqSpec<accountV1.AccountDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto | null, AnyRoute, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
+            /**
+             * Get account by access token
+             */
+            getByAccessToken: {
+                path: "/riot/account/v1/accounts/me",
+            } as ReqSpec<accountV1.AccountDto, AnyRoute, {} | [], {}, undefined>,
             /**
              * Get active shard for a player
              */
             getActiveShard: {
                 path: "/riot/account/v1/active-shards/by-game/{game}/by-puuid/{puuid}",
-            } as ReqSpec<accountV1.ActiveShardDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
+            } as ReqSpec<accountV1.ActiveShardDto | null, AnyRoute, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
         },
         championMasteryV4: {
             /**
@@ -66,13 +72,13 @@ const RiotApiConfig = {
              */
             getAllChampionMasteries: {
                 path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
             /**
              * Get a champion mastery by player ID and champion ID.
              */
             getChampionMastery: {
                 path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDTO | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string, championId: long } | [ string, long ], {}, undefined>,
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string, championId: long } | [ string, long ], {}, undefined>,
             /**
              * Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
              */
@@ -178,6 +184,56 @@ const RiotApiConfig = {
                 path: "/lol/status/v3/shard-data",
             } as ReqSpec<lolStatusV3.ShardStatus, PlatformRoute, {} | [], {}, undefined>,
         },
+        lolStatusV4: {
+            /**
+             * Get League of Legends status for the given platform.
+             */
+            getPlatformData: {
+                path: "/lol/status/v4/platform-data",
+            } as ReqSpec<lolStatusV4.PlatformDataDto, PlatformRoute, {} | [], {}, undefined>,
+        },
+        lorDeckV1: {
+            /**
+             * Get a list of the calling user's decks.
+             */
+            getDecks: {
+                path: "/lor/deck/v1/decks/me",
+                apiKeyName: "lor",
+            } as ReqSpec<lorDeckV1.DeckDto[], RegionalRoute, {} | [], {}, undefined>,
+            /**
+             * Create a new deck for the calling user.
+             */
+            createDeck: {
+                path: "/lor/deck/v1/decks/me",
+                method: "post",
+                apiKeyName: "lor",
+            } as ReqSpec<string, RegionalRoute, {} | [], {}, lorDeckV1.NewDeckDto>,
+        },
+        lorInventoryV1: {
+            /**
+             * Return a list of cards owned by the calling user.
+             */
+            getCards: {
+                path: "/lor/inventory/v1/cards/me",
+                apiKeyName: "lor",
+            } as ReqSpec<lorInventoryV1.CardDto[], RegionalRoute, {} | [], {}, undefined>,
+        },
+        lorMatchV1: {
+            /**
+             * Get a list of match ids by PUUID
+             */
+            getMatchIdsByPUUID: {
+                path: "/lor/match/v1/matches/by-puuid/{puuid}/ids",
+                apiKeyName: "lor",
+            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], {}, undefined>,
+            /**
+             * Get match by id
+             */
+            getMatch: {
+                path: "/lor/match/v1/matches/{matchId}",
+                apiKeyName: "lor",
+            } as ReqSpec<lorMatchV1.MatchDto, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+        },
         lorRankedV1: {
             /**
              * Get the players in Master tier.
@@ -186,6 +242,15 @@ const RiotApiConfig = {
                 path: "/lor/ranked/v1/leaderboards",
                 apiKeyName: "lor",
             } as ReqSpec<lorRankedV1.LeaderboardDto, RegionalRoute, {} | [], {}, undefined>,
+        },
+        lorStatusV1: {
+            /**
+             * Get Legends of Runeterra status for the given platform.
+             */
+            getPlatformData: {
+                path: "/lor/status/v1/platform-data",
+                apiKeyName: "lor",
+            } as ReqSpec<lorStatusV1.PlatformDataDto, RegionalRoute, {} | [], {}, undefined>,
         },
         matchV4: {
             /**
@@ -227,6 +292,26 @@ const RiotApiConfig = {
                 path: "/lol/match/v4/timelines/by-match/{matchId}",
             } as ReqSpec<matchV4.MatchTimelineDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { matchId: long } | [ long ], {}, undefined>,
         },
+        matchV5: {
+            /**
+             * Get a list of match ids by puuid
+             */
+            getMatchIdsByPUUID: {
+                path: "/lol/match/v5/matches/by-puuid/{puuid}/ids",
+            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], { start?: int | null, count?: int | null }, undefined>,
+            /**
+             * Get a match by match id
+             */
+            getMatch: {
+                path: "/lol/match/v5/matches/{matchId}",
+            } as ReqSpec<matchV5.MatchDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+            /**
+             * Get a match timeline by match id
+             */
+            getTimeline: {
+                path: "/lol/match/v5/matches/{matchId}/timeline",
+            } as ReqSpec<matchV5.MatchTimelineDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+        },
         spectatorV4: {
             /**
              * Get current game information for the given summoner ID.
@@ -261,6 +346,12 @@ const RiotApiConfig = {
                 path: "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}",
             } as ReqSpec<summonerV4.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
             /**
+             * Get a summoner by access token.
+             */
+            getByAccessToken: {
+                path: "/lol/summoner/v4/summoners/me",
+            } as ReqSpec<summonerV4.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            /**
              * Get a summoner by summoner ID.
              */
             getBySummonerId: {
@@ -279,9 +370,9 @@ const RiotApiConfig = {
              * Get league entries for a given summoner ID.
              */
             getLeagueEntriesForSummoner: {
-                path: "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}",
+                path: "/tft/league/v1/entries/by-summoner/{summonerId}",
                 apiKeyName: "tft",
-            } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { summonerId: string } | [ string ], {}, undefined>,
             /**
              * Get all the league entries.
              */
@@ -310,17 +401,24 @@ const RiotApiConfig = {
                 path: "/tft/league/v1/master",
                 apiKeyName: "tft",
             } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            /**
+             * Get the top rated ladder for given queue
+             */
+            getTopRatedLadder: {
+                path: "/tft/league/v1/rated-ladders/{queue}/top",
+                apiKeyName: "tft",
+            } as ReqSpec<tftLeagueV1.TopRatedLadderEntryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_TFT_TURBO" } | [ "RANKED_TFT_TURBO" ], {}, undefined>,
         },
         tftMatchV1: {
             /**
-             * Get a list of match ids by PUUID.
+             * Get a list of match ids by PUUID
              */
             getMatchIdsByPUUID: {
                 path: "/tft/match/v1/matches/by-puuid/{puuid}/ids",
                 apiKeyName: "tft",
             } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], { count?: int | null }, undefined>,
             /**
-             * Get a match by match id.
+             * Get a match by match id
              */
             getMatch: {
                 path: "/tft/match/v1/matches/{matchId}",
@@ -349,6 +447,13 @@ const RiotApiConfig = {
                 path: "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}",
                 apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
+            /**
+             * Get a summoner by access token.
+             */
+            getByAccessToken: {
+                path: "/tft/summoner/v1/summoners/me",
+                apiKeyName: "tft",
+            } as ReqSpec<tftSummonerV1.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
             /**
              * Get a summoner by summoner ID.
              */
@@ -471,6 +576,30 @@ const RiotApiConfig = {
             getMatchlist: {
                 path: "/val/match/v1/matchlists/by-puuid/{puuid}",
             } as ReqSpec<valMatchV1.MatchlistDto, ValPlatformRoute, { puuid: string } | [ string ], {}, undefined>,
+            /**
+             * Get recent matches
+             * ## Implementation Notes
+             * Returns a list of match ids that have completed in the last 10 minutes for live regions and 12 hours for the esports routing value. NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions. Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
+             */
+            getRecent: {
+                path: "/val/match/v1/recent-matches/by-queue/{queue}",
+            } as ReqSpec<valMatchV1.RecentMatchesDto, ValPlatformRoute, { queue: "competitive" | "unrated" | "spikerush" | "tournamentmode" } | [ "competitive" | "unrated" | "spikerush" | "tournamentmode" ], {}, undefined>,
+        },
+        valRankedV1: {
+            /**
+             * Get leaderboard for the competitive queue
+             */
+            getLeaderboard: {
+                path: "/val/ranked/v1/leaderboards/by-act/{actId}",
+            } as ReqSpec<valRankedV1.LeaderboardDto | null, Exclude<ValPlatformRoute, ValPlatformRoute.ESPORTS>, { actId: string } | [ string ], { size?: int | null, startIndex?: int | null }, undefined>,
+        },
+        valStatusV1: {
+            /**
+             * Get VALORANT status for the given platform.
+             */
+            getPlatformData: {
+                path: "/val/status/v1/platform-data",
+            } as ReqSpec<valStatusV1.PlatformDataDto, Exclude<ValPlatformRoute, ValPlatformRoute.ESPORTS>, {} | [], {}, undefined>,
         },
     },
 } as const;
