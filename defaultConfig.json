@@ -33,6 +33,7 @@
     "account": {
       "getByPuuid": "/riot/account/v1/accounts/by-puuid/%s",
       "getByRiotId": "/riot/account/v1/accounts/by-riot-id/%s/%s",
+      "getByAccessToken": "/riot/account/v1/accounts/me",
       "getActiveShard": "/riot/account/v1/active-shards/by-game/%s/by-puuid/%s"
     },
     "championMastery": {
@@ -64,6 +65,13 @@
     "lolStatus": {
       "getPlatformData": "/lol/status/v4/platform-data"
     },
+    "lorDeck": {
+      "getDecks": "/lor/deck/v1/decks/me",
+      "createDeck": "/lor/deck/v1/decks/me"
+    },
+    "lorInventory": {
+      "getCards": "/lor/inventory/v1/cards/me"
+    },
     "lorMatch": {
       "getMatchIdsByPUUID": "/lor/match/v1/matches/by-puuid/%s/ids",
       "getMatch": "/lor/match/v1/matches/%s"
@@ -75,11 +83,9 @@
       "getPlatformData": "/lor/status/v1/platform-data"
     },
     "match": {
-      "getMatchIdsByTournamentCode": "/lol/match/v4/matches/by-tournament-code/%s/ids",
-      "getMatch": "/lol/match/v4/matches/%s",
-      "getMatchByTournamentCode": "/lol/match/v4/matches/%s/by-tournament-code/%s",
-      "getMatchlist": "/lol/match/v4/matchlists/by-account/%s",
-      "getMatchTimeline": "/lol/match/v4/timelines/by-match/%s"
+      "getMatchIdsByPUUID": "/lol/match/v5/matches/by-puuid/%s/ids",
+      "getMatch": "/lol/match/v5/matches/%s",
+      "getTimeline": "/lol/match/v5/matches/%s/timeline"
     },
     "spectator": {
       "getCurrentGameInfoBySummoner": "/lol/spectator/v4/active-games/by-summoner/%s",
@@ -89,6 +95,7 @@
       "getByAccountId": "/lol/summoner/v4/summoners/by-account/%s",
       "getBySummonerName": "/lol/summoner/v4/summoners/by-name/%s",
       "getByPUUID": "/lol/summoner/v4/summoners/by-puuid/%s",
+      "getByAccessToken": "/lol/summoner/v4/summoners/me",
       "getBySummonerId": "/lol/summoner/v4/summoners/%s"
     },
     "tftLeague": {
@@ -97,7 +104,8 @@
       "getLeagueEntries": "/tft/league/v1/entries/%s/%s",
       "getGrandmasterLeague": "/tft/league/v1/grandmaster",
       "getLeagueById": "/tft/league/v1/leagues/%s",
-      "getMasterLeague": "/tft/league/v1/master"
+      "getMasterLeague": "/tft/league/v1/master",
+      "getTopRatedLadder": "/tft/league/v1/rated-ladders/%s/top"
     },
     "tftMatch": {
       "getMatchIdsByPUUID": "/tft/match/v1/matches/by-puuid/%s/ids",
@@ -107,6 +115,7 @@
       "getByAccountId": "/tft/summoner/v1/summoners/by-account/%s",
       "getBySummonerName": "/tft/summoner/v1/summoners/by-name/%s",
       "getByPUUID": "/tft/summoner/v1/summoners/by-puuid/%s",
+      "getByAccessToken": "/tft/summoner/v1/summoners/me",
       "getBySummonerId": "/tft/summoner/v1/summoners/%s"
     },
     "thirdPartyCode": {
