@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version 570eb12bfe9fb09e435976cb454f622293d0020e
+// Version a9b6936baced1f181b550b7fb921ab72b216076c
 
 namespace accountV1 {
     /**
@@ -220,14 +220,14 @@ namespace leagueV4 {
      * LeagueEntryDTO data object, automatically generated.
      */
     export interface LeagueEntryDTO {
-        leagueId: string;
+        leagueId?: string | null;
         /** Player's encrypted summonerId. */
         summonerId: string;
         summonerName: string;
         queueType: string;
-        tier: string;
+        tier?: string | null;
         /** The player's division within a tier. */
-        rank: string;
+        rank?: string | null;
         leaguePoints: int;
         /** Winning team on Summoners Rift. */
         wins: int;
@@ -238,6 +238,128 @@ namespace leagueV4 {
         freshBlood: boolean;
         inactive: boolean;
         miniSeries?: leagueV4.MiniSeriesDTO | null;
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * ChallengeConfigInfoDto data object, automatically generated.
+     */
+    export interface ChallengeConfigInfoDto {
+        id: long;
+        localizedNames: { [key: string]: { [key: string]: string } };
+        /** DISABLED - not visible and not calculated, HIDDEN - not visible, but calculated, ENABLED - visible and calculated, ARCHIVED - visible, but not calculated */
+        state: "DISABLED" | "HIDDEN" | "ENABLED" | "ARCHIVED";
+        /** LIFETIME - stats are incremented without reset, SEASON - stats are accumulated by season and reset at the beginning of new season */
+        tracking?: "LIFETIME" | "SEASON" | null;
+        startTimestamp?: long | null;
+        endTimestamp?: long | null;
+        leaderboard: boolean;
+        thresholds: { [key: string]: double };
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * State data object, automatically generated.
+     * # Description
+     * DISABLED - not visible and not calculated,
+HIDDEN - not visible, but calculated,
+ENABLED - visible and calculated,
+ARCHIVED - visible, but not calculated
+     */
+    export interface State {
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * Tracking data object, automatically generated.
+     * # Description
+     * LIFETIME - stats are incremented without reset,
+SEASON - stats are accumulated by season and reset at the beginning of new season
+     */
+    export interface Tracking {
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * ApexPlayerInfoDto data object, automatically generated.
+     */
+    export interface ApexPlayerInfoDto {
+        puuid: string;
+        value: double;
+        position: int;
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * Level data object, automatically generated.
+     * # Description
+     * 0 NONE,
+1 IRON,
+2 BRONZE,
+3 SILVER,
+4 GOLD,
+5 PLATINUM,
+6 DIAMOND,
+7 MASTER,
+8 GRANDMASTER,
+9 CHALLENGER
+     */
+    export interface Level {
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * PlayerInfoDto data object, automatically generated.
+     */
+    export interface PlayerInfoDto {
+        challenges: lolChallengesV1.ChallengeInfo[];
+        preferences: lolChallengesV1.PlayerClientPreferences;
+        totalPoints: lolChallengesV1.ChallengePoints;
+        categoryPoints: { [key: string]: lolChallengesV1.ChallengePoints };
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * ChallengeInfo data object, automatically generated.
+     */
+    export interface ChallengeInfo {
+        challengeId: long;
+        percentile: double;
+        level: string;
+        value: double;
+        achievedTime?: long | null;
+        position?: long | null;
+        playersInLevel?: long | null;
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * PlayerClientPreferences data object, automatically generated.
+     */
+    export interface PlayerClientPreferences {
+        bannerAccent?: string | null;
+        title?: string | null;
+        challengeIds?: long[] | null;
+    }
+}
+
+namespace lolChallengesV1 {
+    /**
+     * ChallengePoints data object, automatically generated.
+     */
+    export interface ChallengePoints {
+        level: string;
+        current: long;
+        max: long;
+        percentile?: double | null;
     }
 }
 
@@ -326,14 +448,14 @@ namespace lolStatusV4 {
     export interface StatusDto {
         id: int;
         /** (Legal values:  scheduled,  in_progress,  complete) */
-        maintenance_status: "scheduled" | "in_progress" | "complete";
+        maintenance_status?: "scheduled" | "in_progress" | "complete" | null;
         /** (Legal values:  info,  warning,  critical) */
-        incident_severity: "info" | "warning" | "critical";
+        incident_severity?: "info" | "warning" | "critical" | null;
         titles: lolStatusV4.ContentDto[];
         updates: lolStatusV4.UpdateDto[];
         created_at: string;
-        archive_at: string;
-        updated_at: string;
+        archive_at?: string | null;
+        updated_at?: string | null;
         /** (Legal values: windows, macos, android, ios, ps4, xbone, switch) */
         platforms: string[];
     }
@@ -536,465 +658,270 @@ namespace lorStatusV1 {
     }
 }
 
-namespace matchV4 {
+namespace matchV5 {
     /**
      * MatchDto data object, automatically generated.
      */
     export interface MatchDto {
-        gameId: long;
-        /** Participant identity information. Participant identity information is purposefully excluded for custom games. */
-        participantIdentities: matchV4.ParticipantIdentityDto[];
-        /** Please refer to the Game Constants documentation. */
-        queueId: int;
-        /** Please refer to the Game Constants documentation. */
-        gameType: string;
-        /** Match duration in seconds. */
+        /** Match metadata. */
+        metadata: matchV5.MetadataDto;
+        /** Match info. */
+        info: matchV5.InfoDto;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * MetadataDto data object, automatically generated.
+     */
+    export interface MetadataDto {
+        /** Match data version. */
+        dataVersion: string;
+        /** Match id. */
+        matchId: string;
+        /** A list of participant PUUIDs. */
+        participants: string[];
+    }
+}
+
+namespace matchV5 {
+    /**
+     * InfoDto data object, automatically generated.
+     */
+    export interface InfoDto {
+        /** Unix timestamp for when the game is created on the game server (i.e., the loading screen). */
+        gameCreation: long;
+        /** Prior to patch 11.20, this field returns the game length in milliseconds calculated from gameEndTimestamp - gameStartTimestamp. Post patch 11.20, this field returns the max timePlayed of any participant in the game in seconds, which makes the behavior of this field consistent with that of match-v4. The best way to handling the change in this field is to treat the value as milliseconds if the gameEndTimestamp field isn't in the response and to treat the value as seconds if gameEndTimestamp is in the response. */
         gameDuration: long;
-        /** Team information. */
-        teams: matchV4.TeamStatsDto[];
+        /** Unix timestamp for when match ends on the game server. This timestamp can occasionally be significantly longer than when the match "ends". The most reliable way of determining the timestamp for the end of the match would be to add the max time played of any participant to the gameStartTimestamp. This field was added to match-v5 in patch 11.20 on Oct 5th, 2021. */
+        gameEndTimestamp?: long | null;
+        gameId: long;
+        /** Refer to the Game Constants documentation. */
+        gameMode: string;
+        gameName: string;
+        /** Unix timestamp for when match starts on the game server. */
+        gameStartTimestamp: long;
+        gameType: string;
+        /** The first two parts can be used to determine the patch a game was played on. */
+        gameVersion: string;
+        /** Refer to the Game Constants documentation. */
+        mapId: int;
+        participants: matchV5.ParticipantDto[];
         /** Platform where the match was played. */
         platformId: string;
-        /** Designates the timestamp when champion select ended and the loading screen appeared, NOT when the game timer was at 0:00. */
-        gameCreation: long;
-        /** Please refer to the Game Constants documentation. */
-        seasonId: int;
-        /** The major.minor version typically indicates the patch the match was played on. */
-        gameVersion: string;
-        /** Please refer to the Game Constants documentation. */
-        mapId: int;
-        /** Please refer to the Game Constants documentation. */
-        gameMode: string;
-        /** Participant information. */
-        participants: matchV4.ParticipantDto[];
+        /** Refer to the Game Constants documentation. */
+        queueId: int;
+        teams: matchV5.TeamDto[];
+        /** Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021. */
+        tournamentCode?: string | null;
     }
 }
 
-namespace matchV4 {
-    /**
-     * ParticipantIdentityDto data object, automatically generated.
-     */
-    export interface ParticipantIdentityDto {
-        participantId: int;
-        /** Player information not included in the response for custom matches. Custom matches are considered private unless a tournament code was used to create the match. */
-        player: matchV4.PlayerDto;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * PlayerDto data object, automatically generated.
-     */
-    export interface PlayerDto {
-        profileIcon: int;
-        /** Player's original accountId. */
-        accountId: string;
-        matchHistoryUri: string;
-        /** Player's current accountId when the match was played. */
-        currentAccountId: string;
-        /** Player's current platformId when the match was played. */
-        currentPlatformId: string;
-        summonerName: string;
-        /** Player's summonerId (Encrypted) */
-        summonerId?: string | null;
-        /** Player's original platformId. */
-        platformId: string;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * TeamStatsDto data object, automatically generated.
-     */
-    export interface TeamStatsDto {
-        /** Number of towers the team destroyed. */
-        towerKills: int;
-        /** Number of times the team killed Rift Herald. */
-        riftHeraldKills: int;
-        /** Flag indicating whether or not the team scored the first blood. */
-        firstBlood: boolean;
-        /** Number of inhibitors the team destroyed. */
-        inhibitorKills: int;
-        /** If match queueId has a draft, contains banned champion data, otherwise empty. */
-        bans: matchV4.TeamBansDto[];
-        /** Flag indicating whether or not the team scored the first Baron kill. */
-        firstBaron: boolean;
-        /** Flag indicating whether or not the team scored the first Dragon kill. */
-        firstDragon: boolean;
-        /** For Dominion matches, specifies the points the team had at game end. */
-        dominionVictoryScore: int;
-        /** Number of times the team killed Dragon. */
-        dragonKills: int;
-        /** Number of times the team killed Baron. */
-        baronKills: int;
-        /** Flag indicating whether or not the team destroyed the first inhibitor. */
-        firstInhibitor: boolean;
-        /** Flag indicating whether or not the team destroyed the first tower. */
-        firstTower: boolean;
-        /** Number of times the team killed Vilemaw. */
-        vilemawKills: int;
-        /** Flag indicating whether or not the team scored the first Rift Herald kill. */
-        firstRiftHerald: boolean;
-        /** 100 for blue side. 200 for red side. */
-        teamId: int;
-        /** String indicating whether or not the team won. There are only two values visibile in public match history.
-             (Legal values:  Fail,  Win) */
-        win?: "Fail" | "Win" | null;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * TeamBansDto data object, automatically generated.
-     */
-    export interface TeamBansDto {
-        /** Banned championId. */
-        championId: int;
-        /** Turn during which the champion was banned. */
-        pickTurn: int;
-    }
-}
-
-namespace matchV4 {
+namespace matchV5 {
     /**
      * ParticipantDto data object, automatically generated.
      */
     export interface ParticipantDto {
-        participantId: int;
-        championId: int;
-        /** List of legacy Rune information. Not included for matches played with Runes Reforged. */
-        runes?: matchV4.RuneDto[] | null;
-        /** Participant statistics. */
-        stats: matchV4.ParticipantStatsDto;
-        /** 100 for blue side. 200 for red side. */
-        teamId: int;
-        /** Participant timeline data. */
-        timeline?: matchV4.ParticipantTimelineDto | null;
-        /** First Summoner Spell id. */
-        spell1Id: int;
-        /** Second Summoner Spell id. */
-        spell2Id: int;
-        /** Highest ranked tier achieved for the previous season in a specific subset of queueIds, if any, otherwise null. Used to display border in game loading screen. Please refer to the Ranked Info documentation.
-             (Legal values:  CHALLENGER,  MASTER,  DIAMOND,  PLATINUM,  GOLD,  SILVER,  BRONZE,  UNRANKED) */
-        highestAchievedSeasonTier?: "CHALLENGER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "UNRANKED" | null;
-        /** List of legacy Mastery information. Not included for matches played with Runes Reforged. */
-        masteries?: matchV4.MasteryDto[] | null;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * RuneDto data object, automatically generated.
-     */
-    export interface RuneDto {
-        runeId: int;
-        rank: int;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * ParticipantStatsDto data object, automatically generated.
-     */
-    export interface ParticipantStatsDto {
-        item0: int;
-        item2: int;
-        totalUnitsHealed: int;
-        item1: int;
-        largestMultiKill: int;
-        goldEarned: int;
-        firstInhibitorKill?: boolean | null;
-        physicalDamageTaken: long;
-        nodeNeutralizeAssist?: int | null;
-        totalPlayerScore?: int | null;
-        champLevel: int;
-        damageDealtToObjectives: long;
-        totalDamageTaken: long;
-        neutralMinionsKilled: int;
-        deaths: int;
-        tripleKills: int;
-        magicDamageDealtToChampions: long;
-        wardsKilled?: int | null;
-        pentaKills: int;
-        damageSelfMitigated: long;
-        largestCriticalStrike: int;
-        nodeNeutralize?: int | null;
-        totalTimeCrowdControlDealt: int;
-        firstTowerKill?: boolean | null;
-        magicDamageDealt: long;
-        totalScoreRank?: int | null;
-        nodeCapture?: int | null;
-        wardsPlaced?: int | null;
-        totalDamageDealt: long;
-        timeCCingOthers: long;
-        magicalDamageTaken: long;
-        largestKillingSpree: int;
-        totalDamageDealtToChampions: long;
-        physicalDamageDealtToChampions: long;
-        neutralMinionsKilledTeamJungle?: int | null;
-        totalMinionsKilled: int;
-        firstInhibitorAssist?: boolean | null;
-        visionWardsBoughtInGame: int;
-        objectivePlayerScore?: int | null;
-        kills: int;
-        firstTowerAssist?: boolean | null;
-        combatPlayerScore?: int | null;
-        inhibitorKills?: int | null;
-        turretKills?: int | null;
-        participantId: int;
-        trueDamageTaken: long;
-        firstBloodAssist?: boolean | null;
-        nodeCaptureAssist?: int | null;
         assists: int;
-        teamObjective?: int | null;
-        altarsNeutralized?: int | null;
-        goldSpent: int;
-        damageDealtToTurrets: long;
-        altarsCaptured?: int | null;
-        win: boolean;
-        totalHeal: long;
-        unrealKills: int;
-        visionScore?: long | null;
-        physicalDamageDealt: long;
-        firstBloodKill?: boolean | null;
-        longestTimeSpentLiving: int;
-        killingSprees: int;
-        sightWardsBoughtInGame?: int | null;
-        trueDamageDealtToChampions: long;
-        neutralMinionsKilledEnemyJungle?: int | null;
+        baronKills: int;
+        bountyLevel: int;
+        champExperience: int;
+        champLevel: int;
+        /** Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4. */
+        championId: int;
+        championName: string;
+        /** This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin) */
+        championTransform: int;
+        consumablesPurchased: int;
+        damageDealtToBuildings?: int | null;
+        damageDealtToObjectives: int;
+        damageDealtToTurrets: int;
+        damageSelfMitigated: int;
+        deaths: int;
+        detectorWardsPlaced: int;
         doubleKills: int;
-        trueDamageDealt: long;
-        quadraKills: int;
-        item4: int;
+        dragonKills: int;
+        firstBloodAssist: boolean;
+        firstBloodKill: boolean;
+        firstTowerAssist: boolean;
+        firstTowerKill: boolean;
+        gameEndedInEarlySurrender: boolean;
+        gameEndedInSurrender: boolean;
+        goldEarned: int;
+        goldSpent: int;
+        /** Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field. */
+        individualPosition: string;
+        inhibitorKills: int;
+        inhibitorTakedowns?: int | null;
+        inhibitorsLost?: int | null;
+        item0: int;
+        item1: int;
+        item2: int;
         item3: int;
-        item6: int;
+        item4: int;
         item5: int;
-        playerScore0?: int | null;
-        playerScore1?: int | null;
-        playerScore2?: int | null;
-        playerScore3?: int | null;
-        playerScore4?: int | null;
-        playerScore5?: int | null;
-        playerScore6?: int | null;
-        playerScore7?: int | null;
-        playerScore8?: int | null;
-        playerScore9?: int | null;
-        /** Primary path keystone rune. */
-        perk0?: int | null;
-        /** Post game rune stats. */
-        perk0Var1?: int | null;
-        /** Post game rune stats. */
-        perk0Var2?: int | null;
-        /** Post game rune stats. */
-        perk0Var3?: int | null;
-        /** Primary path rune. */
-        perk1?: int | null;
-        /** Post game rune stats. */
-        perk1Var1?: int | null;
-        /** Post game rune stats. */
-        perk1Var2?: int | null;
-        /** Post game rune stats. */
-        perk1Var3?: int | null;
-        /** Primary path rune. */
-        perk2?: int | null;
-        /** Post game rune stats. */
-        perk2Var1?: int | null;
-        /** Post game rune stats. */
-        perk2Var2?: int | null;
-        /** Post game rune stats. */
-        perk2Var3?: int | null;
-        /** Primary path rune. */
-        perk3?: int | null;
-        /** Post game rune stats. */
-        perk3Var1?: int | null;
-        /** Post game rune stats. */
-        perk3Var2?: int | null;
-        /** Post game rune stats. */
-        perk3Var3?: int | null;
-        /** Secondary path rune. */
-        perk4?: int | null;
-        /** Post game rune stats. */
-        perk4Var1?: int | null;
-        /** Post game rune stats. */
-        perk4Var2?: int | null;
-        /** Post game rune stats. */
-        perk4Var3?: int | null;
-        /** Secondary path rune. */
-        perk5?: int | null;
-        /** Post game rune stats. */
-        perk5Var1?: int | null;
-        /** Post game rune stats. */
-        perk5Var2?: int | null;
-        /** Post game rune stats. */
-        perk5Var3?: int | null;
-        /** Primary rune path */
-        perkPrimaryStyle?: int | null;
-        /** Secondary rune path */
-        perkSubStyle?: int | null;
-        /** Stat rune */
-        statPerk0?: int | null;
-        /** Stat rune */
-        statPerk1?: int | null;
-        /** Stat rune */
-        statPerk2?: int | null;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * ParticipantTimelineDto data object, automatically generated.
-     */
-    export interface ParticipantTimelineDto {
-        participantId?: int | null;
-        /** Creep score difference versus the calculated lane opponent(s) for a specified period. */
-        csDiffPerMinDeltas?: { [key: string]: double } | null;
-        /** Damage taken for a specified period. */
-        damageTakenPerMinDeltas?: { [key: string]: double } | null;
-        /** Participant's calculated role.
-             (Legal values:  DUO,  NONE,  SOLO,  DUO_CARRY,  DUO_SUPPORT) */
-        role?: "DUO" | "NONE" | "SOLO" | "DUO_CARRY" | "DUO_SUPPORT" | null;
-        /** Damage taken difference versus the calculated lane opponent(s) for a specified period. */
-        damageTakenDiffPerMinDeltas?: { [key: string]: double } | null;
-        /** Experience change for a specified period. */
-        xpPerMinDeltas?: { [key: string]: double } | null;
-        /** Experience difference versus the calculated lane opponent(s) for a specified period. */
-        xpDiffPerMinDeltas?: { [key: string]: double } | null;
-        /** Participant's calculated lane. MID and BOT are legacy values.
-             (Legal values:  MID,  MIDDLE,  TOP,  JUNGLE,  BOT,  BOTTOM) */
-        lane?: "MID" | "MIDDLE" | "TOP" | "JUNGLE" | "BOT" | "BOTTOM" | null;
-        /** Creeps for a specified period. */
-        creepsPerMinDeltas?: { [key: string]: double } | null;
-        /** Gold for a specified period. */
-        goldPerMinDeltas?: { [key: string]: double } | null;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MasteryDto data object, automatically generated.
-     */
-    export interface MasteryDto {
-        rank: int;
-        masteryId: int;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchlistDto data object, automatically generated.
-     */
-    export interface MatchlistDto {
-        startIndex: int;
-        /** There is a known issue that this field doesn't correctly return the total number of games that match the parameters of the request. Please paginate using beginIndex until you reach the end of a player's matchlist. */
-        totalGames: int;
-        endIndex: int;
-        matches: matchV4.MatchReferenceDto[];
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchReferenceDto data object, automatically generated.
-     */
-    export interface MatchReferenceDto {
-        gameId: long;
-        role?: string | null;
-        season: int;
-        platformId: string;
-        champion: int;
-        queue: int;
-        lane?: string | null;
-        timestamp: long;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchTimelineDto data object, automatically generated.
-     */
-    export interface MatchTimelineDto {
-        frames: matchV4.MatchFrameDto[];
-        frameInterval: long;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchFrameDto data object, automatically generated.
-     */
-    export interface MatchFrameDto {
-        participantFrames: { [key: string]: matchV4.MatchParticipantFrameDto };
-        events: matchV4.MatchEventDto[];
-        timestamp: long;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchParticipantFrameDto data object, automatically generated.
-     */
-    export interface MatchParticipantFrameDto {
+        item6: int;
+        itemsPurchased: int;
+        killingSprees: int;
+        kills: int;
+        lane: string;
+        largestCriticalStrike: int;
+        largestKillingSpree: int;
+        largestMultiKill: int;
+        longestTimeSpentLiving: int;
+        magicDamageDealt: int;
+        magicDamageDealtToChampions: int;
+        magicDamageTaken: int;
+        neutralMinionsKilled: int;
+        nexusKills: int;
+        nexusTakedowns?: int | null;
+        nexusLost?: int | null;
+        objectivesStolen: int;
+        objectivesStolenAssists: int;
         participantId: int;
-        minionsKilled: int;
-        teamScore?: int | null;
-        dominionScore?: int | null;
-        totalGold: int;
-        level: int;
-        xp: int;
-        currentGold: int;
-        position?: matchV4.MatchPositionDto | null;
-        jungleMinionsKilled: int;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchPositionDto data object, automatically generated.
-     */
-    export interface MatchPositionDto {
-        x: int;
-        y: int;
-    }
-}
-
-namespace matchV4 {
-    /**
-     * MatchEventDto data object, automatically generated.
-     */
-    export interface MatchEventDto {
-        laneType?: string | null;
-        skillSlot?: int | null;
-        ascendedType?: string | null;
-        creatorId?: int | null;
-        afterId?: int | null;
-        eventType?: string | null;
-        /** (Legal values:  CHAMPION_KILL,  WARD_PLACED,  WARD_KILL,  BUILDING_KILL,  ELITE_MONSTER_KILL,  ITEM_PURCHASED,  ITEM_SOLD,  ITEM_DESTROYED,  ITEM_UNDO,  SKILL_LEVEL_UP,  ASCENDED_EVENT,  CAPTURE_POINT,  PORO_KING_SUMMON) */
-        type: "CHAMPION_KILL" | "WARD_PLACED" | "WARD_KILL" | "BUILDING_KILL" | "ELITE_MONSTER_KILL" | "ITEM_PURCHASED" | "ITEM_SOLD" | "ITEM_DESTROYED" | "ITEM_UNDO" | "SKILL_LEVEL_UP" | "ASCENDED_EVENT" | "CAPTURE_POINT" | "PORO_KING_SUMMON";
-        levelUpType?: string | null;
-        wardType?: string | null;
-        participantId?: int | null;
-        towerType?: string | null;
-        itemId?: int | null;
-        beforeId?: int | null;
-        pointCaptured?: string | null;
-        monsterType?: string | null;
-        monsterSubType?: string | null;
-        teamId?: int | null;
-        position?: matchV4.MatchPositionDto | null;
-        killerId?: int | null;
-        timestamp: long;
-        assistingParticipantIds?: int[] | null;
-        buildingType?: string | null;
-        victimId?: int | null;
+        pentaKills: int;
+        perks: matchV5.PerksDto;
+        physicalDamageDealt: int;
+        physicalDamageDealtToChampions: int;
+        physicalDamageTaken: int;
+        profileIcon: int;
+        puuid: string;
+        quadraKills: int;
+        riotIdName: string;
+        riotIdTagline: string;
+        role: string;
+        sightWardsBoughtInGame: int;
+        spell1Casts: int;
+        spell2Casts: int;
+        spell3Casts: int;
+        spell4Casts: int;
+        summoner1Casts: int;
+        summoner1Id: int;
+        summoner2Casts: int;
+        summoner2Id: int;
+        summonerId: string;
+        summonerLevel: int;
+        summonerName: string;
+        teamEarlySurrendered: boolean;
+        teamId: int;
+        /** Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field. */
+        teamPosition: string;
+        timeCCingOthers: int;
+        timePlayed: int;
+        totalDamageDealt: int;
+        totalDamageDealtToChampions: int;
+        totalDamageShieldedOnTeammates: int;
+        totalDamageTaken: int;
+        totalHeal: int;
+        totalHealsOnTeammates: int;
+        totalMinionsKilled: int;
+        totalTimeCCDealt: int;
+        totalTimeSpentDead: int;
+        totalUnitsHealed: int;
+        tripleKills: int;
+        trueDamageDealt: int;
+        trueDamageDealtToChampions: int;
+        trueDamageTaken: int;
+        turretKills: int;
+        turretTakedowns?: int | null;
+        turretsLost?: int | null;
+        unrealKills: int;
+        visionScore: int;
+        visionWardsBoughtInGame: int;
+        wardsKilled: int;
+        wardsPlaced: int;
+        win: boolean;
+        challenges?: matchV5.ParticipantChallenges | null;
     }
 }
 
 namespace matchV5 {
     /**
-     * MatchDto data object, automatically generated.
+     * PerksDto data object, automatically generated.
      */
-    export interface MatchDto {
-        metadata: matchV5.MatchMetadata;
-        info: matchV5.MatchInfo;
+    export interface PerksDto {
+        statPerks: matchV5.PerkStatsDto;
+        styles: matchV5.PerkStyleDto[];
+    }
+}
+
+namespace matchV5 {
+    /**
+     * PerkStatsDto data object, automatically generated.
+     */
+    export interface PerkStatsDto {
+        defense: int;
+        flex: int;
+        offense: int;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * PerkStyleDto data object, automatically generated.
+     */
+    export interface PerkStyleDto {
+        description: string;
+        selections: matchV5.PerkStyleSelectionDto[];
+        style: int;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * PerkStyleSelectionDto data object, automatically generated.
+     */
+    export interface PerkStyleSelectionDto {
+        perk: int;
+        var1: int;
+        var2: int;
+        var3: int;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * TeamDto data object, automatically generated.
+     */
+    export interface TeamDto {
+        bans: matchV5.BanDto[];
+        objectives: matchV5.ObjectivesDto;
+        teamId: int;
+        win: boolean;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * BanDto data object, automatically generated.
+     */
+    export interface BanDto {
+        championId: int;
+        pickTurn: int;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * ObjectivesDto data object, automatically generated.
+     */
+    export interface ObjectivesDto {
+        baron: matchV5.ObjectiveDto;
+        champion: matchV5.ObjectiveDto;
+        dragon: matchV5.ObjectiveDto;
+        inhibitor: matchV5.ObjectiveDto;
+        riftHerald: matchV5.ObjectiveDto;
+        tower: matchV5.ObjectiveDto;
+    }
+}
+
+namespace matchV5 {
+    /**
+     * ObjectiveDto data object, automatically generated.
+     */
+    export interface ObjectiveDto {
+        first: boolean;
+        kills: int;
     }
 }
 
@@ -1003,7 +930,7 @@ namespace matchV5 {
      * MatchTimelineDto data object, automatically generated.
      */
     export interface MatchTimelineDto {
-        metadata: matchV5.MatchMetadata;
+        metadata: matchV5.MetadataDto;
         info: matchV5.MatchTimelineInfo;
     }
 }
@@ -1433,6 +1360,65 @@ namespace tftMatchV1 {
     }
 }
 
+namespace tftStatusV1 {
+    /**
+     * PlatformDataDto data object, automatically generated.
+     */
+    export interface PlatformDataDto {
+        id: string;
+        name: string;
+        locales: string[];
+        maintenances: tftStatusV1.StatusDto[];
+        incidents: tftStatusV1.StatusDto[];
+    }
+}
+
+namespace tftStatusV1 {
+    /**
+     * StatusDto data object, automatically generated.
+     */
+    export interface StatusDto {
+        id: int;
+        /** (Legal values:  scheduled,  in_progress,  complete) */
+        maintenance_status: "scheduled" | "in_progress" | "complete";
+        /** (Legal values:  info,  warning,  critical) */
+        incident_severity: "info" | "warning" | "critical";
+        titles: tftStatusV1.ContentDto[];
+        updates: tftStatusV1.UpdateDto[];
+        created_at: string;
+        archive_at: string;
+        updated_at: string;
+        /** (Legal values: windows, macos, android, ios, ps4, xbone, switch) */
+        platforms: string[];
+    }
+}
+
+namespace tftStatusV1 {
+    /**
+     * ContentDto data object, automatically generated.
+     */
+    export interface ContentDto {
+        locale: string;
+        content: string;
+    }
+}
+
+namespace tftStatusV1 {
+    /**
+     * UpdateDto data object, automatically generated.
+     */
+    export interface UpdateDto {
+        id: int;
+        author: string;
+        publish: boolean;
+        /** (Legal values: riotclient, riotstatus, game) */
+        publish_locations: string[];
+        translations: tftStatusV1.ContentDto[];
+        created_at: string;
+        updated_at: string;
+    }
+}
+
 namespace tftSummonerV1 {
     /**
      * SummonerDTO data object, automatically generated.
@@ -1673,6 +1659,7 @@ namespace valContentV1 {
         playerCards: valContentV1.ContentItemDto[];
         playerTitles: valContentV1.ContentItemDto[];
         acts: valContentV1.ActDto[];
+        ceremonies?: valContentV1.ContentItemDto[] | null;
     }
 }
 
@@ -1698,7 +1685,7 @@ namespace valContentV1 {
     export interface LocalizedNamesDto {
         "ar-AE": string;
         "de-DE": string;
-        "en-GB": string;
+        "en-GB?": string | null;
         "en-US": string;
         "es-ES": string;
         "es-MX": string;
@@ -1728,6 +1715,8 @@ namespace valContentV1 {
         localizedNames?: valContentV1.LocalizedNamesDto | null;
         id: string;
         isActive: boolean;
+        parentId?: string | null;
+        type?: string | null;
     }
 }
 
@@ -2006,6 +1995,12 @@ namespace valRankedV1 {
         /** The total number of players in the leaderboard. */
         totalPlayers: long;
         players: valRankedV1.PlayerDto[];
+        immortalStartingPage?: long | null;
+        immortalStartingIndex?: long | null;
+        topTierRRThreshold?: long | null;
+        tierDetails?: { [key: string]: valRankedV1.TierDetailDto } | null;
+        startIndex?: long | null;
+        query?: string | null;
     }
 }
 
@@ -2023,6 +2018,7 @@ namespace valRankedV1 {
         leaderboardRank: long;
         rankedRating: long;
         numberOfWins: long;
+        competitiveTier?: long | null;
     }
 }
 
@@ -2087,233 +2083,136 @@ namespace valStatusV1 {
 
 namespace matchV5 {
     /**
-     * MatchMetadata data object, automatically generated.
+     * ParticipantChallenges data object, automatically generated.
      */
-    export interface MatchMetadata {
-        dataVersion: string;
-        matchId: string;
-        participants: string[];
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoParticipantPerksStatPerks data object, automatically generated.
-     */
-    export interface MatchInfoParticipantPerksStatPerks {
-        defense: int;
-        flex: int;
-        offense: int;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoParticipantPerksStyleSelection data object, automatically generated.
-     */
-    export interface MatchInfoParticipantPerksStyleSelection {
-        perk: int;
-        var1: int;
-        var2: int;
-        var3: int;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoParticipantPerksStyle data object, automatically generated.
-     */
-    export interface MatchInfoParticipantPerksStyle {
-        description: string;
-        selections: matchV5.MatchInfoParticipantPerksStyleSelection[];
-        style: int;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoParticipantPerks data object, automatically generated.
-     */
-    export interface MatchInfoParticipantPerks {
-        statPerks: matchV5.MatchInfoParticipantPerksStatPerks;
-        styles: matchV5.MatchInfoParticipantPerksStyle[];
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoParticipant data object, automatically generated.
-     */
-    export interface MatchInfoParticipant {
-        assists: int;
-        baronKills: int;
-        bountyLevel: int;
-        champExperience: int;
-        champLevel: int;
-        championId: int;
-        championName: string;
-        championTransform: int;
-        consumablesPurchased: int;
-        damageDealtToBuildings: int;
-        damageDealtToObjectives: int;
-        damageDealtToTurrets: int;
-        damageSelfMitigated: int;
-        deaths: int;
-        detectorWardsPlaced: int;
-        doubleKills: int;
-        dragonKills: int;
-        firstBloodAssist: boolean;
-        firstBloodKill: boolean;
-        firstTowerAssist: boolean;
-        firstTowerKill: boolean;
-        gameEndedInEarlySurrender: boolean;
-        gameEndedInSurrender: boolean;
-        goldEarned: int;
-        goldSpent: int;
-        individualPosition: string;
-        inhibitorKills: int;
-        inhibitorsLost: int;
-        item0: int;
-        item1: int;
-        item2: int;
-        item3: int;
-        item4: int;
-        item5: int;
-        item6: int;
-        itemsPurchased: int;
-        killingSprees: int;
-        kills: int;
-        lane: string;
-        largestCriticalStrike: int;
-        largestKillingSpree: int;
-        largestMultiKill: int;
-        longestTimeSpentLiving: int;
-        magicDamageDealt: int;
-        magicDamageDealtToChampions: int;
-        magicDamageTaken: int;
-        neutralMinionsKilled: int;
-        nexusKills: int;
-        nexusLost: int;
-        objectivesStolen: int;
-        objectivesStolenAssists: int;
-        participantId: int;
-        pentaKills: int;
-        perks: matchV5.MatchInfoParticipantPerks;
-        physicalDamageDealt: int;
-        physicalDamageDealtToChampions: int;
-        physicalDamageTaken: int;
-        profileIcon: int;
-        puuid: string;
-        quadraKills: int;
-        riotIdName: string;
-        riotIdTagline: string;
-        role: string;
-        sightWardsBoughtInGame: int;
-        spell1Casts: int;
-        spell2Casts: int;
-        spell3Casts: int;
-        spell4Casts: int;
-        summoner1Casts: int;
-        summoner1Id: int;
-        summoner2Casts: int;
-        summoner2Id: int;
-        summonerId: string;
-        summonerLevel: int;
-        summonerName: string;
-        teamEarlySurrendered: boolean;
-        teamId: int;
-        teamPosition: string;
-        timeCCingOthers: int;
-        timePlayed: int;
-        totalDamageDealt: int;
-        totalDamageDealtToChampions: int;
-        totalDamageShieldedOnTeammates: int;
-        totalDamageTaken: int;
-        totalHeal: int;
-        totalHealsOnTeammates: int;
-        totalMinionsKilled: int;
-        totalTimeCCDealt: int;
-        totalTimeSpentDead: int;
-        totalUnitsHealed: int;
-        tripleKills: int;
-        trueDamageDealt: int;
-        trueDamageDealtToChampions: int;
-        trueDamageTaken: int;
-        turretKills: int;
-        turretsLost: int;
-        unrealKills: int;
-        visionScore: int;
-        visionWardsBoughtInGame: int;
-        wardsKilled: int;
-        wardsPlaced: int;
-        win: boolean;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoTeamBan data object, automatically generated.
-     */
-    export interface MatchInfoTeamBan {
-        championId: int;
-        pickTurn: int;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoTeamObjective data object, automatically generated.
-     */
-    export interface MatchInfoTeamObjective {
-        first: boolean;
-        kills: int;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoTeamObjectives data object, automatically generated.
-     */
-    export interface MatchInfoTeamObjectives {
-        baron: matchV5.MatchInfoTeamObjective;
-        champion: matchV5.MatchInfoTeamObjective;
-        dragon: matchV5.MatchInfoTeamObjective;
-        inhibitor: matchV5.MatchInfoTeamObjective;
-        riftHerald: matchV5.MatchInfoTeamObjective;
-        tower: matchV5.MatchInfoTeamObjective;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfoTeam data object, automatically generated.
-     */
-    export interface MatchInfoTeam {
-        bans: matchV5.MatchInfoTeamBan[];
-        objectives: matchV5.MatchInfoTeamObjectives;
-        teamId: int;
-        win: boolean;
-    }
-}
-
-namespace matchV5 {
-    /**
-     * MatchInfo data object, automatically generated.
-     */
-    export interface MatchInfo {
-        gameCreation: int;
-        gameDuration: int;
-        gameId: int;
-        gameMode: string;
-        gameName: string;
-        gameStartTimestamp: int;
-        gameType: string;
-        gameVersion: string;
-        mapId: int;
-        participants: matchV5.MatchInfoParticipant[];
-        platformId: string;
-        queueId: int;
-        teams: matchV5.MatchInfoTeam[];
+    export interface ParticipantChallenges {
+        "12AssistStreakCount?": double | null;
+        abilityUses?: double | null;
+        acesBefore15Minutes?: double | null;
+        alliedJungleMonsterKills?: double | null;
+        baronBuffGoldAdvantageOverThreshold?: double | null;
+        baronTakedowns?: double | null;
+        blastConeOppositeOpponentCount?: double | null;
+        bountyGold?: double | null;
+        buffsStolen?: double | null;
+        completeSupportQuestInTime?: double | null;
+        controlWardsPlaced?: double | null;
+        controlWardTimeCoverageInRiverOrEnemyHalf?: double | null;
+        damagePerMinute?: double | null;
+        damageTakenOnTeamPercentage?: double | null;
+        dancedWithRiftHerald?: double | null;
+        deathsByEnemyChamps?: double | null;
+        dodgeSkillShotsSmallWindow?: double | null;
+        doubleAces?: double | null;
+        dragonTakedowns?: double | null;
+        earliestBaron?: double | null;
+        earliestDragonTakedown?: double | null;
+        earliestElderDragon?: double | null;
+        earlyLaningPhaseGoldExpAdvantage?: double | null;
+        effectiveHealAndShielding?: double | null;
+        elderDragonKillsWithOpposingSoul?: double | null;
+        elderDragonMultikills?: double | null;
+        enemyChampionImmobilizations?: double | null;
+        enemyJungleMonsterKills?: double | null;
+        epicMonsterKillsNearEnemyJungler?: double | null;
+        epicMonsterKillsWithin30SecondsOfSpawn?: double | null;
+        epicMonsterSteals?: double | null;
+        epicMonsterStolenWithoutSmite?: double | null;
+        fasterSupportQuestCompletion?: double | null;
+        fastestLegendary?: double | null;
+        firstTurretKilledTime?: double | null;
+        flawlessAces?: double | null;
+        fullTeamTakedown?: double | null;
+        gameLength?: double | null;
+        getTakedownsInAllLanesEarlyJungleAsLaner?: double | null;
+        goldPerMinute?: double | null;
+        hadAfkTeammate?: double | null;
+        hadOpenNexus?: double | null;
+        highestChampionDamage?: double | null;
+        highestCrowdControlScore?: double | null;
+        highestWardKills?: double | null;
+        immobilizeAndKillWithAlly?: double | null;
+        initialBuffCount?: double | null;
+        initialCrabCount?: double | null;
+        jungleCsBefore10Minutes?: double | null;
+        junglerKillsEarlyJungle?: double | null;
+        junglerTakedownsNearDamagedEpicMonster?: double | null;
+        kda?: double | null;
+        killAfterHiddenWithAlly?: double | null;
+        killedChampTookFullTeamDamageSurvived?: double | null;
+        killParticipation?: double | null;
+        killsNearEnemyTurret?: double | null;
+        killsOnLanersEarlyJungleAsJungler?: double | null;
+        killsOnOtherLanesEarlyJungleAsLaner?: double | null;
+        killsOnRecentlyHealedByAramPack?: double | null;
+        killsUnderOwnTurret?: double | null;
+        killsWithHelpFromEpicMonster?: double | null;
+        knockEnemyIntoTeamAndKill?: double | null;
+        kTurretsDestroyedBeforePlatesFall?: double | null;
+        landSkillShotsEarlyGame?: double | null;
+        laneMinionsFirst10Minutes?: double | null;
+        laningPhaseGoldExpAdvantage?: double | null;
+        legendaryCount?: double | null;
+        lostAnInhibitor?: double | null;
+        maxCsAdvantageOnLaneOpponent?: double | null;
+        maxKillDeficit?: double | null;
+        maxLevelLeadLaneOpponent?: double | null;
+        mejaisFullStackInTime?: double | null;
+        moreEnemyJungleThanOpponent?: double | null;
+        mostWardsDestroyedOneSweeper?: double | null;
+        multiKillOneSpell?: double | null;
+        multikills?: double | null;
+        multikillsAfterAggressiveFlash?: double | null;
+        multiTurretRiftHeraldCount?: double | null;
+        mythicItemUsed?: double | null;
+        outerTurretExecutesBefore10Minutes?: double | null;
+        outnumberedKills?: double | null;
+        outnumberedNexusKill?: double | null;
+        perfectDragonSoulsTaken?: double | null;
+        perfectGame?: double | null;
+        pickKillWithAlly?: double | null;
+        poroExplosions?: double | null;
+        quickCleanse?: double | null;
+        quickFirstTurret?: double | null;
+        quickSoloKills?: double | null;
+        riftHeraldTakedowns?: double | null;
+        saveAllyFromDeath?: double | null;
+        scuttleCrabKills?: double | null;
+        shortestTimeToAceFromFirstTakedown?: double | null;
+        skillshotsDodged?: double | null;
+        skillshotsHit?: double | null;
+        snowballsHit?: double | null;
+        soloBaronKills?: double | null;
+        soloKills?: double | null;
+        soloTurretsLategame?: double | null;
+        stealthWardsPlaced?: double | null;
+        survivedSingleDigitHpCount?: double | null;
+        survivedThreeImmobilizesInFight?: double | null;
+        takedownOnFirstTurret?: double | null;
+        takedowns?: double | null;
+        takedownsAfterGainingLevelAdvantage?: double | null;
+        takedownsBeforeJungleMinionSpawn?: double | null;
+        takedownsFirst25Minutes?: double | null;
+        takedownsInAlcove?: double | null;
+        takedownsInEnemyFountain?: double | null;
+        teamBaronKills?: double | null;
+        teamDamagePercentage?: double | null;
+        teamElderDragonKills?: double | null;
+        teamRiftHeraldKills?: double | null;
+        teleportTakedowns?: double | null;
+        thirdInhibitorDestroyedTime?: double | null;
+        threeWardsOneSweeperCount?: double | null;
+        tookLargeDamageSurvived?: double | null;
+        turretPlatesTaken?: double | null;
+        turretsTakenWithRiftHerald?: double | null;
+        turretTakedowns?: double | null;
+        twentyMinionsIn3SecondsCount?: double | null;
+        unseenRecalls?: double | null;
+        visionScoreAdvantageLaneOpponent?: double | null;
+        visionScorePerMinute?: double | null;
+        wardsGuarded?: double | null;
+        wardTakedowns?: double | null;
+        wardTakedownsBefore20M?: double | null;
     }
 }
 
@@ -2324,7 +2223,9 @@ namespace matchV5 {
     export interface MatchTimelineInfoFrameEvent {
         realTimestamp?: int | null;
         timestamp: int;
-        type: string;
+        /** Timeline event type.
+(Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED) */
+        type: "ASCENDED_EVENT" | "BUILDING_KILL" | "CAPTURE_POINT" | "CHAMPION_KILL" | "CHAMPION_SPECIAL_KILL" | "CHAMPION_TRANSFORM" | "DRAGON_SOUL_GIVEN" | "ELITE_MONSTER_KILL" | "GAME_END" | "ITEM_DESTROYED" | "ITEM_PURCHASED" | "ITEM_SOLD" | "ITEM_UNDO" | "LEVEL_UP" | "PAUSE_END" | "PAUSE_START" | "SKILL_LEVEL_UP" | "TURRET_PLATE_DESTROYED" | "WARD_KILL" | "WARD_PLACED";
         itemId?: int | null;
         participantId?: int | null;
         levelUpType?: string | null;
@@ -2336,7 +2237,7 @@ namespace matchV5 {
         bounty?: int | null;
         killStreakLength?: int | null;
         killerId?: int | null;
-        position?: matchV5.MatchTimelineInfoFrameParticipantFramePosition | null;
+        position?: matchV5.MatchTimelinePosition | null;
         victimDamageDealt?: matchV5.MatchTimelineInfoFrameEventVictimDamageDealt[] | null;
         victimDamageReceived?: matchV5.MatchTimelineInfoFrameEventVictimDamageDealt[] | null;
         victimId?: int | null;
@@ -2356,6 +2257,8 @@ namespace matchV5 {
         winningTeam?: int | null;
         transformType?: string | null;
         name?: string | null;
+        shutdownBounty?: int | null;
+        actualStartTime?: int | null;
     }
 }
 
@@ -2364,7 +2267,7 @@ namespace matchV5 {
      * MatchTimelineInfoFrameParticipantFrameChampionStats data object, automatically generated.
      */
     export interface MatchTimelineInfoFrameParticipantFrameChampionStats {
-        abilityHaste: int;
+        abilityHaste?: int | null;
         abilityPower: int;
         armor: int;
         armorPen: int;
@@ -2383,8 +2286,8 @@ namespace matchV5 {
         magicPenPercent: int;
         magicResist: int;
         movementSpeed: int;
-        omnivamp: int;
-        physicalVamp: int;
+        omnivamp?: int | null;
+        physicalVamp?: int | null;
         power: int;
         powerMax: int;
         powerRegen: int;
@@ -2414,9 +2317,9 @@ namespace matchV5 {
 
 namespace matchV5 {
     /**
-     * MatchTimelineInfoFrameParticipantFramePosition data object, automatically generated.
+     * MatchTimelinePosition data object, automatically generated.
      */
-    export interface MatchTimelineInfoFrameParticipantFramePosition {
+    export interface MatchTimelinePosition {
         x: int;
         y: int;
     }
@@ -2435,7 +2338,7 @@ namespace matchV5 {
         level: int;
         minionsKilled: int;
         participantId: int;
-        position: matchV5.MatchTimelineInfoFrameParticipantFramePosition;
+        position: matchV5.MatchTimelinePosition;
         timeEnemySpentControlled: int;
         totalGold: int;
         xp: int;
@@ -2447,16 +2350,16 @@ namespace matchV5 {
      * MatchTimelineInfoFrameParticipantFrames data object, automatically generated.
      */
     export interface MatchTimelineInfoFrameParticipantFrames {
-        1: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        2: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        3: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        4: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        5: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        6: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        7: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        8: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        9: matchV5.MatchTimelineInfoFrameParticipantFrame;
-        10: matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "1": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "2": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "3": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "4": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "5": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "6": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "7": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "8": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "9": matchV5.MatchTimelineInfoFrameParticipantFrame;
+        "10": matchV5.MatchTimelineInfoFrameParticipantFrame;
     }
 }
 
@@ -2505,7 +2408,18 @@ namespace matchV5 {
     export interface MatchTimelineInfo {
         frameInterval: int;
         frames: matchV5.MatchTimelineInfoFrame[];
-        gameId: int;
-        participants: matchV5.MatchTimelineInfoParticipant[];
+        gameId?: int | null;
+        participants?: matchV5.MatchTimelineInfoParticipant[] | null;
+    }
+}
+
+namespace valRankedV1 {
+    /**
+     * TierDetailDto data object, automatically generated.
+     */
+    export interface TierDetailDto {
+        rankedRatingThreshold: long;
+        startingPage: long;
+        startingIndex: long;
     }
 }

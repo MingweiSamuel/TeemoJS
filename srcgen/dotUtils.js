@@ -78,10 +78,12 @@ function paramsToType(params, ordered = false) {
     return namedType.join('');
 }
 
-const routesTable = require("./routes");
+const routesTable = require("./.routesTable");
 function getRouteUnionType(operation) {
     const routes = operation['x-platforms-available'].map(r => r.toUpperCase());
-    for (const [ routeType, routeValues ] of Object.entries(routesTable)) {
+    for (const [ routeName, routeData ] of Object.entries(routesTable)) {
+        const routeType = `${toUpperCamel(routeName)}Route`;
+        const routeValues = Object.keys(routeData).map(r => r.toUpperCase());
         if (routes.every(r => routeValues.includes(r))) {
             if (routes.length === routeValues.length)
                 return routeType;

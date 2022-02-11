@@ -6,6 +6,7 @@ sed -i "s/'form-data'/'form-data\/index'/g" node_modules/\@types/node-fetch/inde
 
 # Generate spec and model source.
 curl -o srcgen/.spec.json http://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.json
+curl -o srcgen/.routesTable.json http://www.mingweisamuel.com/riotapi-schema/routesTable.json
 node srcgen
 
 # Run ESLint.

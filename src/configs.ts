@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version 570eb12bfe9fb09e435976cb454f622293d0020e
+// Version a9b6936baced1f181b550b7fb921ab72b216076c
 
 const RiotApiConfig = {
     apiKeys: {
@@ -46,25 +46,25 @@ const RiotApiConfig = {
              */
             getByPuuid: {
                 path: "/riot/account/v1/accounts/by-puuid/{puuid}",
-            } as ReqSpec<accountV1.AccountDto, AnyRoute, { puuid: string } | [ string ], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.ESPORTS | RegionalRoute.EUROPE, { puuid: string } | [ string ], {}, undefined>,
             /**
              * Get account by riot id
              */
             getByRiotId: {
                 path: "/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}",
-            } as ReqSpec<accountV1.AccountDto | null, AnyRoute, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.ESPORTS | RegionalRoute.EUROPE, { gameName: string, tagLine: string } | [ string, string ], {}, undefined>,
             /**
              * Get account by access token
              */
             getByAccessToken: {
                 path: "/riot/account/v1/accounts/me",
-            } as ReqSpec<accountV1.AccountDto, AnyRoute, {} | [], {}, undefined>,
+            } as ReqSpec<accountV1.AccountDto, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.ESPORTS | RegionalRoute.EUROPE, {} | [], {}, undefined>,
             /**
              * Get active shard for a player
              */
             getActiveShard: {
                 path: "/riot/account/v1/active-shards/by-game/{game}/by-puuid/{puuid}",
-            } as ReqSpec<accountV1.ActiveShardDto | null, AnyRoute, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
+            } as ReqSpec<accountV1.ActiveShardDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.ESPORTS | RegionalRoute.EUROPE, { game: "val" | "lor", puuid: string } | [ "val" | "lor", string ], {}, undefined>,
         },
         championMasteryV4: {
             /**
@@ -79,6 +79,12 @@ const RiotApiConfig = {
             getChampionMastery: {
                 path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}",
             } as ReqSpec<championMasteryV4.ChampionMasteryDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string, championId: long } | [ string, long ], {}, undefined>,
+            /**
+             * Get specified number of top champion mastery entries sorted by number of champion points descending.
+             */
+            getTopChampionMasteries: {
+                path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/top",
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], { count?: int | null }, undefined>,
             /**
              * Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
              */
@@ -174,6 +180,44 @@ const RiotApiConfig = {
                 path: "/lol/league/v4/masterleagues/by-queue/{queue}",
             } as ReqSpec<leagueV4.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" } | [ "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT" ], {}, undefined>,
         },
+        lolChallengesV1: {
+            /**
+             * List of all basic challenge configuration information (includes all translations for names and descriptions)
+             */
+            getAllChallengeConfigs: {
+                path: "/lol/challenges/v1/challenges/config",
+            } as ReqSpec<lolChallengesV1.ChallengeConfigInfoDto[], PlatformRoute, {} | [], {}, undefined>,
+            /**
+             * Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it
+             */
+            getAllChallengePercentiles: {
+                path: "/lol/challenges/v1/challenges/percentiles",
+            } as ReqSpec<{ [key: string]: { [key: string]: double } }, PlatformRoute, {} | [], {}, undefined>,
+            /**
+             * Get challenge configuration (REST)
+             */
+            getChallengeConfigs: {
+                path: "/lol/challenges/v1/challenges/{challengeId}/config",
+            } as ReqSpec<lolChallengesV1.ChallengeConfigInfoDto | null, PlatformRoute, { challengeId: long } | [ long ], {}, undefined>,
+            /**
+             * Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
+             */
+            getChallengeLeaderboards: {
+                path: "/lol/challenges/v1/challenges/{challengeId}/leaderboards/by-level/{level}",
+            } as ReqSpec<lolChallengesV1.ApexPlayerInfoDto[] | null, PlatformRoute, { challengeId: long, level: "NONE" | "IRON" | "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "DIAMOND" | "MASTER" | "GRANDMASTER" | "CHALLENGER" | "HIGHEST_NOT_LEADERBOARD_ONLY" | "HIGHEST" | "LOWEST" } | [ long, "NONE" | "IRON" | "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "DIAMOND" | "MASTER" | "GRANDMASTER" | "CHALLENGER" | "HIGHEST_NOT_LEADERBOARD_ONLY" | "HIGHEST" | "LOWEST" ], { limit?: int | null }, undefined>,
+            /**
+             * Map of level to percentile of players who have achieved it
+             */
+            getChallengePercentiles: {
+                path: "/lol/challenges/v1/challenges/{challengeId}/percentiles",
+            } as ReqSpec<{ [key: string]: double } | null, PlatformRoute, { challengeId: long } | [ long ], {}, undefined>,
+            /**
+             * Returns player information with list of all progressed challenges (REST)
+             */
+            getPlayerData: {
+                path: "/lol/challenges/v1/player-data/{puuid}",
+            } as ReqSpec<lolChallengesV1.PlayerInfoDto, PlatformRoute, { puuid: string } | [ string ], {}, undefined>,
+        },
         lolStatusV3: {
             /**
              * Get League of Legends status for the given shard.
@@ -190,7 +234,7 @@ const RiotApiConfig = {
              */
             getPlatformData: {
                 path: "/lol/status/v4/platform-data",
-            } as ReqSpec<lolStatusV4.PlatformDataDto, PlatformRoute, {} | [], {}, undefined>,
+            } as ReqSpec<lolStatusV4.PlatformDataDto, Exclude<PlatformRoute, PlatformRoute.TW2>, {} | [], {}, undefined>,
         },
         lorDeckV1: {
             /**
@@ -199,7 +243,7 @@ const RiotApiConfig = {
             getDecks: {
                 path: "/lor/deck/v1/decks/me",
                 apiKeyName: "lor",
-            } as ReqSpec<lorDeckV1.DeckDto[], RegionalRoute, {} | [], {}, undefined>,
+            } as ReqSpec<lorDeckV1.DeckDto[], RegionalRoute.AMERICAS | RegionalRoute.EUROPE | RegionalRoute.SEA, {} | [], {}, undefined>,
             /**
              * Create a new deck for the calling user.
              */
@@ -207,7 +251,7 @@ const RiotApiConfig = {
                 path: "/lor/deck/v1/decks/me",
                 method: "post",
                 apiKeyName: "lor",
-            } as ReqSpec<string, RegionalRoute, {} | [], {}, lorDeckV1.NewDeckDto>,
+            } as ReqSpec<string, RegionalRoute.AMERICAS | RegionalRoute.EUROPE | RegionalRoute.SEA, {} | [], {}, lorDeckV1.NewDeckDto>,
         },
         lorInventoryV1: {
             /**
@@ -216,7 +260,7 @@ const RiotApiConfig = {
             getCards: {
                 path: "/lor/inventory/v1/cards/me",
                 apiKeyName: "lor",
-            } as ReqSpec<lorInventoryV1.CardDto[], RegionalRoute, {} | [], {}, undefined>,
+            } as ReqSpec<lorInventoryV1.CardDto[], RegionalRoute.AMERICAS | RegionalRoute.EUROPE | RegionalRoute.SEA, {} | [], {}, undefined>,
         },
         lorMatchV1: {
             /**
@@ -225,14 +269,14 @@ const RiotApiConfig = {
             getMatchIdsByPUUID: {
                 path: "/lor/match/v1/matches/by-puuid/{puuid}/ids",
                 apiKeyName: "lor",
-            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], {}, undefined>,
+            } as ReqSpec<string[], RegionalRoute.AMERICAS | RegionalRoute.APAC | RegionalRoute.EUROPE | RegionalRoute.SEA, { puuid: string } | [ string ], {}, undefined>,
             /**
              * Get match by id
              */
             getMatch: {
                 path: "/lor/match/v1/matches/{matchId}",
                 apiKeyName: "lor",
-            } as ReqSpec<lorMatchV1.MatchDto, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<lorMatchV1.MatchDto, RegionalRoute.AMERICAS | RegionalRoute.APAC | RegionalRoute.EUROPE | RegionalRoute.SEA, { matchId: string } | [ string ], {}, undefined>,
         },
         lorRankedV1: {
             /**
@@ -241,7 +285,7 @@ const RiotApiConfig = {
             getLeaderboards: {
                 path: "/lor/ranked/v1/leaderboards",
                 apiKeyName: "lor",
-            } as ReqSpec<lorRankedV1.LeaderboardDto, RegionalRoute, {} | [], {}, undefined>,
+            } as ReqSpec<lorRankedV1.LeaderboardDto, RegionalRoute.AMERICAS | RegionalRoute.EUROPE | RegionalRoute.SEA, {} | [], {}, undefined>,
         },
         lorStatusV1: {
             /**
@@ -250,47 +294,7 @@ const RiotApiConfig = {
             getPlatformData: {
                 path: "/lor/status/v1/platform-data",
                 apiKeyName: "lor",
-            } as ReqSpec<lorStatusV1.PlatformDataDto, RegionalRoute, {} | [], {}, undefined>,
-        },
-        matchV4: {
-            /**
-             * Get match IDs by tournament code.
-             */
-            getMatchIdsByTournamentCode: {
-                path: "/lol/match/v4/matches/by-tournament-code/{tournamentCode}/ids",
-            } as ReqSpec<long[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { tournamentCode: string } | [ string ], {}, undefined>,
-            /**
-             * Get match by match ID.
-             */
-            getMatch: {
-                path: "/lol/match/v4/matches/{matchId}",
-            } as ReqSpec<matchV4.MatchDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { matchId: long } | [ long ], {}, undefined>,
-            /**
-             * Get match by match ID and tournament code.
-             */
-            getMatchByTournamentCode: {
-                path: "/lol/match/v4/matches/{matchId}/by-tournament-code/{tournamentCode}",
-            } as ReqSpec<matchV4.MatchDto, Exclude<PlatformRoute, PlatformRoute.PBE1>, { matchId: long, tournamentCode: string } | [ long, string ], {}, undefined>,
-            /**
-             * Get matchlist for games played on given account ID and platform ID and filtered using given filter parameters, if any.
-             * ## Implementation Notes
-             * A number of optional parameters are provided for filtering. It is up to the caller to ensure that the combination of filter parameters provided is valid for the requested account, otherwise, no matches may be returned.
-             * 
-             * If beginIndex is specified, but not endIndex, then endIndex defaults to beginIndex+100. If endIndex is specified, but not beginIndex, then beginIndex defaults to 0. If both are specified, then endIndex must be greater than beginIndex. The maximum range allowed is 100, otherwise a 400 error code is returned.
-             * 
-             * If beginTime is specified, but not endTime, then endTime defaults to the the current unix timestamp in milliseconds (the maximum time range limitation is not observed in this specific case). If endTime is specified, but not beginTime, then beginTime defaults to the start of the account's match history returning a 400 due to the maximum time range limitation. If both are specified, then endTime should be greater than beginTime. The maximum time range allowed is one week, otherwise a 400 error code is returned.
-             */
-            getMatchlist: {
-                path: "/lol/match/v4/matchlists/by-account/{encryptedAccountId}",
-            } as ReqSpec<matchV4.MatchlistDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedAccountId: string } | [ string ], { champion?: int[] | null, queue?: int[] | null, season?: int[] | null, endTime?: long | null, beginTime?: long | null, endIndex?: int | null, beginIndex?: int | null }, undefined>,
-            /**
-             * Get match timeline by match ID.
-             * ## Implementation Notes
-             * Not all matches have timeline data.
-             */
-            getMatchTimeline: {
-                path: "/lol/match/v4/timelines/by-match/{matchId}",
-            } as ReqSpec<matchV4.MatchTimelineDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { matchId: long } | [ long ], {}, undefined>,
+            } as ReqSpec<lorStatusV1.PlatformDataDto, RegionalRoute.AMERICAS | RegionalRoute.EUROPE | RegionalRoute.SEA, {} | [], {}, undefined>,
         },
         matchV5: {
             /**
@@ -298,19 +302,19 @@ const RiotApiConfig = {
              */
             getMatchIdsByPUUID: {
                 path: "/lol/match/v5/matches/by-puuid/{puuid}/ids",
-            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], { start?: int | null, count?: int | null }, undefined>,
+            } as ReqSpec<string[], RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { puuid: string } | [ string ], { startTime?: long | null, endTime?: long | null, queue?: int | null, type?: "ranked" | "normal" | "tourney" | "tutorial" | null, start?: int | null, count?: int | null }, undefined>,
             /**
              * Get a match by match id
              */
             getMatch: {
                 path: "/lol/match/v5/matches/{matchId}",
-            } as ReqSpec<matchV5.MatchDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<matchV5.MatchDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { matchId: string } | [ string ], {}, undefined>,
             /**
              * Get a match timeline by match id
              */
             getTimeline: {
                 path: "/lol/match/v5/matches/{matchId}/timeline",
-            } as ReqSpec<matchV5.MatchTimelineDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<matchV5.MatchTimelineDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { matchId: string } | [ string ], {}, undefined>,
         },
         spectatorV4: {
             /**
@@ -318,15 +322,21 @@ const RiotApiConfig = {
              */
             getCurrentGameInfoBySummoner: {
                 path: "/lol/spectator/v4/active-games/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<spectatorV4.CurrentGameInfo | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<spectatorV4.CurrentGameInfo | null, PlatformRoute.BR1 | PlatformRoute.EUN1 | PlatformRoute.EUW1 | PlatformRoute.JP1 | PlatformRoute.KR | PlatformRoute.LA1 | PlatformRoute.LA2 | PlatformRoute.NA1 | PlatformRoute.OC1 | PlatformRoute.RU | PlatformRoute.TR1, { encryptedSummonerId: string } | [ string ], {}, undefined>,
             /**
              * Get list of featured games.
              */
             getFeaturedGames: {
                 path: "/lol/spectator/v4/featured-games",
-            } as ReqSpec<spectatorV4.FeaturedGames, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            } as ReqSpec<spectatorV4.FeaturedGames, PlatformRoute.BR1 | PlatformRoute.EUN1 | PlatformRoute.EUW1 | PlatformRoute.JP1 | PlatformRoute.KR | PlatformRoute.LA1 | PlatformRoute.LA2 | PlatformRoute.NA1 | PlatformRoute.OC1 | PlatformRoute.RU | PlatformRoute.TR1, {} | [], {}, undefined>,
         },
         summonerV4: {
+            /**
+             * Get a summoner by its RSO encrypted PUUID.
+             */
+            getByRSOPUUID: {
+                path: "/fulfillment/v1/summoners/by-puuid/{rsoPUUID}",
+            } as ReqSpec<summonerV4.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { rsoPUUID: string } | [ string ], {}, undefined>,
             /**
              * Get a summoner by account ID.
              */
@@ -416,14 +426,23 @@ const RiotApiConfig = {
             getMatchIdsByPUUID: {
                 path: "/tft/match/v1/matches/by-puuid/{puuid}/ids",
                 apiKeyName: "tft",
-            } as ReqSpec<string[], Exclude<RegionalRoute, RegionalRoute.SEA>, { puuid: string } | [ string ], { count?: int | null }, undefined>,
+            } as ReqSpec<string[], RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { puuid: string } | [ string ], { start?: int | null, endTime?: long | null, startTime?: long | null, count?: int | null }, undefined>,
             /**
              * Get a match by match id
              */
             getMatch: {
                 path: "/tft/match/v1/matches/{matchId}",
                 apiKeyName: "tft",
-            } as ReqSpec<tftMatchV1.MatchDto | null, Exclude<RegionalRoute, RegionalRoute.SEA>, { matchId: string } | [ string ], {}, undefined>,
+            } as ReqSpec<tftMatchV1.MatchDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { matchId: string } | [ string ], {}, undefined>,
+        },
+        tftStatusV1: {
+            /**
+             * Get Teamfight Tactics status for the given platform.
+             */
+            getPlatformData: {
+                path: "/tft/status/v1/platform-data",
+                apiKeyName: "tft",
+            } as ReqSpec<tftStatusV1.PlatformDataDto, PlatformRoute, {} | [], {}, undefined>,
         },
         tftSummonerV1: {
             /**
@@ -461,14 +480,6 @@ const RiotApiConfig = {
                 path: "/tft/summoner/v1/summoners/{encryptedSummonerId}",
                 apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
-        },
-        thirdPartyCodeV4: {
-            /**
-             * Get third party code for a given summoner ID.
-             */
-            getThirdPartyCodeBySummonerId: {
-                path: "/lol/platform/v4/third-party-code/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<string, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
         },
         tournamentStubV4: {
             /**
@@ -583,7 +594,7 @@ const RiotApiConfig = {
              */
             getRecent: {
                 path: "/val/match/v1/recent-matches/by-queue/{queue}",
-            } as ReqSpec<valMatchV1.RecentMatchesDto, ValPlatformRoute, { queue: "competitive" | "unrated" | "spikerush" | "tournamentmode" } | [ "competitive" | "unrated" | "spikerush" | "tournamentmode" ], {}, undefined>,
+            } as ReqSpec<valMatchV1.RecentMatchesDto, ValPlatformRoute, { queue: "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" } | [ "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" ], {}, undefined>,
         },
         valRankedV1: {
             /**

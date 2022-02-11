@@ -1,0 +1,204 @@
+{{
+    const dotUtils = require('./dotUtils.js');
+    const spec = require('./.spec');
+    const routesTable = require('./.routesTable');
+}}{{= dotUtils.PREAMBLE }}
+
+// http://www.mingweisamuel.com/riotapi-schema/tool/
+// Version {{= spec.info.version }}
+
+/** Regional routing values for `tftMatchV1`, `lorRankedV1`, and `AMERICAS` for league endpoints. */
+enum RegionalRoute {
+{{
+    for (const [ name, { id, description, deprecated } ] of Object.entries(routesTable['regional'])) {
+        const desc = description.split('\n');
+}}
+    /**
+{{~ desc :line }}
+     * {{= line }}
+{{~}}
+     *
+     * `{{= id }}` (riotapi-schema ID/repr)
+{{? deprecated }}
+     *
+     * @deprecated
+{{?}}
+     */
+    {{= name.toUpperCase() }} = {{= id }},
+
+{{
+    }
+}}
+}
+
+/** Platform routing values for LoL, TFT. */
+enum PlatformRoute {
+{{
+    for (const [ name, { id, description, altName, deprecated } ] of Object.entries(routesTable['platform'])) {
+        const desc = description.split('\n');
+}}
+    /**
+{{~ desc :line }}
+     * {{= line }}
+{{~}}
+     *
+     * `{{= id }}` (riotapi-schema ID/repr)
+{{? deprecated }}
+     *
+     * @deprecated
+{{?}}
+     */
+    {{= name.toUpperCase() }} = {{= id }},
+
+{{
+    }
+}}
+}
+
+/** Valorant platform routing values. */
+enum ValPlatformRoute {
+{{
+    for (const [ name, { id, description, deprecated } ] of Object.entries(routesTable['val-platform'])) {
+        const desc = description.split('\n');
+}}
+    /**
+{{~ desc :line }}
+     * {{= line }}
+{{~}}
+     *
+     * `{{= id }}` (riotapi-schema ID/repr)
+{{? deprecated }}
+     *
+     * @deprecated
+{{?}}
+     */
+    {{= name.toUpperCase() }} = {{= id }},
+
+{{
+    }
+}}
+}
+
+/** Combined routing enum. */
+const AnyRoute = { ...RegionalRoute, ...PlatformRoute, ...ValPlatformRoute };
+/** Combined routing type. */
+type AnyRoute = RegionalRoute | PlatformRoute | ValPlatformRoute;
+
+/** RegionalRoute static utility functions. */
+namespace RegionalRoute {
+    /**
+     * Parse a `RegionalRoute` from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning two-letter prefix to
+     * determine the `PlatformRoute`.
+     * @param str String to parse.
+     * @returns The parsed `RegionalRoute`.
+     * @throws Error if `str` could not be parsed.
+     */
+    export function parse(str: string): RegionalRoute {
+        switch (str.slice(0, 2).toUpperCase()) {
+{{
+    for (const name of Object.keys(routesTable['regional'])) {
+}}
+            case "{{= name.toUpperCase().slice(0, 2) }}": return RegionalRoute.{{= name.toUpperCase() }};
+{{
+    }
+}}
+        }
+        throw new Error(`Failed to parse string as RegionalRoute: "${str}".`);
+    }
+}
+
+/** PlatformRoute static utility functions. */
+namespace PlatformRoute {
+    const PLATFORM_TO_REGIONAL = {
+{{
+    for (const [ name, { regionalRoute } ] of Object.entries(routesTable['platform'])) {
+}}
+        [PlatformRoute.{{= name.toUpperCase() }}]: RegionalRoute.{{= regionalRoute.toUpperCase() }},
+{{
+    }
+}}
+    } as const;
+    /**
+     * Converts a `PlatformRoute` to the corresponding `RegionalRoute` for
+     * `matchV5` and `tftMatchV1` endpoints, which require a `RegionalRoute`,
+     * while other TFT/LoL endpoints require a `PlatformRoute`.
+     * @param route `PlatformRoute` to be converted.
+     * @returns A `RegionalRoute`.
+     */
+    export function toRegional(route: PlatformRoute): RegionalRoute {
+        return PLATFORM_TO_REGIONAL[route];
+    }
+
+    const PLATFORM_TO_REGIONAL_LOR = {
+{{
+    for (const [ name, { regionalRouteLor } ] of Object.entries(routesTable['platform'])) {
+}}
+        [PlatformRoute.{{= name.toUpperCase() }}]: RegionalRoute.{{= regionalRouteLor.toUpperCase() }},
+{{
+    }
+}}
+    } as const;
+    /**
+     * Converts a `PlatformRoute` to the corresponding `RegionalRoute` for
+     * Legends of Runterra (LoR) endpoints.
+     * @param route `PlatformRoute` to be converted.
+     * @returns A `RegionalRoute`.
+     */
+    export function toRegionalLor(route: PlatformRoute): RegionalRoute {
+        return PLATFORM_TO_REGIONAL_LOR[route];
+    }
+
+    /**
+     * Parse a `PlatformRoute` from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning three-letter
+     * prefix to determine the `PlatformRoute`.
+     * @param str String to parse.
+     * @returns The parsed `PlatformRoute`.
+     * @throws Error if `str` could not be parsed.
+     */
+    export function parse(str: string): PlatformRoute {
+        switch (str.slice(0, 3).toUpperCase()) {
+{{
+    for (const [ name, { altName } ] of Object.entries(routesTable['platform'])) {
+        const name3 = name.toUpperCase().slice(0, 3);
+        const altName3 = altName?.toUpperCase()?.slice(0, 3);
+}}
+{{? altName3 && name3 !== altName3 }}
+            case "{{= altName3 }}":
+{{?}}
+            case "{{= name3 }}": return PlatformRoute.{{= name.toUpperCase() }};
+{{
+    }
+}}
+        }
+        throw new Error(`Failed to parse string as PlatformRoute: "${str}".`);
+    }
+}
+
+/** ValPlatformRoute static utility functions. */
+namespace ValPlatformRoute {
+    /**
+     * Parse a `ValPlatformRoute` from a string, or throw if unparsable.
+     * Case-insensitive. Only looks at the beginning two-letter prefix to
+     * determine the `PlatformRoute`.
+     * @param str String to parse.
+     * @returns The parsed `ValPlatformRoute`.
+     * @throws Error if `str` could not be parsed.
+     */
+    export function parse(str: string): ValPlatformRoute {
+        switch (str.slice(0, 2).toUpperCase()) {
+{{
+    for (const name of Object.keys(routesTable['val-platform'])) {
+}}
+            case "{{= name.toUpperCase().slice(0, 2) }}": return ValPlatformRoute.{{= name.toUpperCase() }};
+{{
+    }
+}}
+        }
+        throw new Error(`Failed to parse string as ValPlatformRoute: "${str}".`);
+    }
+}
+
+
+Object.assign(module.exports, { RegionalRoute, PlatformRoute, ValPlatformRoute, AnyRoute });
