@@ -37,7 +37,7 @@ npm install --save teemojs
 
 ### Example
 ```javascript
-const { TeemoApi, PlatformRoute } = require('teemojs');
+const { TeemoApi, PlatformRoute, RegionalRoute } = require('teemojs');
 const api = TeemoApi.createRiotApi('RGAPI-KEY-HERE').proxy();
 
 async function main() {
@@ -47,9 +47,9 @@ async function main() {
   console.log(`${summoner.name}'s account id is ${summoner.accountId}.`);
 
   // Get summoner's games on Teemo and Illaoi for a particular season.
-  const matchlist = await api.matchV4.getMatchlist(PlatformRoute.NA1, {
-    path: [ summoner.accountId ],
-    query: { champion: [ 17, 420 ] },
+  const matchlist = await api.matchV5.getMatchlist(RegionalRoute.AMERICAS, {
+    path: [ summoner.puuid ],
+    query: { queue: 420 },
   });
   console.log(`Fetched ${matchlist.matches.length} games.`);
 
@@ -91,7 +91,7 @@ aPromise = api.endpoint.method(region, {
 
 #### Parameters
 - `endpoint` - An API endpoint in lower camel case, such as `summonerV4` or
-  `matchV4`.
+  `matchV5`.
 - `method` - An method in `endpoint`, such as `getBySummonerName` or
   `getMatchlist` (respectively).
   - See [`configs.ts`](https://github.com/MingweiSamuel/TeemoJS/blob/master/src/configs.ts)
@@ -151,14 +151,14 @@ const api = TeemoApi.createRiotApi({
 #### TypeScript typings
 
 ```typescript
-import { TeemoApi, PlatformRoute, summonerV4, matchV4 } from "TeemoJS";
+import { TeemoApi, PlatformRoute, RegionalRoute, summonerV4, matchV5 } from "TeemoJS";
 // ...
 const summoner: summonerV4.SummonerDTO = await api.summonerV4.getBySummonerName(PlatformRoute.NA1, {
   path: { summonerName: 'x blotter' },
 });
-const matchlist: matchV4.MatchlistDto = await api.matchV4.getMatchlist(PlatformRoute.NA1, {
-  path: [ summoner.accountId ],
-  query: { champion: [ 17, 420 ] },
+const matchlist: matchV5.MatchlistDto = await api.matchV5.getMatchlist(RegionalRoute.AMERICAS, {
+  path: [ summoner.puuid ],
+  query: { queue: 420 },
 });
 ```
 ```typescript

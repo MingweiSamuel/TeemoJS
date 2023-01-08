@@ -59,6 +59,7 @@ describe('TeemoJS LoL', function() {
       const summoner = await apf.summonerV4.getBySummonerName(PlatformRoute.NA1, {
         path: [ 'lugnutsk' ],
       });
+      assert.ok(summoner);
       const data = await apf.championMasteryV4.getAllChampionMasteries(PlatformRoute.NA1, {
         path: { encryptedSummonerId: summoner.id },
       });
@@ -72,9 +73,11 @@ describe('TeemoJS LoL', function() {
       const summoner = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: { summonerName: 'lugnutsk' },
       });
+      assert.ok(summoner);
       const data = await api.req("championMasteryV4", "getChampionMastery", PlatformRoute.NA1, {
         path: [ summoner.id, 143 ],
       });
+      assert.ok(data);
       assert.equal(data.championId, 143);
       assert.ok(data.championPoints >= 500000);
     });
@@ -84,35 +87,35 @@ describe('TeemoJS LoL', function() {
       const summoner = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: [ 'c9 zven' ],
       });
-      const data = await apf.matchV4.getMatchlist(PlatformRoute.NA1, {
-        path: { encryptedAccountId: summoner.accountId },
-        query: { champion: 429, queue: 420 },
+      assert.ok(summoner);
+      const data = await apf.matchV5.getMatchIdsByPUUID(RegionalRoute.AMERICAS, {
+        path: { puuid: summoner.puuid },
+        query: { queue: 420 },
       });
       assert.ok(data);
-      assert.ok(data.matches);
-      assert.ok(data.matches.length > 10);
+      assert.ok(data.length > 10);
     });
     it('match.getMatchlist (list params)', async function() {
       // TODO why isn't this null?
       const summoner = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: [ 'c9 zven' ],
       });
-      const data = await apf.matchV4.getMatchlist(PlatformRoute.NA1, {
-        path: [ summoner.accountId ],
-        // TODO: optional lists.
-        query: { champion: [ 81, 429 ], queue: [ 420 ] },
+      assert.ok(summoner);
+      const data = await apf.matchV5.getMatchIdsByPUUID(RegionalRoute.AMERICAS, {
+        path: [ summoner.puuid ],
+        query: { queue: 420 },
       });
       assert.ok(data);
-      assert.ok(data.matches);
+      assert.ok(data.length > 10);
     });
     it('match.getMatch', async function() {
-      const data = await apf.matchV4.getMatch(PlatformRoute.NA1, {
-        path: [ 2351868633 ],
+      const data = await apf.matchV5.getMatch(RegionalRoute.AMERICAS, {
+        path: [ 'NA1_4541499677' ],
       });
       assert.ok(data);
-      assert.equal(data.gameId, 2351868633);
-      assert.equal(data.teams.length, 2);
-      assert.equal(data.participants.length, 10);
+      assert.equal(data.metadata.matchId, 'NA1_4541499677');
+      assert.equal(data.info.teams.length, 2);
+      assert.equal(data.info.participants.length, 10);
     });
 
     it('summoner.getBySummonerName', async function() {
@@ -163,11 +166,13 @@ describe('TeemoJS LoL', function() {
       const summoner = await apf.summonerV4.getBySummonerName(PlatformRoute.NA1, {
         path: [ 'xBlotter' ],
       });
+      assert.ok(summoner);
       const data = await apf.leagueV4.getLeagueEntriesForSummoner(PlatformRoute.NA1, {
         path: [ summoner.id ],
       });
       if (0 !== data.length) {
         let entry = data.find(e => e.queueType === 'RANKED_SOLO_5x5');
+        assert.ok(entry);
         assert.ok(entry.wins);
       }
     });

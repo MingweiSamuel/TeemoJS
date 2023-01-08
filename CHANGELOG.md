@@ -114,6 +114,7 @@ future = api.req(
   will automatically be translated into `'americas'`.
 * Endpoint paths now include the version number (`V1`, `V3`, `V4`, etc).
   For example, `api.get('na1', 'match.getMatch', 3022273777)` is now `api.req('na', 'lol.matchV4.getMatch', 3022273777)`.
+  (Note that `matchV4` has been replaced by `matchV5` with different arguments/routes).
 * On failed requests (when retries run out or the request is not retryable),
   an `Error` will always be thrown. Previously, some error codes (`403`, `401`, ?) would not result in `Error`s thrown.
 * Thrown `Error`s may now contain a `.response` field containing the latest failed Fetch API `Response` instance.
