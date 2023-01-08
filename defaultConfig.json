@@ -39,6 +39,7 @@
     "championMastery": {
       "getAllChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s",
       "getChampionMastery": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s",
+      "getTopChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/top",
       "getChampionMasteryScore": "/lol/champion-mastery/v4/scores/by-summoner/%s"
     },
     "champion": {
@@ -61,6 +62,14 @@
       "getGrandmasterLeague": "/lol/league/v4/grandmasterleagues/by-queue/%s",
       "getLeagueById": "/lol/league/v4/leagues/%s",
       "getMasterLeague": "/lol/league/v4/masterleagues/by-queue/%s"
+    },
+    "lolChallenges": {
+      "getAllChallengeConfigs": "/lol/challenges/v1/challenges/config",
+      "getAllChallengePercentiles": "/lol/challenges/v1/challenges/percentiles",
+      "getChallengeConfigs": "/lol/challenges/v1/challenges/%s/config",
+      "getChallengeLeaderboards": "/lol/challenges/v1/challenges/%s/leaderboards/by-level/%s",
+      "getChallengePercentiles": "/lol/challenges/v1/challenges/%s/percentiles",
+      "getPlayerData": "/lol/challenges/v1/player-data/%s"
     },
     "lolStatus": {
       "getPlatformData": "/lol/status/v4/platform-data"
@@ -92,6 +101,7 @@
       "getFeaturedGames": "/lol/spectator/v4/featured-games"
     },
     "summoner": {
+      "getByRSOPUUID": "/fulfillment/v1/summoners/by-puuid/%s",
       "getByAccountId": "/lol/summoner/v4/summoners/by-account/%s",
       "getBySummonerName": "/lol/summoner/v4/summoners/by-name/%s",
       "getByPUUID": "/lol/summoner/v4/summoners/by-puuid/%s",
@@ -111,15 +121,15 @@
       "getMatchIdsByPUUID": "/tft/match/v1/matches/by-puuid/%s/ids",
       "getMatch": "/tft/match/v1/matches/%s"
     },
+    "tftStatus": {
+      "getPlatformData": "/tft/status/v1/platform-data"
+    },
     "tftSummoner": {
       "getByAccountId": "/tft/summoner/v1/summoners/by-account/%s",
       "getBySummonerName": "/tft/summoner/v1/summoners/by-name/%s",
       "getByPUUID": "/tft/summoner/v1/summoners/by-puuid/%s",
       "getByAccessToken": "/tft/summoner/v1/summoners/me",
       "getBySummonerId": "/tft/summoner/v1/summoners/%s"
-    },
-    "thirdPartyCode": {
-      "getThirdPartyCodeBySummonerId": "/lol/platform/v4/third-party-code/by-summoner/%s"
     },
     "valContent": {
       "getContent": "/val/content/v1/contents"
