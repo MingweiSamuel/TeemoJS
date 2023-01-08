@@ -51,10 +51,10 @@
     "eslint": "^7.4.0",
     "glob": "^7.1.2",
     "glob-promise": "^3.3.0",
-    "mocha": "^8.0.1",
+    "mocha": "^10.2.0",
     "rewire": "^5.0.0",
     "source-map-support": "^0.5.19",
-    "tinyify": "^2.5.2",
+    "tinyify": "^3.1.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }
