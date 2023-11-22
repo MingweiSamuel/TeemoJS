@@ -136,13 +136,12 @@ describe('TeemoJS', function() {
     it('tftLeague.getChallengerLeague', function() {
       return api.get('na1', 'tftLeague.getChallengerLeague')
         .then(data => {
-          console.log(data);
-          if (null == data) {
+          assert.ok(data);
+          if (0 === data.entries.length) {
             console.log('No one in TFT Challenger!');
             return;
           }
           assert.ok(data.leagueId);
-          assert.ok(data.entries.length);
           assert.ok(data.name);
           for (const entry of data.entries) {
             assert.ok(entry);
