@@ -37,9 +37,13 @@
       "getActiveShard": "/riot/account/v1/active-shards/by-game/%s/by-puuid/%s"
     },
     "championMastery": {
+      "getAllChampionMasteriesByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s",
+      "getChampionMasteryByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/by-champion/%s",
+      "getTopChampionMasteriesByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/top",
       "getAllChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s",
       "getChampionMastery": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s",
       "getTopChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/top",
+      "getChampionMasteryScoreByPUUID": "/lol/champion-mastery/v4/scores/by-puuid/%s",
       "getChampionMasteryScore": "/lol/champion-mastery/v4/scores/by-summoner/%s"
     },
     "champion": {
