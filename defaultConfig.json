@@ -40,11 +40,7 @@
       "getAllChampionMasteriesByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s",
       "getChampionMasteryByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/by-champion/%s",
       "getTopChampionMasteriesByPUUID": "/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/top",
-      "getAllChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s",
-      "getChampionMastery": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%s",
-      "getTopChampionMasteries": "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/top",
-      "getChampionMasteryScoreByPUUID": "/lol/champion-mastery/v4/scores/by-puuid/%s",
-      "getChampionMasteryScore": "/lol/champion-mastery/v4/scores/by-summoner/%s"
+      "getChampionMasteryScoreByPUUID": "/lol/champion-mastery/v4/scores/by-puuid/%s"
     },
     "champion": {
       "getChampionInfo": "/lol/platform/v3/champion-rotations"
@@ -100,9 +96,13 @@
       "getMatch": "/lol/match/v5/matches/%s",
       "getTimeline": "/lol/match/v5/matches/%s/timeline"
     },
+    "spectatorTft": {
+      "getCurrentGameInfoByPuuid": "/lol/spectator/tft/v5/active-games/by-puuid/%s",
+      "getFeaturedGames": "/lol/spectator/tft/v5/featured-games"
+    },
     "spectator": {
-      "getCurrentGameInfoBySummoner": "/lol/spectator/v4/active-games/by-summoner/%s",
-      "getFeaturedGames": "/lol/spectator/v4/featured-games"
+      "getCurrentGameInfoByPuuid": "/lol/spectator/v5/active-games/by-summoner/%s",
+      "getFeaturedGames": "/lol/spectator/v5/featured-games"
     },
     "summoner": {
       "getByRSOPUUID": "/fulfillment/v1/summoners/by-puuid/%s",

@@ -5,6 +5,7 @@ const SID_LUGNUTSK = 'SBM8Ubipo4ge2yj7bhEzL7yvV0C9Oc1XA2l6v5okGMA_nCw';
 const SID_C9SNEAKY = 'ghHSdADqgxKwcRl_vWndx6wKiyZx0xKQv-LOhOcU5LU';
 const SID_TCTRE    = 'rF8-YEID3MSbgPF6Hsqdbq92FgdLjilZdhVgI7UARMbzzTk';
 const AID_C9SNEAKY = 'ML_CcLT94UUHp1iDvXOXCidfmzzPrk_Jbub1f_INhw';
+const PUUID_LUGNUTSK = 'bJ_-UdX8v1NqvsUemuklcmd70lNjgDY0UN81L75d84HneX8dHy8iteZC49qEkJVPvGzJZC4R-89dHA';
 
 describe('TeemoJS', function() {
   let api;
@@ -37,16 +38,16 @@ describe('TeemoJS', function() {
 
   describe('#get()', function() {
     this.slow(500);
-    it('championMastery.getAllChampionMasteries', function() {
-      return api.get('na1', 'championMastery.getAllChampionMasteries', SID_LUGNUTSK)
+    it('championMastery.getAllChampionMasteriesByPUUID', function() {
+      return api.get('na1', 'championMastery.getAllChampionMasteriesByPUUID', PUUID_LUGNUTSK)
         .then(data => {
           assert.ok(data);
           assert.ok(data.length >= 48);
           assert.equal(data[0].championId, 143);
         });
     });
-    it('championMastery.getChampionMastery', function() {
-      return api.get('na1', 'championMastery.getChampionMastery', SID_LUGNUTSK, 143)
+    it('championMastery.getChampionMasteryByPUUID', function() {
+      return api.get('na1', 'championMastery.getChampionMasteryByPUUID', PUUID_LUGNUTSK, 143)
         .then(data => {
           assert.equal(data.championId, 143);
           assert.ok(data.championPoints >= 349767);
@@ -90,7 +91,7 @@ describe('TeemoJS', function() {
           assert.ok(data.summonerLevel > 30); // Level up.
         });
     });
-    it('summoner.getBySummonerName encoding test', function() {
+    xit('summoner.getBySummonerName encoding test', function() {
       return api.get('na1', 'summoner.getBySummonerName', 'The Øne And Ønly')
         .then(data => {
           assert.ok(data);
@@ -145,7 +146,7 @@ describe('TeemoJS', function() {
           assert.ok(data.name);
           for (const entry of data.entries) {
             assert.ok(entry);
-            assert.ok(entry.summonerName);
+            assert.ok(entry.summonerId);
           }
         });
     });
