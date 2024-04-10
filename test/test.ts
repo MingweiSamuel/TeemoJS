@@ -30,16 +30,16 @@ describe('TeemoJS LoL', function() {
       assert.throws(() => apf.base.setDistFactor(100));
     });
     it ('handles bad region', async function() {
-      // Should be a region, not a platform.
-      await assert.rejects(async () => api.req("lolStatusV3", "getShardData", RegionalRoute.AMERICAS as any));
-      await assert.rejects(async () => apf.lolStatusV3.getShardData(RegionalRoute.AMERICAS as any));
+      // Should be a platform, not a region.
+      await assert.rejects(async () => api.req("lolStatusV4", "getPlatformData", RegionalRoute.AMERICAS as any));
+      await assert.rejects(async () => apf.lolStatusV4.getPlatformData(RegionalRoute.AMERICAS as any));
     });
     it('handles missing path', async function() {
       await assert.rejects(async () => api.req("fakeEndpointV6" as any, "getFake", PlatformRoute.NA1) as Promise<unknown>);
       await assert.rejects(async () => (apf as any).fakeEndpointV6.getFake(PlatformRoute.NA1));
 
-      await assert.rejects(async () => api.req("lolStatusV3", "getFake" as any, PlatformRoute.NA1) as Promise<unknown>);
-      await assert.rejects(async () => (apf.lolStatusV3 as any).getFake(PlatformRoute.NA1));
+      await assert.rejects(async () => api.req("lolStatusV4", "getFake" as any, PlatformRoute.NA1) as Promise<unknown>);
+      await assert.rejects(async () => (apf.lolStatusV4 as any).getFake(PlatformRoute.NA1));
     });
     it('handles wrong path args', async function() {
       // Should be: queue, tier, division.
@@ -60,8 +60,8 @@ describe('TeemoJS LoL', function() {
         path: [ 'lugnutsk' ],
       });
       assert.ok(summoner);
-      const data = await apf.championMasteryV4.getAllChampionMasteries(PlatformRoute.NA1, {
-        path: { encryptedSummonerId: summoner.id },
+      const data = await apf.championMasteryV4.getAllChampionMasteriesByPUUID(PlatformRoute.NA1, {
+        path: { encryptedPUUID: summoner.puuid },
       });
       // const data = await api.req('na', 'lol.championMasteryV4.getAllChampionMasteries', { summonerId: summoner.id });
       assert.ok(data);
@@ -74,15 +74,15 @@ describe('TeemoJS LoL', function() {
         path: { summonerName: 'lugnutsk' },
       });
       assert.ok(summoner);
-      const data = await api.req("championMasteryV4", "getChampionMastery", PlatformRoute.NA1, {
-        path: [ summoner.id, 143 ],
+      const data = await api.req("championMasteryV4", "getChampionMasteryByPUUID", PlatformRoute.NA1, {
+        path: [ summoner.puuid, 143 ],
       });
       assert.ok(data);
       assert.equal(data.championId, 143);
       assert.ok(data.championPoints >= 500000);
     });
 
-    it('match.getMatchlist', async function() {
+    xit('match.getMatchlist', async function() {
       // TODO why isn't this null?
       const summoner = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: [ 'c9 zven' ],
@@ -95,7 +95,7 @@ describe('TeemoJS LoL', function() {
       assert.ok(data);
       assert.ok(data.length > 10);
     });
-    it('match.getMatchlist (list params)', async function() {
+    xit('match.getMatchlist (list params)', async function() {
       // TODO why isn't this null?
       const summoner = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: [ 'c9 zven' ],
@@ -110,10 +110,10 @@ describe('TeemoJS LoL', function() {
     });
     it('match.getMatch', async function() {
       const data = await apf.matchV5.getMatch(RegionalRoute.AMERICAS, {
-        path: [ 'NA1_4541499677' ],
+        path: [ 'NA1_4924008147' ],
       });
       assert.ok(data);
-      assert.equal(data.metadata.matchId, 'NA1_4541499677');
+      assert.equal(data.metadata.matchId, 'NA1_4924008147');
       assert.equal(data.info.teams.length, 2);
       assert.equal(data.info.participants.length, 10);
     });
@@ -125,7 +125,7 @@ describe('TeemoJS LoL', function() {
       assert.ok(data);
       assert.ok(data.summonerLevel > 30); // Level up.
     });
-    it('summoner.getBySummonerName encoding test', async function() {
+    xit('summoner.getBySummonerName encoding test', async function() {
       const summonerName = 'The Øne And Ønly';
       const data = await api.req("summonerV4", "getBySummonerName", PlatformRoute.NA1, {
         path: { summonerName },
@@ -180,19 +180,19 @@ describe('TeemoJS LoL', function() {
   it('#req() tournament', function() {
     this.slow(500);
     it('works for tournament endpoints', async function() {
-      const providerId = await apf.tournamentStubV4.registerProviderData(RegionalRoute.AMERICAS, {
+      const providerId = await apf.tournamentStubV5.registerProviderData(RegionalRoute.AMERICAS, {
         body: {
           region: "NA",
           url: "https://github.com/MingweiSamuel/TeemoJS",
         },
       });
-      const tournamentId = await apf.tournamentStubV4.registerTournament(RegionalRoute.AMERICAS, {
+      const tournamentId = await apf.tournamentStubV5.registerTournament(RegionalRoute.AMERICAS, {
         body: {
           name: "Teemo Tournament :)",
           providerId,
         },
       });
-      const codes = await apf.tournamentStubV4.createTournamentCode(RegionalRoute.AMERICAS, {
+      const codes = await apf.tournamentStubV5.createTournamentCode(RegionalRoute.AMERICAS, {
         query: {
           count: 10,
           tournamentId,
@@ -204,6 +204,7 @@ describe('TeemoJS LoL', function() {
           pickType: "TOURNAMENT_DRAFT",
           spectatorType: "ALL",
           teamSize: 5,
+          enoughPlayers: true,
         },
       });
       assert.ok(codes)

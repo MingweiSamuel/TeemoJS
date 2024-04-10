@@ -48,7 +48,10 @@ function formatPropType(prop, optional = false) {
     }
     if ('STRING' === prop['x-type'].toUpperCase())
         return 'string';
-    return prop['x-type'];
+    if ('integer' === prop['x-type'])
+        return 'int';
+    else
+        return prop['x-type'];
 }
 
 function paramsToType(params, ordered = false) {

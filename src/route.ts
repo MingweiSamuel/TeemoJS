@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version a9b6936baced1f181b550b7fb921ab72b216076c
+// Version 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 /** Regional routing values for `tftMatchV1`, `lorRankedV1`, and `AMERICAS` for league endpoints. */
 enum RegionalRoute {
@@ -116,7 +116,7 @@ enum PlatformRoute {
     NA1 = 23,
 
     /**
-     * Oceana.
+     * Oceania.
      *
      * `24` (riotapi-schema ID/repr)
      */
@@ -347,13 +347,18 @@ namespace PlatformRoute {
             case "NA1": return PlatformRoute.NA1;
             case "OCE":
             case "OC1": return PlatformRoute.OC1;
+            case "PH":
             case "PH2": return PlatformRoute.PH2;
             case "RU": return PlatformRoute.RU;
+            case "SG":
             case "SG2": return PlatformRoute.SG2;
+            case "TH":
             case "TH2": return PlatformRoute.TH2;
             case "TR":
             case "TR1": return PlatformRoute.TR1;
+            case "TW":
             case "TW2": return PlatformRoute.TW2;
+            case "VN":
             case "VN2": return PlatformRoute.VN2;
             case "PBE": return PlatformRoute.PBE1;
         }

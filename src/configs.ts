@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////
 
 // http://www.mingweisamuel.com/riotapi-schema/tool/
-// Version a9b6936baced1f181b550b7fb921ab72b216076c
+// Version 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 const RiotApiConfig = {
     apiKeys: {
@@ -68,29 +68,29 @@ const RiotApiConfig = {
         },
         championMasteryV4: {
             /**
-             * Get all champion mastery entries sorted by number of champion points descending,
+             * Get all champion mastery entries sorted by number of champion points descending.
              */
-            getAllChampionMasteries: {
-                path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            getAllChampionMasteriesByPUUID: {
+                path: "/lol/champion-mastery/v4/champion-masteries/by-puuid/{encryptedPUUID}",
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
             /**
-             * Get a champion mastery by player ID and champion ID.
+             * Get a champion mastery by puuid and champion ID.
              */
-            getChampionMastery: {
-                path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/by-champion/{championId}",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDto | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string, championId: long } | [ string, long ], {}, undefined>,
+            getChampionMasteryByPUUID: {
+                path: "/lol/champion-mastery/v4/champion-masteries/by-puuid/{encryptedPUUID}/by-champion/{championId}",
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string, championId: int } | [ string, int ], {}, undefined>,
             /**
              * Get specified number of top champion mastery entries sorted by number of champion points descending.
              */
-            getTopChampionMasteries: {
-                path: "/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedSummonerId}/top",
-            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], { count?: int | null }, undefined>,
+            getTopChampionMasteriesByPUUID: {
+                path: "/lol/champion-mastery/v4/champion-masteries/by-puuid/{encryptedPUUID}/top",
+            } as ReqSpec<championMasteryV4.ChampionMasteryDto[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], { count?: int | null }, undefined>,
             /**
              * Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
              */
-            getChampionMasteryScore: {
-                path: "/lol/champion-mastery/v4/scores/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<int, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            getChampionMasteryScoreByPUUID: {
+                path: "/lol/champion-mastery/v4/scores/by-puuid/{encryptedPUUID}",
+            } as ReqSpec<int, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
         },
         championV3: {
             /**
@@ -140,7 +140,7 @@ const RiotApiConfig = {
              */
             getLeagueEntries: {
                 path: "/lol/league-exp/v4/entries/{queue}/{tier}/{division}",
-            } as ReqSpec<leagueExpV4.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
+            } as ReqSpec<leagueExpV4.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "RANKED_SOLO_5x5" | "RANKED_TFT" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", "CHALLENGER" | "GRANDMASTER" | "MASTER" | "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
         },
         leagueV4: {
             /**
@@ -160,7 +160,7 @@ const RiotApiConfig = {
              */
             getLeagueEntries: {
                 path: "/lol/league/v4/entries/{queue}/{tier}/{division}",
-            } as ReqSpec<leagueV4.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
+            } as ReqSpec<leagueV4.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { queue: "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", tier: "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "RANKED_SOLO_5x5" | "RANKED_FLEX_SR" | "RANKED_FLEX_TT", "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
             /**
              * Get the grandmaster league of a specific queue.
              */
@@ -217,16 +217,6 @@ const RiotApiConfig = {
             getPlayerData: {
                 path: "/lol/challenges/v1/player-data/{puuid}",
             } as ReqSpec<lolChallengesV1.PlayerInfoDto, PlatformRoute, { puuid: string } | [ string ], {}, undefined>,
-        },
-        lolStatusV3: {
-            /**
-             * Get League of Legends status for the given shard.
-             * ## Rate Limit Notes
-             * Requests to this API are not counted against the application Rate Limits.
-             */
-            getShardData: {
-                path: "/lol/status/v3/shard-data",
-            } as ReqSpec<lolStatusV3.ShardStatus, PlatformRoute, {} | [], {}, undefined>,
         },
         lolStatusV4: {
             /**
@@ -316,19 +306,35 @@ const RiotApiConfig = {
                 path: "/lol/match/v5/matches/{matchId}/timeline",
             } as ReqSpec<matchV5.MatchTimelineDto | null, RegionalRoute.AMERICAS | RegionalRoute.ASIA | RegionalRoute.EUROPE | RegionalRoute.SEA, { matchId: string } | [ string ], {}, undefined>,
         },
-        spectatorV4: {
+        spectatorTftV5: {
             /**
-             * Get current game information for the given summoner ID.
+             * Get current game information for the given puuid.
              */
-            getCurrentGameInfoBySummoner: {
-                path: "/lol/spectator/v4/active-games/by-summoner/{encryptedSummonerId}",
-            } as ReqSpec<spectatorV4.CurrentGameInfo | null, PlatformRoute.BR1 | PlatformRoute.EUN1 | PlatformRoute.EUW1 | PlatformRoute.JP1 | PlatformRoute.KR | PlatformRoute.LA1 | PlatformRoute.LA2 | PlatformRoute.NA1 | PlatformRoute.OC1 | PlatformRoute.RU | PlatformRoute.TR1, { encryptedSummonerId: string } | [ string ], {}, undefined>,
+            getCurrentGameInfoByPuuid: {
+                path: "/lol/spectator/tft/v5/active-games/by-puuid/{encryptedPUUID}",
+                apiKeyName: "tft",
+            } as ReqSpec<spectatorTftV5.CurrentGameInfo | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
             /**
              * Get list of featured games.
              */
             getFeaturedGames: {
-                path: "/lol/spectator/v4/featured-games",
-            } as ReqSpec<spectatorV4.FeaturedGames, PlatformRoute.BR1 | PlatformRoute.EUN1 | PlatformRoute.EUW1 | PlatformRoute.JP1 | PlatformRoute.KR | PlatformRoute.LA1 | PlatformRoute.LA2 | PlatformRoute.NA1 | PlatformRoute.OC1 | PlatformRoute.RU | PlatformRoute.TR1, {} | [], {}, undefined>,
+                path: "/lol/spectator/tft/v5/featured-games",
+                apiKeyName: "tft",
+            } as ReqSpec<spectatorTftV5.FeaturedGames, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+        },
+        spectatorV5: {
+            /**
+             * Get current game information for the given puuid.
+             */
+            getCurrentGameInfoByPuuid: {
+                path: "/lol/spectator/v5/active-games/by-summoner/{encryptedPUUID}",
+            } as ReqSpec<spectatorV5.CurrentGameInfo | null, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedPUUID: string } | [ string ], {}, undefined>,
+            /**
+             * Get list of featured games.
+             */
+            getFeaturedGames: {
+                path: "/lol/spectator/v5/featured-games",
+            } as ReqSpec<spectatorV5.FeaturedGames, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
         },
         summonerV4: {
             /**
@@ -375,7 +381,7 @@ const RiotApiConfig = {
             getChallengerLeague: {
                 path: "/tft/league/v1/challenger",
                 apiKeyName: "tft",
-            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], { queue?: "RANKED_TFT" | "RANKED_TFT_DOUBLE_UP" | null }, undefined>,
             /**
              * Get league entries for a given summoner ID.
              */
@@ -389,14 +395,14 @@ const RiotApiConfig = {
             getLeagueEntries: {
                 path: "/tft/league/v1/entries/{tier}/{division}",
                 apiKeyName: "tft",
-            } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { tier: "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "DIAMOND" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { page?: int | null }, undefined>,
+            } as ReqSpec<tftLeagueV1.LeagueEntryDTO[], Exclude<PlatformRoute, PlatformRoute.PBE1>, { tier: "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", division: "I" | "II" | "III" | "IV" } | [ "DIAMOND" | "EMERALD" | "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "IRON", "I" | "II" | "III" | "IV" ], { queue?: "RANKED_TFT" | "RANKED_TFT_DOUBLE_UP" | null, page?: int | null }, undefined>,
             /**
              * Get the grandmaster league.
              */
             getGrandmasterLeague: {
                 path: "/tft/league/v1/grandmaster",
                 apiKeyName: "tft",
-            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], { queue?: "RANKED_TFT" | "RANKED_TFT_DOUBLE_UP" | null }, undefined>,
             /**
              * Get league with given ID, including inactive entries.
              */
@@ -410,7 +416,7 @@ const RiotApiConfig = {
             getMasterLeague: {
                 path: "/tft/league/v1/master",
                 apiKeyName: "tft",
-            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], {}, undefined>,
+            } as ReqSpec<tftLeagueV1.LeagueListDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, {} | [], { queue?: "RANKED_TFT" | "RANKED_TFT_DOUBLE_UP" | null }, undefined>,
             /**
              * Get the top rated ladder for given queue
              */
@@ -481,90 +487,110 @@ const RiotApiConfig = {
                 apiKeyName: "tft",
             } as ReqSpec<tftSummonerV1.SummonerDTO, Exclude<PlatformRoute, PlatformRoute.PBE1>, { encryptedSummonerId: string } | [ string ], {}, undefined>,
         },
-        tournamentStubV4: {
+        tournamentStubV5: {
             /**
-             * Create a mock tournament code for the given tournament.
+             * Create a tournament code for the given tournament - Stub method
              */
             createTournamentCode: {
-                path: "/lol/tournament-stub/v4/codes",
+                path: "/lol/tournament-stub/v5/codes",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<string[], RegionalRoute.AMERICAS, {} | [], { count?: int | null, tournamentId: long }, tournamentStubV4.TournamentCodeParameters>,
+            } as ReqSpec<string[], RegionalRoute.AMERICAS, {} | [], { count?: int | null, tournamentId: long }, tournamentStubV5.TournamentCodeParametersV5>,
             /**
-             * Gets a mock list of lobby events by tournament code.
+             * Returns the tournament code DTO associated with a tournament code string - Stub Method
+             */
+            getTournamentCode: {
+                path: "/lol/tournament-stub/v5/codes/{tournamentCode}",
+                apiKeyName: "tournament",
+            } as ReqSpec<tournamentStubV5.TournamentCodeV5DTO, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
+            /**
+             * Gets a list of lobby events by tournament code - Stub method
              */
             getLobbyEventsByCode: {
-                path: "/lol/tournament-stub/v4/lobby-events/by-code/{tournamentCode}",
+                path: "/lol/tournament-stub/v5/lobby-events/by-code/{tournamentCode}",
                 apiKeyName: "tournament",
-            } as ReqSpec<tournamentStubV4.LobbyEventDTOWrapper, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
+            } as ReqSpec<tournamentStubV5.LobbyEventV5DTOWrapper, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
             /**
-             * Creates a mock tournament provider and returns its ID.
+             * Creates a tournament provider and returns its ID - Stub method
              * ## Implementation Notes
              * Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
              */
             registerProviderData: {
-                path: "/lol/tournament-stub/v4/providers",
+                path: "/lol/tournament-stub/v5/providers",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentStubV4.ProviderRegistrationParameters>,
+            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentStubV5.ProviderRegistrationParametersV5>,
             /**
-             * Creates a mock tournament and returns its ID.
+             * Creates a tournament and returns its ID - Stub method
              */
             registerTournament: {
-                path: "/lol/tournament-stub/v4/tournaments",
+                path: "/lol/tournament-stub/v5/tournaments",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentStubV4.TournamentRegistrationParameters>,
+            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentStubV5.TournamentRegistrationParametersV5>,
         },
-        tournamentV4: {
+        tournamentV5: {
             /**
              * Create a tournament code for the given tournament.
              */
             createTournamentCode: {
-                path: "/lol/tournament/v4/codes",
+                path: "/lol/tournament/v5/codes",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<string[], RegionalRoute.AMERICAS, {} | [], { count?: int | null, tournamentId: long }, tournamentV4.TournamentCodeParameters>,
+            } as ReqSpec<string[], RegionalRoute.AMERICAS, {} | [], { tournamentId: long, count?: int | null }, tournamentV5.TournamentCodeParametersV5>,
             /**
              * Returns the tournament code DTO associated with a tournament code string.
              */
             getTournamentCode: {
-                path: "/lol/tournament/v4/codes/{tournamentCode}",
+                path: "/lol/tournament/v5/codes/{tournamentCode}",
                 apiKeyName: "tournament",
-            } as ReqSpec<tournamentV4.TournamentCodeDTO, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
+            } as ReqSpec<tournamentV5.TournamentCodeV5DTO, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
             /**
-             * Update the pick type, map, spectator type, or allowed summoners for a code.
+             * Update the pick type, map, spectator type, or allowed puuids for a code.
              */
             updateCode: {
-                path: "/lol/tournament/v4/codes/{tournamentCode}",
+                path: "/lol/tournament/v5/codes/{tournamentCode}",
                 method: "put",
                 apiKeyName: "tournament",
-            } as ReqSpec<void, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, tournamentV4.TournamentCodeUpdateParameters>,
+            } as ReqSpec<void, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, tournamentV5.TournamentCodeUpdateParametersV5>,
+            /**
+             * Get games details
+             * ## Implementation Notes
+             * Additional endpoint to get tournament games. From this endpoint, you are able to get participants PUUID (the callback doesn't contain this info).
+             * 
+             * You can also use it to check if the game was recorded and validate callbacks. If the endpoint returns the game, it means a callback was attempted.
+             * 
+             * This will only work for tournament codes created after November 10, 2023.
+             */
+            getGames: {
+                path: "/lol/tournament/v5/games/by-code/{tournamentCode}",
+                apiKeyName: "tournament",
+            } as ReqSpec<tournamentV5.TournamentGamesV5[], RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
             /**
              * Gets a list of lobby events by tournament code.
              */
             getLobbyEventsByCode: {
-                path: "/lol/tournament/v4/lobby-events/by-code/{tournamentCode}",
+                path: "/lol/tournament/v5/lobby-events/by-code/{tournamentCode}",
                 apiKeyName: "tournament",
-            } as ReqSpec<tournamentV4.LobbyEventDTOWrapper, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
+            } as ReqSpec<tournamentV5.LobbyEventV5DTOWrapper, RegionalRoute.AMERICAS, { tournamentCode: string } | [ string ], {}, undefined>,
             /**
              * Creates a tournament provider and returns its ID.
              * ## Implementation Notes
              * Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
              */
             registerProviderData: {
-                path: "/lol/tournament/v4/providers",
+                path: "/lol/tournament/v5/providers",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentV4.ProviderRegistrationParameters>,
+            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentV5.ProviderRegistrationParametersV5>,
             /**
              * Creates a tournament and returns its ID.
              */
             registerTournament: {
-                path: "/lol/tournament/v4/tournaments",
+                path: "/lol/tournament/v5/tournaments",
                 method: "post",
                 apiKeyName: "tournament",
-            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentV4.TournamentRegistrationParameters>,
+            } as ReqSpec<int, RegionalRoute.AMERICAS, {} | [], {}, tournamentV5.TournamentRegistrationParametersV5>,
         },
         valContentV1: {
             /**
@@ -594,7 +620,7 @@ const RiotApiConfig = {
              */
             getRecent: {
                 path: "/val/match/v1/recent-matches/by-queue/{queue}",
-            } as ReqSpec<valMatchV1.RecentMatchesDto, ValPlatformRoute, { queue: "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" } | [ "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" ], {}, undefined>,
+            } as ReqSpec<valMatchV1.RecentMatchesDto, ValPlatformRoute, { queue: "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" | "hurm" } | [ "competitive" | "unrated" | "spikerush" | "tournamentmode" | "deathmatch" | "onefa" | "ggteam" | "hurm" ], {}, undefined>,
         },
         valRankedV1: {
             /**

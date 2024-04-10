@@ -11,6 +11,7 @@
         if ('Error' === name) continue;
         const [ endpoint, model ] = name.split('.');
         const { description, properties, required = [] } = schema;
+        if (0 === Object.keys(properties).length) continue;
 }}
 
 namespace {{= dotUtils.toLowerCamel(endpoint) }} {
