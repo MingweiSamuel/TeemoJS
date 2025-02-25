@@ -46,7 +46,7 @@
       "getChampionInfo": "/lol/platform/v3/champion-rotations"
     },
     "clash": {
-      "getPlayersBySummoner": "/lol/clash/v1/players/by-summoner/%s",
+      "getPlayersByPUUID": "/lol/clash/v1/players/by-puuid/%s",
       "getTeamById": "/lol/clash/v1/teams/%s",
       "getTournaments": "/lol/clash/v1/tournaments",
       "getTournamentByTeam": "/lol/clash/v1/tournaments/by-team/%s",
@@ -57,6 +57,7 @@
     },
     "league": {
       "getChallengerLeague": "/lol/league/v4/challengerleagues/by-queue/%s",
+      "getLeagueEntriesByPUUID": "/lol/league/v4/entries/by-puuid/%s",
       "getLeagueEntriesForSummoner": "/lol/league/v4/entries/by-summoner/%s",
       "getLeagueEntries": "/lol/league/v4/entries/%s/%s/%s",
       "getGrandmasterLeague": "/lol/league/v4/grandmasterleagues/by-queue/%s",
@@ -70,6 +71,11 @@
       "getChallengeLeaderboards": "/lol/challenges/v1/challenges/%s/leaderboards/by-level/%s",
       "getChallengePercentiles": "/lol/challenges/v1/challenges/%s/percentiles",
       "getPlayerData": "/lol/challenges/v1/player-data/%s"
+    },
+    "lolRsoMatch": {
+      "getMatchIds": "/lol/rso-match/v1/matches/ids",
+      "getMatch": "/lol/rso-match/v1/matches/%s",
+      "getTimeline": "/lol/rso-match/v1/matches/%s/timeline"
     },
     "lolStatus": {
       "getPlatformData": "/lol/status/v4/platform-data"
@@ -107,7 +113,6 @@
     "summoner": {
       "getByRSOPUUID": "/fulfillment/v1/summoners/by-puuid/%s",
       "getByAccountId": "/lol/summoner/v4/summoners/by-account/%s",
-      "getBySummonerName": "/lol/summoner/v4/summoners/by-name/%s",
       "getByPUUID": "/lol/summoner/v4/summoners/by-puuid/%s",
       "getByAccessToken": "/lol/summoner/v4/summoners/me",
       "getBySummonerId": "/lol/summoner/v4/summoners/%s"
@@ -130,10 +135,17 @@
     },
     "tftSummoner": {
       "getByAccountId": "/tft/summoner/v1/summoners/by-account/%s",
-      "getBySummonerName": "/tft/summoner/v1/summoners/by-name/%s",
       "getByPUUID": "/tft/summoner/v1/summoners/by-puuid/%s",
       "getByAccessToken": "/tft/summoner/v1/summoners/me",
       "getBySummonerId": "/tft/summoner/v1/summoners/%s"
+    },
+    "valConsoleMatch": {
+      "getMatch": "/val/match/console/v1/matches/%s",
+      "getMatchlist": "/val/match/console/v1/matchlists/by-puuid/%s",
+      "getRecent": "/val/match/console/v1/recent-matches/by-queue/%s"
+    },
+    "valConsoleRanked": {
+      "getLeaderboard": "/val/console/ranked/v1/leaderboards/by-act/%s"
     },
     "valContent": {
       "getContent": "/val/content/v1/contents"
